@@ -1,0 +1,1190 @@
+{
+  "lastUniverseQuoteSyncUtc": "2026-11-21T10:44:37.588Z",
+  "bySymbol": {
+    "RELIANCE": {
+      "symbol": "RELIANCE",
+      "companyName": "Reliance Industries Limited",
+      "bseScripCode": "500325",
+      "nextResultDate": "2027-01-15",
+      "isResultEstimate": true,
+      "resultSource": "Yahoo Finance Calendar",
+      "news7D": [
+        {
+          "title": "Reliance Industries on course for longest winning streak in 19 years - Moneycontrol.com",
+          "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOdjItdmxaMnZXaUFOMnhBZFFzNzd3Ni1UU3FiQlh6emFoMVd0bUtkODNsVXRjLVotOUp5OXRVNjVFOEx3MDRQcHdKUVZ6ZjNIS2tkNGZ1MFMyNTAxVmNlX0lUZUE2Z0xrenBBTGVXRUtyTG4wRUIweVhiRTNlTEY3ZGNBVUZhampBam0zUFBlbnVRWWduY19vOW9HT1FSdGg5VDJfU2hYaVdiTTdNdHphS3RoQjhqX3Z0YUVEVlhYeUF5RjTSAcgBQVVfeXFMUFI3emhsRHAyS19IMl9mdUZJWFJHTlZic3dla3VXQllKV3RtMjZPVWE3WlphcUlZejViMWV0cWpOV3ZGNnNIWkl0TVFfZ3BYdXBCUVNISW1Jam1vSEFHM2M2VUpoRkxQSVJvUXVWdG14cGR0REw4eFgyQlB4UmlwQndqS096eWJYTjJuMlFiNDdBZ2ppLU15UXQ2UnBzbnR0SlpvMHdldENXZWl3TWZxb19wTEdlMkRmWjBYdGIySWQwOGVGQmNOcEs?oc=5",
+          "source": "Moneycontrol.com",
+          "publishedAtUtc": "2026-11-18T08:29:50.000Z",
+          "ageDays": 0,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Reliance seeks manufacturing partners for its 1,600-satellite network - Bloomberg - Yahoo Finance Singapore",
+          "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQaUtrbWNnWEVueDMyUjY0Y21HQkg0Y1QxVkdyekdUWk1yY29aMVBIRkxSZDZNaE1qSF9RT3R1Q0U1a3JmU3AwbmptdUczdng0ZUtzeFRYOVFpUU5lQXI5ZE9rUndoU1hyMWloM1VVLUhmZ1p6c25Fc2VNUUcyNldEdU01aVNPX29udjZOTkRhekxOZw?oc=5",
+          "source": "Yahoo Finance Singapore",
+          "publishedAtUtc": "2026-11-18T02:02:00.000Z",
+          "ageDays": 0.3,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Reliance, Hindustan Zinc and other metal stocks shine in Q2FY27 earnings; while auto sector faces pressure: Check key highlights - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxQcWtNMHZIZDZ5ZFpRUHg4WVRZaDh3LVVDNkdLTTVia1hkNWlOSTh2VExIZGxIcWQ4SGZYc2o4Wm83S095MUM3OUFxLWZiWTJlQ2VSblk3X1pEVFg2d19RcjlNTjI4dzZTeVFYWlNoZ3E1RVJfZGpCeS14RDFVOEhwOHBvMTlaU1V0b1l1X0Y2ZnlXQVlBOU8tTllkdW1PMm55alNIbGg0UGJMLU9ubEYyOU00NkNQei1GT0poMkpXTV9ETVpmZDZTOXZCX0dyamNIeUlIRnlhVWxmMW43TFVQVl93VXBxeVVXZm95eldoOEJ6dlZ3UjJsSElYTjJaNkVCOWRONkVxbWYydVF6OExTYVN1YTE?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-17T19:35:47.000Z",
+          "ageDays": 0.5,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Reliance Industries Limited (RELIANCE.NS) stock price, news, quote and history - Yahoo Finance UK",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE4xeXJjVnZ0V2gtTms3eTY0ak1yaTZnR0RXVHpEMEQ0bTh1SElpTFBkV3c1R1dIUlk5SEZVMnFzLUM3MmcwS1BPRWxLV0RHS1prbmU1U2NKbTByNm8?oc=5",
+          "source": "Yahoo Finance UK",
+          "publishedAtUtc": "2026-11-17T17:19:45.000Z",
+          "ageDays": 0.6,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Reliance Industries NSE:RELIANCE JM Financial Conference Update - Kalkine India",
+          "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPVXhEUHNZZEJ4Qzh0SXNKem5CVUVmbWtzaWU1Ym9COFBQOXpEa2JKQWRvOXpWVFR5Rnl5dk5pMWlmaGlWaDdMYzllaFVyODlYc1plMmdCY1R1WkRiZlE5ZnlTUWFrMzI0bnNiYmhoU2w2U2FFZjE1LUE4RzlIYzJlUWVIMzRVZ2V1ZWtYNmNuTjhZQnUxQThLemV0bHA5RTZLaHRtM2Z5WDNVakNsdFAtMkpaSWxkQTRzS3FmTE50cmFURjNqaGlFRG9fc3BOeUdHcjVPQlRKNXVnWF82dFVpWHlnWm1MNWpsUS1N?oc=5",
+          "source": "Kalkine India",
+          "publishedAtUtc": "2026-11-17T13:17:00.000Z",
+          "ageDays": 0.8,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Green Energy Stocks Gain as Renewable and Battery Shares Drive Market Momentum (17 November 2026) - SolarQuarter",
+          "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOMEdzZlQtN3BsLWJ3X1dIQUdXNFA0R1haYUIzT1VPdDhRYU9EWTBuMzNjVHZtZDQyWVdlT0sxMUkyUG1yRzctQVUxcG95bl9iTDN0c1JHQVQ2Qi1TOFc2UHVQNDJrSHlZeUh2THdOV0ZKVWlmd2FJV0loSGVOWHI0WkhiSkZ6UHE5d29DQVlnUmtPQVJNRFFLczZpQ3B1c0pvMGw1d2F5eG5BckF2U2daOFVReTFhWUQ3ejRZeWc1X0k4S1pEQjlVOTZJNnk?oc=5",
+          "source": "SolarQuarter",
+          "publishedAtUtc": "2026-11-17T11:42:33.000Z",
+          "ageDays": 0.9,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Reliance Industries Share Price Prediction for Tomorrow (17 Nov 2026): Stock Edges Up 0.38% Near Its High - Univest",
+          "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNZTdsTnZfaEt1NEM5UlltT3U1dF9HbzJLR21VSHVKY1pUaTJvRUZFbndPNkxURXpnUng1cHI2T2I5aHhpRDduX2xCS1BmOE10X2VYMm55elJhaTRaREc2SU4wRkNxQjBKazFnbDR4QXpFaEpIOWlvZjFtU09YZVhYdzVNVGVQZkhuZFhiRzE1MA?oc=5",
+          "source": "Univest",
+          "publishedAtUtc": "2026-11-16T10:44:00.000Z",
+          "ageDays": 1.9,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "RCOM Share Price Today - Reliance Communications on NSE/BSE - scanx.trade",
+          "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBrSWRPSVU1SUotMWM2MW1ZYnFoaDFOb3RNRlhoa01RT3prdGtoMldZY2xyWjJMU3h2YmRTMHpkdWhINWFNOFNNaWtCQ1FnbEpKYnU3STlpM1N1bDRubDJMM29qd2xNUQ?oc=5",
+          "source": "scanx.trade",
+          "publishedAtUtc": "2026-11-15T06:00:51.000Z",
+          "ageDays": 3.1,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "RELINFRA Share Price Today - Reliance Infrastructure on NSE/BSE - scanx.trade",
+          "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9UMG9mdFVMVFhVek84VDZIbTd3LXZvS2ZLSDN6d2JHQkNGRU9idUFEZUYyMGJrdGk1Ul8zcTZPMV9ibWNsUDlLZlZOS0VVaVBPdDBYMzY2QnlNUEVZdTVYSDRZVm9Ndw?oc=5",
+          "source": "scanx.trade",
+          "publishedAtUtc": "2026-11-15T03:36:50.000Z",
+          "ageDays": 3.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "RELIANCE Outlook for the Week - Equitypandit",
+          "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBUa1ZackhmanA0bDFEUFZuYXo1eDJLdjNldV9KN1ROYVZDdXlvS21sOUp6OGp3aldiUHQ1QUdrT3ZOTmF0bXZjLURSOHA5ZzlVclNBdUplZmpJNmxjWFd1VjVSQTNscFRGVWtv?oc=5",
+          "source": "Equitypandit",
+          "publishedAtUtc": "2026-11-13T08:00:00.000Z",
+          "ageDays": 5,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Top Losers Today - NSE Top Losers Stocks Live, BSE Top Losers Shares Today - The Economic Times",
+          "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1pdllieG9walJtZS01eEV5TXozT2d4aHZtby1TSEJ2WHM2ZDVCVG5kOEk2V3VDemRWd0tqajBYOGlILTJncTV4eU1XSUVUU3ljOXNzOFBXUkx6TTN3cTRrTHh3aS1BRE5SUWM5RGxqZTBQQlk0?oc=5",
+          "source": "The Economic Times",
+          "publishedAtUtc": "2026-11-12T21:12:00.000Z",
+          "ageDays": 5.5,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "RELIANCE Share Price — NSE:RELIANCE - TradingView",
+          "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE00anNGRF9JdzljQVhoc3o1RDloUllFYW5oVUw2d1hTbkNjZjRLYTUwdkZaTkJXWUhWamRQb285S2JyZkhfQzIzUm5yWS1TQ09wZEl5b29JUE5scTdGMEE?oc=5",
+          "source": "TradingView",
+          "publishedAtUtc": "2026-11-11T15:55:58.000Z",
+          "ageDays": 6.7,
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "announcements": [
+        {
+          "date": "2026-11-17",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Update On Institutional Investors'' Meeting - JM Financial India Conference",
+          "details": "This is further to the disclosure dated November 12, 2026 made by the Company. We wish to inform you that the Company executives participated in the Institutional Investors'' Meeting - ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/eadec632-3d3c-49bd-8f85-6d26d79a4332.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-16",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Update On Institutional Investors'' Meeting - CLSA India Forum",
+          "details": "This is further to the disclosure dated November 6, 2026 made by the Company. We wish to inform you that the Company executives participated in the Institutional Investors'' Meeting - CLSA ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/c3e0b430-7329-4925-8c6f-a9a1967bc0f9.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-13",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please note that the Company executives will be participating in the Institutional Investors'' Meeting - Morgan Stanley 25th Annual Asia-Pacific Summit, scheduled to be held on November ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3f614a9e-94b0-42ef-8145-ba0055ba7be5.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please note that the Company executives will be participating in the Institutional Investors'' Meeting - JM Financial India Conference, scheduled to be held on November 17, 2026 at Mumbai. ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/55f9d4f5-8638-4669-abdb-7cc4127221fc.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-06",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please note that the Company executives will be participating in the Institutional Investors meeting - CLSA India Forum, scheduled to be held on November 16, 2026 at Mumbai. It is expected ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/bab324f6-6fab-42fc-8b79-a3881f4fb7c7.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Credit Rating",
+          "details": "Intimation of re-affirmation of rating by S&P Global Ratings is attached.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/9a4b00d7-4978-4c75-beb2-78403163cb8e.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-01",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Earnings Call Transcript",
+          "details": "Transcript of the discussion on the Unaudited Financial Results (Consolidated and Standalone) of the Company for the quarter and half year ended September 30, 2026, is attached and also ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/8e997741-4d35-4188-933a-cf020fb9c816.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-31",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Outcome",
+          "details": "Audio recording of the discussion on the unaudited Financial Results (Consolidated and Standalone) of the Company for the quarter and half year ended September 30, 2026, at the analyst ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0f665e67-b13f-4624-9278-3f4183d817eb.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Investor Presentation",
+          "details": "Please find attached presentation on the Unaudited Financial Results (Consolidated and Standalone) for the quarter and half year ended September 30, 2026.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0dc8ebe7-5e2d-4946-85ee-1e536c461a71.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Press Release / Media Release",
+          "details": "In continuation of our letter of today''s date on the Unaudited Financial Results (Consolidated and Standalone) for the quarter and half year ended September 30, 2026, we attach a copy ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/aacc5fc7-25e5-4901-b682-d9911fe1d21b.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Unaudited Financial Results (Consolidated And Standalone) For The Quarter And Half Year Ended September 30, 2026.",
+          "details": "Please find attached Unaudited Financial Results (Consolidated and Standalone) for the quarter and half year ended September 30, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/880087f6-7ecc-40a9-8cac-de48d4616b25.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Outcome for Board Meeting Outcome For Unaudited Financial Results (Consolidated And Standalone) For The Quarter And Half Year Ended September 30, 2026 And Issuance Non-Convertible Debentures.",
+          "details": "In continuation of our letter dated October 27, 2026, we wish to inform you that the Board of Directors of the Company, at its meeting held today, has, inter alia: approved the Unaudited ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/9d4cb3ed-a184-4662-91fc-f4112ce354b7.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-29",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Disclosure Under Regulation 30 Of The Securities And Exchange Board Of India (Listing Obligations And Disclosure Requirements) Regulations, 2015 - Voluntary Strike Off Of Hamleys (Franchising) Limited.",
+          "details": "Voluntary strike off of Hamleys (Franchising) Limited.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/bc9fc5d1-9c04-4a88-b807-79d27dd63697.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-27",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Listing Of Equity Shares Of Jio Platforms Limited",
+          "details": "Trading in equity shares of Jio Platforms Limited (JPL) will commence from October 28, 2026.   Further, a meeting of board of directors of JPL is scheduled to be held on Friday, October ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/70bfc361-3c9a-45d0-8240-e1b544debd01.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-27",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "The meeting of the Board of Directors of the Company is scheduled on October 30, 2026, inter alia, to consider and approve: a. the standalone and consolidated unaudited financial results ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/abf880ad-357c-4ff9-b6d7-83c1dcf59cba.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-27",
+          "symbol": "RELIANCE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Intimation for Considering And Approving The Standalone And Consolidated Unaudited Financial Results For The Quarter And Half Year Ended September 30, 2026 And Raising Of Funds By Way Of Issuance Of Debentures",
+          "details": "Reliance Industries Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on 30/10/2026 ,inter alia, to consider and approve a. the standalone and consolidated ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/5670a3e4-4e3c-489d-9160-455cb124704f.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-24",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Initial Public Offer Of Jio Platforms Limited - Update",
+          "details": "JPL has today finalised the Issue Price at Rs. 1,119 per Equity Share and has also filed Prospectus dated October 24, 2026 with the Registrar of Companies, Gujarat at Ahmedabad.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0056a3dc-6357-48ff-a037-f1b206624331.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-21",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Media Statement",
+          "details": "Please find attached a media statement issued by the Company.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3667a6e5-6d63-45c2-b94e-d09043e401b4.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-21",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Credit Rating",
+          "details": "Intimation of Credit Rating assigned by ICRA Limited",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/77e3ec52-056d-4103-8388-14b48756f70d.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-17",
+          "symbol": "RELIANCE",
+          "category": "GENERAL",
+          "subject": "Newspaper Clipping - Proposed Initial Public Offer Of Jio Platforms Limited -Reservation For Eligible RIL Shareholders",
+          "details": "Newspaper clipping of the advertisement on the captioned subject published today is enclosed.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/1d40c0e3-3bbd-4d47-8085-cae3973ee547.pdf",
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "fetchedAtUtc": "2026-11-18T08:42:11.996Z"
+    },
+    "360ONE": {
+      "symbol": "360ONE",
+      "companyName": "360 One Wam Limited",
+      "bseScripCode": "542772",
+      "nextResultDate": "2027-01-14",
+      "isResultEstimate": true,
+      "resultSource": "Yahoo Finance Calendar",
+      "news7D": [
+        {
+          "title": "360 One Wam Investor Analysis | StockIQ - The Economic Times",
+          "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNMXdPWmZQZHRUUGtNNTVDMF9XUjJrZXN6dXZCZmh2Z3Y0TEV2ZUw4NTNDRDdnb2wyLWMtR0ZjdWViVExReVNuUU1DLUtMaUdlVURWY1RyN05nZjg2cjJDV3I5d2R0d1dtODNPYjhHbWdnUXB1bTRkTWlBLVJFd2dCVUFtUHJVNWRVbDI4?oc=5",
+          "source": "The Economic Times",
+          "publishedAtUtc": "2026-11-17T17:04:03.000Z",
+          "ageDays": 0.7,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "360 One Wam rises 2.02% in Tuesday's session - Global Banking & Finance Review",
+          "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQMFJOa0I5R2V3XzVpZEtiNmExZXZ0ZXVJR3BVZEdEeVB6YVk0TGdnZTN1T1ZSZHVBTlZQUmx6aVpDcUZSbllHS2tJU3BNT1VXekNNbWZQRHNLNDFiejl3MHB4azF0bWtweE80UWotVi1iaUFRcXdJQTlZOW1CRS1EX3hzNGZJQQ?oc=5",
+          "source": "Global Banking & Finance Review",
+          "publishedAtUtc": "2026-11-17T14:30:33.000Z",
+          "ageDays": 0.8,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "360 One Wam Share Price - Live NSE: 360ONE Stock Price & Chart - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5veGhDNDBFdW56M2V2OW9acjkzUUJNMkhSdmVENEtMeUItSkZ4UThCVzRuRkljNlpPa19GVEN0dGJMeUdJMl8zSVFWWDcxeVNoODFvdFZsRWllTjN2ZHgzbnkwNEczUTNVS2c?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-13T08:00:00.000Z",
+          "ageDays": 5.1,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "360 ONE WAM LIMITED Option Chain - Live 360 ONE WAM LIMITED Option Chain Data, OI & Price - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE93d3Nva3oxUk1yRzNpVGNvUGNBZFVhcXZwTXZNQjBRUWVLM1daVnpuc182bmRKX1BLZ0xUYzhXcVU5cUJQM2Z6SE5BS2g1VjZ3Z2loRkNzVlEwQU80eE1OaUNn?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-13T08:00:00.000Z",
+          "ageDays": 5.1,
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "announcements": [
+        {
+          "date": "2026-11-09",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/a7f7b57a-2cdc-4753-b9ce-089e946e6573.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-09",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/cbb4d31a-24b5-4c29-891e-f736922d24a8.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-09",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/49d0d035-bc2f-4e88-8762-8db1cbce1b47.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-09",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/5b7fe719-7496-4cb0-9490-86461e3638f4.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-31",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Receipt Of Certificate Of Registration From International Financial Services Centres Authority ('IFSCA')",
+          "details": "360 ONE WAM LIMITED has informed the Exchange that 360 ONE Distribution Services Limited (IFSC Branch), a branch of 360 ONE Distribution Services Limited, a wholly owned subsidiary of the ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/006aba8b-d6d3-4d61-9cf3-0400760a9ca1.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-26",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/376b475e-c8a7-41f1-832d-3e661b6fa838.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-26",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/06aa3b44-d191-4427-a25c-9de78b92e130.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-26",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/7bfbc611-5ac7-4d42-ad5b-e5122f9d2f23.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-26",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find enclosed Intimation of Schedule of Analysts / Institutional Investor Meeting.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/6dab740a-d007-4f97-bd16-4e3d33f6c4c2.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-22",
+          "symbol": "360ONE",
+          "category": "EXPANSION_FUNDRAISE",
+          "subject": "Announcement under Regulation 30 (LODR)-Allotment of ESOP / ESPS",
+          "details": "360 ONE WAM LIMITED has informed the Exchange regarding allotment of 4,61,384 Equity Shares upon exercise of ESOPs",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/cb047dce-061f-4db1-b6cb-a867ec9ba876.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-22",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Press Release / Media Release",
+          "details": "Press Release dated October 22, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/db362202-3312-4ff9-9f47-2aceb1612c4f.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-22",
+          "symbol": "360ONE",
+          "category": "EXPANSION_FUNDRAISE",
+          "subject": "Announcement under Regulation 30 (LODR)-Allotment",
+          "details": "Allotment of Equity Shares upon conversion of warrants by UBS AG",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/067e45fa-c9ee-40a9-a6a8-b712a00be867.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-21",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Earnings Call Transcript",
+          "details": "360 ONE WAM LIMITED has informed the Exchange about Transcript of Earnings Call held on October 15, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/8f2076b5-bfcf-41d6-a215-abae55aacba1.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-16",
+          "symbol": "360ONE",
+          "category": "CORPORATE_ACTION",
+          "subject": "Communication To Equity Shareholders Of The Company For Tax Deduction On Dividend",
+          "details": "please find attached herewith e-mail communication sent to equity shareholders of the Company with respect to withholding of tax on second interim dividend for the FY 26-27.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3707f548-5703-4fca-ab9f-9050e474d8ff.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Outcome",
+          "details": "Please find attached intimation for audio and video recordings of earnings call held on October 15, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3ca5bf41-6387-4124-9c15-fa9c995f45a6.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Announcement under Regulation 30 (LODR)-Monitoring Agency Report",
+          "details": "Please find enclosed herewith Monitoring Agency Reports for the quarter ended September 30, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3d0d66cd-dd99-436a-b030-d5df1c0c6285.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "CORPORATE_ACTION",
+          "subject": "Fixation Of Record Date For Interim Dividend - 23/10/2026",
+          "details": "Fixation of Record Date for Interim Dividend- 23/10/2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/12c55d13-eefe-4f85-9c7d-6197beaed2f7.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "CORPORATE_ACTION",
+          "subject": "Corporate Action-Board approves Dividend",
+          "details": "Please find enclosed intimation",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/40b6a9ed-a6b3-4fb4-835c-1010610cf806.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Investor Presentation",
+          "details": "Please find attached herewith Investor Presentation",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/35750efd-7f60-4538-9db8-73989fff9482.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-15",
+          "symbol": "360ONE",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Outcome For The Meeting Of The Board Of Directors Of 360 ONE WAM LIMITED Held On Thursday, October 15, 2026",
+          "details": "Outcome of the meeting of the Board of Directors of 360 ONE WAM Limited held on Thursday, October 15, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/765abd5b-44ab-49c0-9566-b1e441484623.pdf",
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "fetchedAtUtc": "2026-11-18T09:43:30.156Z"
+    },
+    "ALKEM": {
+      "symbol": "ALKEM",
+      "companyName": "Alkem Laboratories Limited",
+      "bseScripCode": "539523",
+      "nextResultDate": "2027-02-11",
+      "isResultEstimate": true,
+      "resultSource": "Yahoo Finance Calendar",
+      "news7D": [
+        {
+          "title": "Alkem Labs Q2FY27 Results: Revenue up 13.8% to ₹4,520 crore - scanx.trade",
+          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxORVhvY2tpMWZGTFBudUhhVi13UFhyRTdYSE9hQ0EzV0UxUmtWb2MzbDQxSnBfZXdoX29tTlVBV1ljZHV3OERYMTlBb2gxcm5KTnNkcGhZQjhGRVU5WWxFeXpQNXFRRF9udk83ZXJ6UUw0RG5wX2FaQlBiTGZjUjRXNEZ6WGlFYlNwbk9NVWkycTc4aklUY2kxanJWRndYQlBlZXRjemV6STdseEZJdXNVLVhsRVJZZ3dwdFFZUnhB?oc=5",
+          "source": "scanx.trade",
+          "publishedAtUtc": "2026-11-18T07:35:29.000Z",
+          "ageDays": 0.1,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Laboratories, Gallantt Ispat promoters sell shares; investors raise stake in Green Asia Impex - Moneycontrol.com",
+          "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxONzBKTi16ZDc2dUpUcHM4ZWlPcElFU0Y3NWI3aVBmVVBLa05LZGdpUkhSV0FPRS0yT3gyMFBndXR1dmVjSmdlaWtQU1R6YmV2SUtmVm1EUEMtX0t0Ym1GOTFVTXhoT1dRTjI5RVFELUZRWE9la3J5MmZMSVNLWWNzY29uQWlqLUE4c0dRcWVpV1IyTVpwLWhlM01QTElLNzJpX25rOGxoeWwyUFFLT29WVVl5RXEwUmlLR1d5czJFODNSQlh1SFhpMDJzc0VkM09KcENOeG1MVHAzV0J5anVxSkJFMDV5UkNnN2I4aExXRi0tQVly0gH6AUFVX3lxTFAzZDhMd0dRdkJ6MnE3NHA5R2VzYzRQQmVlZEFKMVVNc0pOUmJKVVI4d1Z2SEtfM25ELTFPUUhkRW10cFpoX1NKanFab3F2d0tFN3IyX2FzZEZkRmdac3RESS0xY0lvRFM4QWZlMHZGTE5IejE2S0NYNnRQbVNUY3pYelBkbC1wWEQ5Tk1LQm1nbjFpQ3ptTHBxYl9RaEdjU0FiMXYtQ2wxZHQwUFhiRk9SRG53UVdPbFRaNVFRLWNWTVMtUDd5c1VXM1JpUFExVVNDY2xXRk1fWWgzbWFWeWhPYm5IUEs1SUZKaHhFZUpJRjdyOU9xRmU0R2c?oc=5",
+          "source": "Moneycontrol.com",
+          "publishedAtUtc": "2026-11-17T16:21:50.000Z",
+          "ageDays": 0.7,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Laboratories Limited (NSE:ALKEM) Just Released Its Second-Quarter Results And Analysts Are Updating Their Estimates - Simply Wall St",
+          "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNczRLRDNVTG9RaHJSVEdYaG50ODNzVVU4aWxTR2pIQVFvNlJiQXNrQS0xc285eUo1U2pkeEpUZ1NaUmU5Tkxobm5xV1RQNWxmYS0teUctdFo1NmQxRktYTnJVckdXanN2aWVydWdpbE4teTFoeTdoa2treW10MUNzV2FXTXJ1R2pjcEdXa1dYU3lUd2o1THVHRHRjeXZoaF91TDY2R2FLaTRLTnQxR2podkVOUHBqVEJXVW9LSVFCWjZhMDVISHlqR09RVk9pLUlXSEVrbHNNMDFjcjVfZkRYLWpaT2twUnQ4a2hiVjNn0gHzAUFVX3lxTE91V0NWTnplejA2blZHaFpGLXdyc1lsa2cwekNSUjByLWtlNVlmLWVtTVhJSHZ5NmVKMzV5RHZWU1RDUDdNbzlfWW14eFBVQk1mR3l1LW45dlJhYmNORVBNRFBiME85cThLVTVqekZzenowdHYtTWJrOVd6UkZ3VmJLVVhlME9leU92bnM1ZjZqM2JULUFmUUd1Z1lERjE2bXY0Q1UwS1ZLV2duYkM1ZWNBUHh6OTlCQ3R3c2N0YjVwUHAxOWtiRDhucGNRR3VGbC01T3ZDVnBnbnh0NFU4Z0FZbjVSWWdwNmFUcktnNWRRRHJGaw?oc=5",
+          "source": "Simply Wall St",
+          "publishedAtUtc": "2026-11-15T02:15:19.000Z",
+          "ageDays": 3.3,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Laboratories Share Price - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE12RTZVVGZ1VUdXV2Vfd2hLQW13NmJ3S2FkOFJ2QXlDMllFSC1qcnFobHBhSDYtZ0RKcDkyYktEcVNoOEhMakVjLUJBTG5QZHVSdkNWUWF2LXp3QUxlRnozaUtPZHNVNHdWem1Zb2dB?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-13T08:00:00.000Z",
+          "ageDays": 5.1,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem shares fall 3% after Q2 results; MOFSL retains Neutral rating - Business Standard",
+          "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNT0RJM05nbVNvY0htRE1xUnB3T0JFMEJLS2FzcXRZY3poTHhYa2xoWEdjVm9CekplRjFKYkZBS3pZSUwweXV4bW91c2VzRFN4YWNTTm1NVGJEMXQ0cHhmcUNEVXh4UU9lV0pmQzE3Qkg0NjRxdHFKT1d3RXNVR3hyVXBjN2tvVDJjQk01bEQyUHFiQUpiWFVla0RpRFMzVzJma1pMUlpPbnpTS3V1bTc4N3lRSTdDSHBkR1B5ZkNta0tBQTVXa3lrVkxWRWPSAdIBQVVfeXFMT0RYb3dWQU9mYXlvUEVZR3NWdGk5RVRHSFEycmdKODNqay1hWjZGMEhxV240MzlEVWtYMU1FcW5UX1h0UG5DbWEwZU5YTnM1QTdWdDRYcHBlcXdtNGJfd2ZaWWhtckExVHhEQkhvdjI1VEljWGdjaEdReGpUYmdkT0hadUdrRGNaY0w4bmFfLXlTaUk5U2FRZHdPc2htbFJjNndSVGI2RjRrelRaRUVNZVpHSGNBVFJFa2lzWFFCWjI4MklkMWxtQ2R0N0lmcG53amFB?oc=5",
+          "source": "Business Standard",
+          "publishedAtUtc": "2026-11-13T05:58:42.000Z",
+          "ageDays": 5.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Price Action: Alkem Laboratories shares decline 2% as HSBC maintains Hold rating, while Manappuram Finance slips 2%. - TradingView",
+          "url": "https://news.google.com/rss/articles/CBMihAJBVV95cUxPdk9UOWF3eDRUTjVLX0JGZzNqcGo0N0MyUnZJLWNoaDBRU1FSVDBWRFpMM0N1MkkwcDNKSXQ1eXZRRWhXNXRaZGNGa3JTUHFrdXRCRkdJNnVIbjU2X3RqTF9FYzVabGVYYXNtbDZjZ3o2VnRvYWRoY3R6VkVVLXpndTk3a25jR2w1WEZMS1lSOTBoZ1pPZS1DbExnelN1azJObkF6UjhDYS0wNmVYSFc2Q1cyZ01sd3Z2Z3kyd1FPU1UyQkR4X01UX2ZkdHVtMG0ySzJYc08zYlhjdTBlbnRhZERxSnhueW05bTE0S29mSHJERWE5Q2V6bDN3RHNGSF9YYUJ0Sw?oc=5",
+          "source": "TradingView",
+          "publishedAtUtc": "2026-11-13T04:47:05.000Z",
+          "ageDays": 5.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Expanding Chronic care portfolio key focus area for Alkem’s new CEO - pharma.economictimes.indiatimes.com",
+          "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxOX05rU0JjWmY4cnUtTkpOUWEzSnRyUWhSblFadzRmZlUwanNkc3FfanhDSTRFc2l3OEtNdDEyWW81ZHNLZjh3TldIeUt0Z3ZKdWYtOG5oUEFyT1J6a1l2d3lZODBqTTRyUXNraVZTWlFVUVF4UmpwZ3ZPbDdQOWxHczZFZS04cGFtRFI3MGNBRjZ1a2JmLUd5LU9JdWVtd0pRQ1cyWk0wYndGZzljWGxHZ2l0NkVMWjNuUU9QUU5iQllHV25zTERnR2lIU3dBWjJUWmEtS3JHWDjSAd4BQVVfeXFMUFAzRnJ3UzhsQUVoa08yem5LQ1F3RG5NUEhGN2RVQUhwdTNVcDh5b2lzQ0cwMncyb2huY09TZ05IX0NoX3Y3VmMxOU1QMDJNUG9HeGNBZDUtbTVLTE5zS3JLUDdOV2owcmNIRVRBUnp3eG5pQ2dmQXVscnNXaDMxdVloeXFLWnYwTEJSYnlBeFo2dmdrd1NZNzlpRHRvajI5b0tCUjh2ZV9lUlVSNENOWHk0TkFuSzh4TGphQk52U21NV0Z4emt5UFo0MF9sZ3Bib3JOa2xCWnBPaU9Ec0Rn?oc=5",
+          "source": "pharma.economictimes.indiatimes.com",
+          "publishedAtUtc": "2026-11-13T04:28:19.000Z",
+          "ageDays": 5.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Lab Q2 profit falls 14.4% to ₹667 cr; revenue rises to ₹4,552 cr - Business Standard",
+          "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPc1Rxbm9FNHBSc0Y3elRZQ01qcUlLSWdvYlZ5ZElTS1Y5Wm4tNzdBM0ZjSDF0Vk5BaFRMRDVLcDJTRkF2V0duSG5YeXVwUTV1Qjc2cHp3cGp5MjA5RGlsT2dvR1lWMjVSX2FiQ1F1QlFiYXZ6dU1hN01USFZIcUNLeGF2LWpZTkNUTGtIWWVPTnlIS3VyZENYMVI1Y1pFNElXYzJlSXFrQjlvb2hwckRiTnJyME1HSDZndUVnU3htQlg1S0ZSaE9salMwUmpZNHkzTU9DU3lyZS04aGlBclpENnRn0gHnAUFVX3lxTE1GQTVhOTRMdEFBMWlXZW1vRmpIVzg3NXB5V0ZyOU8wWDhJLVlsbzVRM3NVQW1wWUphRHBZcDJLUkZOUm1LVTZOVHIzVXZvczlGZlBEczFUSm9CTjRsRlkxODgzdzQ4akxJalQzM1BWb1VseXdMWEhobnpjV0RpTFg1Uzdnd05YTnRRVU5QV3NKV04zNkVfb2dLazBSc0ZIemUyZDBqZ1FQN1N3enE4VU9pSG5ZYXUxU1JTWUpMVk9mUlc1UWZTdU83dmxiRkQxdDV1ZWUtQ3RDVGEzcExoclR1Q0hwN3pYYw?oc=5",
+          "source": "Business Standard",
+          "publishedAtUtc": "2026-11-12T11:41:58.000Z",
+          "ageDays": 5.9,
+          "sentiment": "NEGATIVE"
+        },
+        {
+          "title": "Alkem Labs Q2 Results: Revenue rises 14%, but profit and margins fall; shares drop 4% - CNBC TV18 - LinkedIn",
+          "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOVHhyM1ZkeThnUGJYeUtCb0tWeGpGdW5XdGdOYlp1bTF3UGdmVlhWaUNVeUt1azBxUWRfUHo5QTNScENPU1kxWEFCZ0JjVEtUeS1rdWFMSUl2S2tKMFVlRTN0MjVrYjFwVU1QWGR2WEtBS2RNN3ZENF90Sk9KaFEtUjFQY2ZZMkJPX1ZaUE9DTGpXR3ZDODJidnlRMzA2bVFNRXlpcVl2TGpWc1dYaDY5c3FIUQ?oc=5",
+          "source": "LinkedIn",
+          "publishedAtUtc": "2026-11-12T09:30:02.000Z",
+          "ageDays": 6,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Laboratories Q2 profit falls 12% YoY to ₹675 crore, EBITDA grows 22%; board appoints new CFO - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPcWd2SC1wU25LUTNURGFNWDh1OGJDS3UtNnhqeEZFOTA3ZXhDNk1nMlhKTmJuMEtfVU1Vd2d2UmMtbXpzR3RDTU5ocWN4VkpoNXFuNEdDVnB6aTI0UjlwcmQtbE9JUVFoeng5azFmTGFQc3duZjRDZmhYTk9uRnAtZ1UyTkhxd0JCRUVpNVFNYVVVUXdQY2ZhRjBsbVljekdQYnhRLVhIVjdKS21vR0xaQ280ZUdJTm00SlVseFlYN1BsZXFWWl9qTENtN011algxajdJXzhEaEJpWkdXTm00b1JzaG9HXzMwaHNz?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-12T09:27:41.000Z",
+          "ageDays": 6,
+          "sentiment": "NEGATIVE"
+        },
+        {
+          "title": "Alkem Labs Q2 Results: Revenue rises 14%, but profit and margins fall; shares drop 4% - CNBC TV18",
+          "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxPS28zQUVmVlotLU92U3owTDJsTE9iQXU4a3VzMXJ0dFRfR0dlX1lTYmtZcldwUWpJSHdVRl9YOHVLMGxmQmZhLXI0eDlYeXR4T3EtNHY3V3pCbEdUcGdnS2wyOWFKQWwtR3diYTFGcWpnVHltd1prOURJN1BlX3FreGxMODNRSWtXdVN2bEJ4ZU9rM0dzUFN4TzB4Ulc5YmlmR1BvbFVCOGsza00yTExybFVQdVNDQ2tsRGJVV3VYdjFmUTFPdEtrQ2R30gHPAUFVX3lxTE1ZSU5LUlRBbC1rNktoSkhHdzA2MGR6ZUlMLWh6dW50MVFWUXEyMVNGZ3Y5dGV5b3JISlM5LWQwZXA3c05VMVgxSHRNdGkzd2pzUUQ0YkRhTEdSQ2tvX3B6SDlWeHMzOXpMQXRTYThJbFBmVTBKLUQ4VDRSVXFkQ2RTeS1ocml5emNqTzBsYmRtcGlaYzdlZkVadktOcmNtbTFOOExLdG9tVktCQXhzV1NUNV9jRzhwZXNMeXYzc2xzcmVoTDd0X29iRFdsakl4Zw?oc=5",
+          "source": "CNBC TV18",
+          "publishedAtUtc": "2026-11-12T08:42:08.000Z",
+          "ageDays": 6,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Alkem Laboratories Limited Q2 FY27 Results Awaited as Board Meets - Multibagg AI",
+          "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQWEdEQ1VqQ0oyWTBKc21UYkg2Zy04dVh6Wnh3RnRkemlHY2h6WU9UUkxaYlppTTk4UHBndUtlZ0gwY3BiZnhPUWVZU0stcUpNR1JFeG5QdENaM3dpVFYyVFppUWM3SmxXRTdfYkpEQ2laVnFmbzN5RHNDTktjYTdtblR0TVIzR1RRaU0tM09uQ2MzYVE5dGNsSjVLTGZPOG5SMS1pOQ?oc=5",
+          "source": "Multibagg AI",
+          "publishedAtUtc": "2026-11-12T08:23:59.000Z",
+          "ageDays": 6.1,
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "announcements": [
+        {
+          "date": "2026-11-18",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Earnings Call Transcript",
+          "details": "Please find attached herewith Q2 H1FY2027 - Earnings Conference Call Transcript",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/32c28174-e2ca-4146-a721-562e8df7fdc5.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-13",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Newspaper Publication",
+          "details": "Please find attached herewith intimation for a copy of newspaper publication.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/ad1f183a-2638-41bc-a717-f404ccfa4255.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Outcome",
+          "details": "With reference to relevant provisions of SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, the audio recording of the '' Q2 and H1FY27 Earnings Conference Call'' ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/4fffb14d-141e-48c3-8820-80789dfc8b30.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Closure of Trading Window",
+          "details": "The Financial results of the company for quarter and half year ended 30th Sept , 2026 having been communicated to the Stock Exchanges today ie 12th Nov, 2026 the trading window shall open ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/18f6a228-edee-4cdf-8d61-bd839fee6f75.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Change in Management",
+          "details": "We wish to inform you that the Company has appointed Mr. Gopal Kothari as the CFO and KMP of the Company wef 2nd Dec, 2026.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/f4068cd2-2b45-4c15-997a-4150b8861bd7.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement Under Reg 30 - Investor Presentation",
+          "details": "Pl find enclosed press release and analyst presentation on Q2 and H1FY27 earnings and business updates of the Company",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/30a586a3-54db-4646-bb0d-9ddddce8aa04.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Results- Unaudited Financial Results For Quarter And Half Year Ended 30Th Sept, 26.",
+          "details": "Pl find enclosed unaudited financial results along with Limited Review Report of the Company for quarter and half year ended 30th Sept, 2026.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/c568139d-8b2e-40df-82b7-10de2ed502e9.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "ALKEM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Outcome for Outcome Of Board Meeting Dated 12/11/2026",
+          "details": "Please find enclosed herewith the outcome of Board meeting dated 12th Nov, 2026. The meeting of the Board of Directors of the Company commenced at 11.30 am and concluded at 13.40.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/aaf1b760-4330-439b-be43-7f97d07513c3.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-08",
+          "symbol": "ALKEM",
+          "category": "EXPANSION_FUNDRAISE",
+          "subject": "Announcement under Regulation 30 (LODR)-Acquisition",
+          "details": "Please find attached herewith intimation of incorporation of subsidiary in the form of Joint Venture.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/53c50b66-af2f-4d09-ba2a-26972cd34c65.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-11-05",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Change in Management",
+          "details": "With reference to your email regarding the captioned corporate announcement submitted by the Company on 03rd November, 2026 under Regulation 30 of the SEBI (Listing Obligations and Disclosure ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/a9af42a5-9e43-40fd-973e-bd236ac18094.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find attached herewith intimation for Analyst / Investor Meet.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/19499a02-4c0d-4ae1-b78c-e4998a580a6e.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Please find attached herewith intimation for Analyst / Investor Meet.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/1cd39a94-8667-486a-b9ec-34d75ef250f8.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "ALKEM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Intimation for Notice Of Meeting Of The Board Of Directors Of The Company",
+          "details": "Alkem Laboratories Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on 12/11/2026 ,inter alia, to consider and approve the Standalone and Consolidated ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/2ceca489-d86e-4659-a368-c9c608a9452d.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-03",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Change in Management",
+          "details": "We wish to inform you that M/s. Alkem Laboratories Limited has appointed Dr. Amrut Naik as the Chief Executive Officer (CEO) and Key Managerial Personnel of the Company with effect from ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/befbd490-3bef-478d-9d52-62e65e8fbfaa.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Press Release / Media Release",
+          "details": "Update On US FDA Inspection At Company's API manufacturing facility located at Mandva.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/ac8ccb5e-aac5-4ca7-81f1-545d7f12fafe.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-21",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement Under Regulation 30 (LODR)- Intimation Regarding Initiation Of Forensic Audit",
+          "details": "Pursuant to Regulation 30 of the SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, read with Para A of Part A of Schedule III thereto, we wish to inform you that ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/287c3601-79ec-4eb2-b85f-e65b8f4034b9.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-12",
+          "symbol": "ALKEM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Change in Management",
+          "details": "Please find attached herewith intimation for appointment of Mr. Laxmikant Tiwari and Mr. Nilesh Vartak as Senior Management Personnels of the Company.",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/50f0b19b-90e7-40c5-bee2-936127f0554f.pdf",
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "fetchedAtUtc": "2026-11-18T09:43:30.449Z"
+    },
+    "GREENLAM": {
+      "symbol": "GREENLAM",
+      "companyName": "Greenlam Industries Limited",
+      "bseScripCode": "538979",
+      "nextResultDate": "2025-07-25",
+      "isResultEstimate": true,
+      "resultSource": "Yahoo Finance Calendar",
+      "news7D": [],
+      "announcements": [
+        {
+          "date": "2026-11-13",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Earnings Call Transcript",
+          "details": "Transcript of Earning Call Q2 FY 2026-27",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/ec485a4e-41b3-424f-bac8-111044808921.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-07",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Investor Presentation",
+          "details": "Revised Investor Presentation Q2 FY 27",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/3b6beafd-758e-470e-b448-e5fb3210bf45.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-06",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Outcome",
+          "details": "Audio recording of Earning Calls for Q2 FY 27",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/40689fe4-453c-4404-8510-84c5c3f06103.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-05",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Investor Presentation",
+          "details": "Investor Presentation",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/a1520647-df13-496a-84e6-c5532766edc6.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-05",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Press Release / Media Release",
+          "details": "Press Release for Q2 FY27 Results",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/cd791ee3-9ee6-4171-872a-b2714869c5e9.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-05",
+          "symbol": "GREENLAM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Outcome for Un-Audited Financial Results For The Quarter And Half Year Ended September 30, 2026",
+          "details": "Un-audited Financial Results for the quarter and half year ended September 30, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/15ce8e03-8c23-43b6-a19d-c0d16974cb4b.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-05",
+          "symbol": "GREENLAM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Un-Audited Financial Results For The Quarter And Half Year Ended September 30, 2026",
+          "details": "Un-audited Financial Results for the quarter and half year ended September 30, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/f006a29d-8547-46e4-a99c-b0991c8b3c83.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement Under Regulation 30_Update On Show Case Notice",
+          "details": "Update on Show Cause Notice",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/12954e55-2bb7-4fdc-b9a9-741ffae04ea3.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Intimation Regarding Receipt Of Show Cause Notice",
+          "details": "Intimation regarding receipt of Show Cause Notice",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0e7ab85d-e645-4a2c-8313-70adee763b4b.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Analyst / Investor Meet - Intimation",
+          "details": "Intimation of Schedule of Earnings Call Q2 FY27",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/6bebb49a-bccd-4606-a8c4-b33bd6583767.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-29",
+          "symbol": "GREENLAM",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Intimation for Board Meeting And Closure Of Trading Window",
+          "details": "Greenlam Industries Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on 05/11/2026 ,inter alia, to consider and approve Un-audited Standalone and ....",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/480ea2ab-7558-4c55-82df-edb1b912b2e8.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-08",
+          "symbol": "GREENLAM",
+          "category": "GENERAL",
+          "subject": "Compliances-Certificate under Reg. 74 (5) of SEBI (DP) Regulations, 2018",
+          "details": "Certificate under Reg. 74(5) of SEBI (DP) Regulation 2018",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/cb1b13b2-04e9-4187-a198-41891180f7f4.pdf",
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "fetchedAtUtc": "2026-11-19T09:37:10.574Z"
+    },
+    "INFY": {
+      "symbol": "INFY",
+      "companyName": "Infosys Limited",
+      "bseScripCode": "500209",
+      "nextResultDate": "2027-01-13",
+      "isResultEstimate": true,
+      "resultSource": "Yahoo Finance Calendar",
+      "news7D": [
+        {
+          "title": "INFY Option Chain: Live NSE Option Chain Data, OI & Price - Kotak Neo",
+          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQZE1QYTQzWmkxNUhSTzRvYkc5ajNGM3IzVmRJd0t2RTkybU9VdkdkTmxBLXZrX1FmaElkZXBEMHBqSFFabGNub1NQUjctSWhrSUlZNUdkVHVRR1d4WFJiTF9kTTJZem9IV2xDb19yVUpHQmlFWWI2aVhHTFhpeGxUa3Q0cUltMDBu?oc=5",
+          "source": "Kotak Neo",
+          "publishedAtUtc": "2026-11-20T08:10:28.000Z",
+          "ageDays": 1.1,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Indian IT Stocks Rally 1.96% as TCS, Infosys and Tech Mahindra Gain Despite Global Tech Selloff - Kotak Neo",
+          "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPaDRqMm9KUnNXRi1pUXRYN0VhQl9XbFgwMDRmLXltc3RWZ0xKZHZpYjAyZlhmYnlNYzJORmdUZS14UmtIdWFNS0lUOGRYaHptWG01S21ncWFLZXBxakhlNS1LQlp4VTNxdnNnMk9ZVGxOSkVUcHkyZXJpNzViU3QtUzlUNzdiQmdnVTFNZGFCQVlSQ0IzaHI4UDJDYWVSZjZId0J6ZEhVbUR6OFJUUW1MeWVBUlVlU1NzT0ZsY25GZTc4MWpCZXc?oc=5",
+          "source": "Kotak Neo",
+          "publishedAtUtc": "2026-11-20T06:01:24.000Z",
+          "ageDays": 1.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys Share Price - Live NSE: INFY Stock Price & Chart - Upstox",
+          "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5BbEJTdmZNbE5BN0ZRWWZpd2tZZnRCZWV0MFdhYW5nQ2NSSTgzUlI4TjVPaU5BV1FxQkpYUnFWa05Fb09uMkxlNDhUWVpvV2JLWGIxUmh3SUFKSzEwUHZpX1IyTVM?oc=5",
+          "source": "Upstox",
+          "publishedAtUtc": "2026-11-20T05:02:25.000Z",
+          "ageDays": 1.3,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys (NSEI:INFY) Stock Could Be Undervalued As AI Telecom Demand Builds - Simply Wall St",
+          "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxOaHZfcGhHNXoycjhhT3FQTFJPZHg3S19HVVZfdW1TNkFjckpqVFhKalZmNzdUUzc3SUFJdWM5MmtRbTg5Zk5WaFN6VXVDd1JXdjBVSFcxZEUwb2JQeUNVVXFoZ0l2dU5iZVE3WElCZ2VuTFFzYlRzNzJEcnNLTWttaUdKamJJb1Q3LXAwOW9jeDdxWnBDamE2dHFYZkIycWFQblE5dzRDUnpYRlBZMnhDUk96aHBsaU5ZTlZZaWk3YVlxMHNjSW5RY1A2cDJQRGPSAc8BQVVfeXFMTmh2X3BoRzV6MnI4YU9xUExST2R4N0tfR1VWX3VtUzZBY3JKalRYSmpWZjc3VFM3N0lBSXVjOTJrUW04OWZOVmhTelV1Q3dSV3YwVUhXMWRFMG9iUHlDVVVxaGdJdnVOYmVRN1hJQmdlbkxRc2JUczcyRHJzS01rbWlHSmpiSW9UNy1wMDlvY3g3cVpwQ2phNnRxWGZCMnFhUG5ROXc0Q1J6WEZQWTJ4Q1JPemhwbGlOWU5WWWlpN2FZcTBzY0luUWNQNnAyUERj?oc=5",
+          "source": "Simply Wall St",
+          "publishedAtUtc": "2026-11-19T21:08:56.000Z",
+          "ageDays": 1.6,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys shares slides 2.5% despite Japan JV buzz; stock near 1 month low - BusinessLine",
+          "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxPMmctTnFENGlwOGdmQmZycV8yU2R2UDVwSkNWT2xaN1l6Wi1zWmNXRkxrOTVHTWRzREd6OWJybl9mVjlKUE5GWUROWmYyd1FtY3ZuX0hYbXkyX19admtmMm1TZGVia3p5X29vM1NxX3lKMzBWM1duVUJYbUQxY0RzTFpfU2NvZmVKSGkweVVmN3ZjQXo3Si1JbFNLaVQ5ZGdTR3pQUi1rU2ptRGMwMkphejE2bE9tRGoyRGdUWkpWekIzWE91X3pvZXZTc2lTQmxlNV9DeUUtOFV0ZEhGSnpyeVBGdU9leFHSAe4BQVVfeXFMUGFXR09SYmZ6NjMxMGpBakFBbDkyQUdRdUFUS2ZVaVl4a28yU1VvS016SUFJVnRfS0RjdWtFY3c3VEpITXI2bUZlcGR3bHBlQTlwRHVpdHhSTkx5Z3h3WkRISXJoSHFQblNlWlVhS3JRN3RhV3JNb29UU01RdHJCQU1PU25uZnRnQ2dzVkQ1akNzU0FfNFJtR3FrODZQR1lQRVRuRllSaHhDMXU3bXhnanVSY1pZSUxyNmVtOFlZR1ZDR3ZrMzc3b1ZPeGNfRHl5QWdrT2owX0ZfR2Q4VThyQ3lXTFZabUlGUVlGVzZWUQ?oc=5",
+          "source": "BusinessLine",
+          "publishedAtUtc": "2026-11-19T07:27:05.000Z",
+          "ageDays": 2.2,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Price Action: Infosys sheds 2% on JV with Japanese firm; Tonbo Imaging up 2% on order win - Moneycontrol.com",
+          "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNNGJYSjJ5bFRYdHk1ajRjTjhjSmtjNkFaZTZrMEtPYVItNEp0QmRiMUR0bUJhSkphZUxCYnN4dExiME1vdlloZ1dTQzZJOEIzcUI2TldCQkNOZ1g3c3o2VldYTVdjdDgwc09kWkN4NmpCZldfSGZ1dWpwWHNicFFpNDVwU1hIV0wzLXFQSkdqSjlrMzBrRmNzOWlKODFaM1B3LUhURkVWZWh3ZGlpUzIzSTBGNS14ODVGUGQ1TG5tVzlCYVhVZGY4NWlxLWhRTnFYQkxxdWdqanVUNDN2dE1yck9Ra9IB6AFBVV95cUxQM3NjdU10LWtrSXgyQ3l3elAwSXlQZ0szNGstZU9BT3IyRGxQMWpPSE80SzFqR25LRGIydS1lNHhFcjJDOW1YRGlnVUtrMDVFOXRIc0NIU2g5SGwzeHVIWGx1Wkd3UHlKdFU1NEluRFBHclAtQkM0aFZKM0YzNFc4bno0dWlPV0tfR1lOMThFeFMyWXpCZFJLSEViWEhLRFdreHQxbUpNOGE1dlpyVC13NUlMOGkxd01sazZoelNpWXR4MjZMRVNxTUJRQllMdVE3YWxZaTJJemwtVE9PQUtCZnJSbUxmbmZz?oc=5",
+          "source": "Moneycontrol.com",
+          "publishedAtUtc": "2026-11-19T04:36:04.000Z",
+          "ageDays": 2.3,
+          "sentiment": "POSITIVE"
+        },
+        {
+          "title": "Infosys partners with NTT Docomo for AI-powered Metaverse ecosystem in Japan - CNBC TV18",
+          "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNTTVpNXU4dmxrcG9MTnpKaTJmV0hXNzBaRE1oY2l0N204Q3oxLWdRaTZ0SV9NWjJHVWVNdUdLV1gybVh6Z0ZRaDZmakM0T3ZBU3JLQ3lRWDZZX0p4eEhuWm1CTkY1azRtQ3pfekNDUndWZW14eHl1Wnd4aXpRTEdNRUctRHpiUVdvZGFoT2REU2JWWTFaUTdLV3VHX1lzVXhxc1dLOHBwWTRiV3d0QTY3aGl5a19PcXJFSTRpWVdfaHNPdlhRbVFjU2RWenpTbVJOcjdGSzNfTdIB3AFBVV95cUxORjR3VVp4TFJwSmRMaUFqdTBLa2ljTzV2cXNCM0hkVE9Vc0h1LV90NThURGk1UlBmalFhQ05RdU15NE9xUThfZkNEYUFDZzBaNnJrQXNDazBfenZueFZSR2RCT18xRXk4bkEtOTFBU1Uwc0VuRGh3NG82MmxIbURCMVVnRkFkcVgwU19Jakt6M3FKRktiRjY1LUdvX3JGc1VaVmJYcVVaa3YwZ1N2aVdpLW4yMXkzMjBpbUp3VTM3d0VsbDEwVUw4d0hLdXB3R2ZlSUtPT1NpMEM4WHhU?oc=5",
+          "source": "CNBC TV18",
+          "publishedAtUtc": "2026-11-18T18:19:26.000Z",
+          "ageDays": 2.7,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys RTA KFin Technologies shifts corporate office from Dec 1 - scanx.trade",
+          "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQTEVsNlV4cTNIa0ZBbmtqV1lGak9QSTMtSFdweVZ4QncyNkpxOVUtZmtfaExDZGo4OXdVSGVacHE3Y0VZWjBydXdzMDN0TGlxR203dVNjWXJCc3lGT2s1WUdWeTZXaVk2YVZTRjN1TEdZQTVCbU1vTVpaRG1BOU42VjFfWGV3M3BTbDBNZnR1RWk1NC1MeDJhSFB4MVoxNkhoZFc1cnk4VDI4dTZIMlQ3bnRnNDh5LWs?oc=5",
+          "source": "scanx.trade",
+          "publishedAtUtc": "2026-11-18T16:56:14.000Z",
+          "ageDays": 2.8,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys Share Price Down 25% in a Year: Causes and Valuation - Univest",
+          "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOTE90SDBONEtJTUNRSmdtVzZEalZKaVlZa0htZVRFMUhrMkRnbXdZRHN6cXhPQV90cndORms5ZF9zWkU3cThIdFJwX05LekZkbUdmR1NaSDlLemliTVpqaTl4SlUzalBUdkRTTENwOHRTZXV3dXJBMTYwQ3hVM21sRjBYR1NRTEJsbjBrT08wcXZsZlVUNG5PU3J0VUlNZmpXQVFpdkFpWDY4Y1QySzJjcw?oc=5",
+          "source": "Univest",
+          "publishedAtUtc": "2026-11-18T13:25:19.000Z",
+          "ageDays": 2.9,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys Named Gartner Leader in Public Cloud Services for Fourth Consecutive Year; Shares Fall Nearly 1.2% - HDFC Sky",
+          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOblIyZThwQzRLdTZoaF9ROFRTd0FKY211VHI1UE94UnR0RjZ1cUlpNXlidno3SXo5cDFJMEtHNFhfSlJpbnFMQ0JfVklnMlVhcG1JNzlCSVFPQmZMT2tFQlJHcFlLRFYwdjZETzBpNml1a05HZnNJSzh0bWFuSVZ6YkRic3V6TjFHSGFXMFFlLWxoVnFWZ2tRYWM5bUdkYVNhVXFnazY5VlQ0amdOUGl6aGlYY0FHUUEzS3M4dTF5b1VRWHQxcVpHNjh0VjJvSE9TNFow?oc=5",
+          "source": "HDFC Sky",
+          "publishedAtUtc": "2026-11-17T10:24:41.000Z",
+          "ageDays": 4,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "Infosys named Leader in 2026 Gartner Magic Quadrant for cloud services - scanx.trade",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPOGdQekowS0wxel90U0RhWkF1QXdicjRmbkFMTzAtazB6ak5IeklkTHI4UVB1bF9UNkg2RHBVM3NqSC0wTlRoWURQdDIySE9HRzJaQ1ZDYWtqenNoWDlhTllLU3Y1bTI2dmFLTzhnbFF0UjN6VG4wOUJhc2VvRTNDQTlUNHczMWoySjZaZjY0NENIODdzdHdzRzdaQW53R1h5WXo1clh1VTJPM2d1cExobm91dTBQSDEtTnpiMw?oc=5",
+          "source": "scanx.trade",
+          "publishedAtUtc": "2026-11-17T10:00:25.000Z",
+          "ageDays": 4,
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "title": "TCS, Infosys stock ratings: CLSA cautious, flags growth, margin concerns; check target prices, downside... - Moneycontrol.com",
+          "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxPQlFDZ0FYcUpBQmpFdE1Ec2xhY2lTMGJKd1lsZ1Z3MjBJN0IwVm9zMW9lSjdOcTZNb3FNOEM2OGg5OEpJM1ZyUjczdnFPcFA1U2h3STNMcFZ2VS1YVVZzejhsSjV5QnBQeGlRaDlBeGdWWUprMVUwV1hTS0J3YWtrM0ZnVFM0VVdwbklnUmFFdVdvTjI0dEo2Zy1Ob29PdE5JUEc2THZJeFdUVlFETGFybExQWUNuNTFFV253OTJ5SkFrYXdzU1NtaEhMUzd4VG9oUE9iSVNJRXdIcHZrNFlhQy1KOWc2N2tHUGhzS05RbkVCbFpkYktnVmpla9IBgAJBVV95cUxNbm05Z2NHTlpGYklpcFU1aWNCbEU1aVZtLWhxZXRlSU90am8yWlFxeGxNSXRoYi1kMmRFbXJCUlFzejltUE5tOVFXZHBvVWIyQjFBbTU1akl3NHdONFNjRkpITm9XdlAzYWYwaDN3VFRUM1hmdHA0Xzk2dFlfdzhMa3V1cHlSd0JLeVRyb1dfYVIzaTJLRzZPYjE1ZkNBeC1FN0pFc3NleTZYNTJfTGc5al9ZMVVOQktRR01QbXdtVmxzZVJpN3pqNy0wdUR4Z1QwWVVneG83T0xaSC10MjlOTnMzc3ZXTzlsR19WWnBPd1RvNUNHQjB3dlhvYXB2Nmhr?oc=5",
+          "source": "Moneycontrol.com",
+          "publishedAtUtc": "2026-11-17T05:35:48.000Z",
+          "ageDays": 4.2,
+          "sentiment": "POSITIVE"
+        }
+      ],
+      "announcements": [
+        {
+          "date": "2026-11-18",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Change In Corporate Office Address Of The Company'S Registrar And Share Transfer Agent",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/c3935047-69f0-40a6-9b78-b17afcc7b1a3.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-18",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Disclosure Under Regulation 30 Of SEBI LODR Regulations",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/8629dba6-9d8f-487c-8f05-cc95e1588d94.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-17",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Infosys Positioned As A Leader In The 2026 Gartner® Magic Quadrant™ For Public Cloud Optimization And Transformation Services For The Fourth Consecutive Year",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/4099e736-2977-4a9c-bbca-e04e08c0ab18.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-11-12",
+          "symbol": "INFY",
+          "category": "ORDER_WIN",
+          "subject": "Six Promising Researchers Win The Infosys Prize 2026 Awarded By The Infosys Science Foundation",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/2d26cac8-d5b5-4be4-ba93-d18f80ee8c0c.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-11-04",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Investor Conference",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/83d29514-eb26-466a-a60f-ddc7064a56bf.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-30",
+          "symbol": "INFY",
+          "category": "EXPANSION_FUNDRAISE",
+          "subject": "Infosys Announces Expansion Of Pocharam Development Center In Hyderabad",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/de1d0c27-5ad6-474d-b3b4-44084de360c0.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-29",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Newspaper Publication",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0335049c-de81-4e49-b02a-5887dfa42644.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-29",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Winners Of Qorus-Infosys Finacle Banking Innovation Awards 2026 Announced",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/35b12a6d-e165-42d3-a0d1-cbe42fe2a99f.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-28",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Earnings Call Transcript",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/7982fc61-7765-4981-ab3d-6aec36ba2137.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-28",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Canada'S UNI Financial Cooperation Advances Branch Modernization With Infosys Finacle Universal Banker",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/e740e1c4-75bc-4392-808c-a3323d612194.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-27",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Investor Conference",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/198a321f-ab50-4557-8e45-2905e7ff1a2b.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-27",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Infosys Successfully Delivers Syngenta'S Global SAP S/4HANA Transformation For Crop Protection Business",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/00c170b0-d771-4ac7-bda2-8424c8729de7.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-24",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Announcement under Regulation 30 (LODR)-Newspaper Publication",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/33c1b5fb-5050-4952-9b3b-741b61357dfa.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-23",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Report Of Auditors On Financial Statements For The Quarter And Half Year Ended September 30, 2026 With UDIN",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/b0157a38-ac25-43d0-8be4-d73cfead434b.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-23",
+          "symbol": "INFY",
+          "category": "CORPORATE_ACTION",
+          "subject": "Corporate Action-Board approves Dividend",
+          "details": "Declared an interim dividend of Rs. 26/- per equity share, fixed November 3, 2026 as a record date and November 11, 2026 as a payout date",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0f7c4fa3-6c9a-497a-921a-e14c20919f86.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-23",
+          "symbol": "INFY",
+          "category": "CORPORATE_ACTION",
+          "subject": "Financial Results For The Quarter And Half Year Ended September 30, 2026 And Declaration Of Interim Dividend",
+          "details": "Results for the quarter and half year ended September 30, 2026 and declaration of interim dividend",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/26c12463-d44e-4050-bd47-b53cc294b4e0.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-23",
+          "symbol": "INFY",
+          "category": "RESULTS_BOARD_MEETING",
+          "subject": "Board Meeting Outcome for Financial Results For The Quarter And Half Year Ended September 30, 2026 And Declaration Of Interim Dividend",
+          "details": "Outcome for the quarter and half-year ended September 30, 2026",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/7a7cacec-6e60-4f88-9c95-ad60962ad4d4.pdf",
+          "sentiment": "POSITIVE"
+        },
+        {
+          "date": "2026-10-19",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Infosys To Announce Second Quarter Results On October 23, 2026",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/4a39bee0-4f0d-4b6e-9383-284a0ca26e0f.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-19",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Infosys And Truist Strengthen Strategic Collaboration To Build A Global Capability Center In India",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0fa9a84b-8686-4831-8cee-de8486f1c6c1.pdf",
+          "sentiment": "NEUTRAL"
+        },
+        {
+          "date": "2026-10-13",
+          "symbol": "INFY",
+          "category": "GENERAL",
+          "subject": "Infosys Foundation Enables Over 2.5 Lakh Job Offers Across India Through Infosys Springboard Livelihood Program",
+          "details": "Enclosed",
+          "attachmentUrl": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/0d9bcd05-697f-4fc7-aeba-36f6a000986b.pdf",
+          "sentiment": "NEUTRAL"
+        }
+      ],
+      "fetchedAtUtc": "2026-11-21T11:05:42.857Z"
+    }
+  }
+}

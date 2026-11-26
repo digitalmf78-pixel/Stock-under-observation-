@@ -1,0 +1,27 @@
+{
+  "updatedAtUtc": "2026-11-20T10:41:44.922Z",
+  "trades": [
+    {
+      "id": "341a79d1-38ef-4063-8617-02aba2539ce4",
+      "symbol": "GREENLAM",
+      "sector": "Basic Materials",
+      "strategyTag": "Swing Tier 1",
+      "status": "OPEN",
+      "quantity": 109,
+      "entryDate": "2026-11-19",
+      "entryPrice": 229,
+      "entryPriceSource": "LIVE_YAHOO",
+      "stopLoss": 214.31,
+      "targetPrice": 263.35,
+      "exitDate": null,
+      "exitPrice": null,
+      "exitPriceSource": null,
+      "realizedPnlInr": null,
+      "realizedPnlPct": null,
+      "rMultiple": null,
+      "notes": "1-Click Paper BUY (Swing Tier 1)",
+      "createdAtUtc": "2026-11-19T09:37:05.589Z",
+      "closedAtUtc": null
+    }
+  ]
+}

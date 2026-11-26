@@ -1,0 +1,8 @@
+{
+  "name": "NSE V8 & ECMS Research",
+  "description": "Automated NSE EOD swing-trading analysis, 30-day delivery A/B & RVOL screener, fundamental filing verifier, and ECMS Gemini research workstation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

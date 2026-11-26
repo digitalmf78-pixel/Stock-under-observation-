@@ -1,0 +1,343 @@
+========================================
+SWING TRADING BOT - COMPLETE IMPLEMENTATION PROMPT (v3 FINAL)
+========================================
+
+TU EK EXPERT PYTHON DEVELOPER HAI. MUJHE EK SWING TRADING BOT BANANA HAI JO NSE STOCKS PAR KAAM KARE. NEECHE DIYE GAYE RULES KO EXACTLY IMPLEMENT KAR.
+
+========================================
+SECTION 1: DATA SOURCES (REALISTIC & COMPLETE)
+========================================
+- Bhavcopy: NSE website se daily download (OHLCV + Delivery %)
+- Fundamental:NSE / BSE / yfinance / Screener.in (quarterly)
+- Bulk/Block Deals: NSE Bulk Deals page (daily)
+- Insider/Promoter Trading: BSE/NSE disclosures (event-based)
+- Shareholding Pattern: NSE/BSE quarterly filings (FII/DII/MF holding)
+  * Quarterly data hai, daily nahi. 21 din baad milta hai quarter end ke.
+  * Trendlyne MCP ya Tickertape API (Apify) se programmatic access.
+- FII/DII Daily Aggregate: NSE FII/DII Activity (market-level, stock-wise nahi)
+- News & Geopolitical: News API + manual sector mapping (see Section 3)
+- Macro Data: DXY (yfinance: DX-Y.NYB), Brent Crude (yfinance: BZ=F)
+- India VIX: NSE India VIX
+
+IMPORTANT LIMITATION:
+- "Aaj FII ne is stock mein kharida" ka real-time data NAHI milta.
+- Stock-wise FII activity sirf QUARTERLY shareholding pattern se milti hai.
+- Daily FII/DII data sirf MARKET-LEVEL aggregate hota hai.
+- Bulk deals specific stock + client dikhate hain, lekin yeh FII label nahi hota.
+
+========================================
+SECTION 2: PHASE 1 - MARKET REGIME (HARD STOP)
+========================================
+IF India VIX > 20: STOP (no trades)
+IF MMI > 70 OR MMI < 30: CAUTION (size 50%)
+IF Market Breadth (% stocks above 200 DMA) < 60%: CAUTION
+IF FII Long-Short Ratio falling 2 weeks: SIZE REDUCE
+IF FII + DII both net sellers (daily aggregate): NO NEW POSITIONS
+
+========================================
+SECTION 3: PHASE 2 - SECTOR + NEWS + MACRO FILTER
+========================================
+
+--- 3A: SECTOR RELATIVE STRENGTH ---
+- Sector 1-month return > Nifty 1-month return = PROCEED
+- Negative sector = SKIP stock
+
+--- 3B: GEOPOLITICAL EVENT MATRIX ---
+* India-Pakistan tension:
+  - AVOID: Aviation, Tourism
+  - BUY/WATCH: Defence (HAL, BEL, BDL, Bharat Dynamics, Cochin Shipyard)
+  - Historical evidence: Defence stocks ne India-Pak tension ke dauran 11-20% rally di hai 
+* Middle East conflict:
+  - AVOID: Oil Marketing (HPCL, BPCL, IOC), Aviation
+  - BUY/WATCH: Oil Exploration (ONGC, Oil India), Defence
+* Global recession fear:
+  - AVOID: Metals, Commodities, IT
+  - BUY/WATCH: FMCG, Pharma (defensive)
+
+--- 3C: US DOLLAR INDEX (DXY) CHECK (CRITICAL) ---
+* DXY strong / rising (breaking above 103-105 or 19-month high):
+  - RISK: FII outflows likely, pressure on Indian equities
+  - AVOID/REDUCE: Banking (SBI, HDFC Bank, ICICI Bank), NBFCs, Capital Goods, Infrastructure
+  - AVOID: Oil Marketing Companies (BPCL, HPCL, IOC), Aviation
+  - MIXED/CAUTION: IT (revenue positive due to USD earnings, but valuation pressure if global risk-off)
+  - DEFENSIVE BUY: FMCG, Pharma (domestic-focused, less sensitive to dollar)
+  - Note: DXY recently 103.78 (19-month high) tha, Fed hawkish signals ke saath [citation:15][citation:22]
+* DXY weak / falling:
+  - PROCEED with normal sector logic
+  - FII inflows more likely, supportive for broader market
+
+--- 3D: CRUDE OIL (BRENT) CHECK ---
+* Brent > $105: SEVERE RISK (FII selling likely, inflation concern) → NO NEW POSITIONS
+* Brent $95-105: CAUTION → Reduce size
+* Brent $90-95: NEUTRAL
+* Brent < $90: PROCEED
+* Current context: Brent ~$95.42 (Nov 12), elevated levels [citation:3]
+
+--- 3E: LIVE NEWS IMPACT ENGINE (REAL-TIME) ---
+Bot ko news API ya RSS feed se real-time news fetch karni chahiye. Har news ke liye:
+
+STEP 1: News category classify karo:
+- RBI policy / Interest rate
+- Geopolitical (war, tension, election)
+- Commodity (crude, gold, metals)
+- Currency (rupee, dollar)
+- Corporate (earnings, M&A, fraud, regulatory)
+- Global macro (Fed, US data, China)
+
+STEP 2: Impact matrix apply karo (pre-defined):
+
+| News Category | Negative Sectors | Positive Sectors |
+|--------------|-----------------|------------------|
+| RBI rate hike | Real estate, Auto, NBFC | Banks (NIM expansion) |
+| RBI rate cut | Banks (NIM pressure) | Real estate, Auto, NBFC |
+| Crude spike | Aviation, Paint, Tyre, OMC | Oil exploration (ONGC) |
+| Rupee depreciation | Import-heavy (Electronics, Oil) | IT, Pharma (exporters) |
+| India-Pak tension | Aviation, Tourism | Defence |
+| Gold crash | Jewellery (PC Jeweller, Titan) | — |
+| US Fed hawkish | IT (valuation pressure), Metals | FMCG, Pharma (defensive) |
+| China stimulus | Metals (demand hope) | — |
+
+STEP 3: Sector impact score calculate karo:
+- Agar stock ka sector negative impact list mein hai → stock ko WATCHLIST se hatao ya size 50% reduce karo
+- Agar stock ka sector positive impact list mein hai → priority boost
+
+STEP 4: News ko "temporary" ya "structural" classify karo:
+- Temporary (earnings miss, one-time event) → 1-2 din wait
+- Structural (regulatory change, war, policy shift) → position exit ya sector blacklist
+
+IMPLEMENTATION:
+- News API: NewsAPI.org, GNews API, ya RSS feeds (Economic Times, Business Standard)
+- Sentiment analysis: Simple keyword matching + sector mapping table
+- Alert: Agar watchlist stock ka sector negative news mein aaye → Telegram/Email alert
+
+========================================
+SECTION 4: PHASE 3 - FUNDAMENTAL (HARD REJECT + BOTTOM CALCULATION)
+========================================
+Yeh hard rejection hai. Ek bhi fail = REJECT.
+
+--- 4A: HARD REJECT FILTERS ---
+1. Piotroski F-Score >= 7
+   - ROE > 0
+   - OCF > 0
+   - ROA > ROA_prev_year
+   - OCF > Net Income
+   - Debt/Equity < Debt/Equity_prev_year
+   - Current Ratio > Current Ratio_prev_year
+   - Shares Outstanding <= prev_year
+   - Gross Margin > prev_year
+   - Asset Turnover > prev_year
+
+2. ROE > 15% (3 saal average)
+3. Debt/Equity < 1.0
+4. Interest Coverage (EBIT/Interest) > 3
+5. Earnings Quality (OCF/Net Income) > 1.0
+6. EPS Growth > 10% YoY
+7. Free-float Market Cap > 1000 Cr
+
+--- 4B: FUNDAMENTAL BOTTOM CALCULATION (VALUE ZONE) ---
+1. Graham Number = sqrt(22.5 * EPS * Book Value per Share)
+   - Agar Price < Graham Number * 0.7 = DEEP VALUE ZONE (bottom candidate)
+
+2. DCF Intrinsic Value (simplified):
+   - FCF next 5 years estimate karo (conservative growth)
+   - Discount rate: 10-12% (India risk premium)
+   - Terminal value: 3% perpetual growth
+   - Agar Price < Intrinsic Value * 0.7 = MARGIN OF SAFETY
+
+3. EV/EBITDA vs 5-year average:
+   - Agar current EV/EBITDA < 5-year average * 0.7 = UNDERVALUED
+
+--- 4C: FUNDAMENTAL TOP DETECTION (OVERHEATED ZONE) ---
+1. Agar Price > Graham Number * 1.5 = OVERVALUED WARNING
+2. Agar EV/EBITDA > 5-year average * 1.5 = TOP ZONE
+3. Agar Piotroski F-Score suddenly gir raha hai (7 → 4) = fundamental deterioration
+
+========================================
+SECTION 5: PHASE 4 - MOVEMENT POTENTIAL (20%+ MOVE CANDIDATES)
+========================================
+1. Burst Power Score (lookback 252 days):
+   Score = (5-10% days * 1) + (10-19% days * 2) + (19%+ days * 3)
+   Normalized = min(100, (Score / (252*3)) * 1000)
+   Rule: Normalized >= 10 = PROCEED, < 10 = SKIP
+   (Yeh indicator batata hai ki stock historically kitne baar 20%+ move deta hai)
+
+2. 52-week high distance: Price 52w high ke 25% ke andar
+3. Relative Strength (RS) > 80 (top 20% stocks)
+
+========================================
+SECTION 6: PHASE 5 - ACCUMULATION DETECTION + BOTTOM CONFIRMATION
+========================================
+--- 6A: WYCKOFF BOTTOM PATTERNS ---
+1. Selling Climax:
+   - Bhaari volume + bada red candle + turant reversal
+   - Matlab: panic selling khatam
+
+2. Secondary Test:
+   - Price wapas low ke paas, lekin volume KAM
+   - Matlab: selling exhaustion
+
+3. Spring (BEST ENTRY):
+   - Price 20-day low se 2% neeche gaya
+   - Close wapas 20-day low ke upar
+   - Volume > 20-day average * 1.5
+   - Matlab: jhootha breakdown, bade players ne retail ko daraya
+
+4. Sign of Strength (SOS):
+   - Volume ke saath resistance break
+   - Matlab: accumulation complete, markup shuru
+
+--- 6B: VCP (Volatility Contraction Pattern) ---
+- 2-6 contractions, har agla chhota (jaise 20% → 10% → 5%)
+- Volume dry-up during contraction
+- Breakout with volume > 40% above average
+- Entry: Pivot ke upar + volume confirmation
+
+--- 6C: DELIVERY FILTER (RELAXED) ---
+- Daily delivery > 60% 
+- 5-day average delivery > 60%
+- Volume ratio > 1.5x
+- Liquidity ratio > 1.5x
+- VWAP: Price VWAP ke upar stable
+
+--- 6D: BULK DEAL CONFIRMATION ---
+- Repeated prints: 3-4 sessions mein same client kharid raha
+- Price context: Bulk deal recent range se UPAR = conviction
+- Size relative to ADV: Chhote stock mein ₹20 Cr bada hai
+
+--- 6E: INSTITUTIONAL BACKGROUND CHECK (QUARTERLY) ---
+- FII holding trend: 2-3 quarters lagatar badh raha ho
+- DII/MF holding trend: 2-3 quarters lagatar badh raha ho
+- Promoter holding: Stable ya badh raha ho
+- Promoter pledge: Zero ya kam ho (red flag agar zyada)
+- Smart Money Total (FII+DII+Promoter) >= 70%
+
+========================================
+SECTION 7: PHASE 6 - ENTRY TRIGGER (FAST - EMA 44 SE JALDI)
+========================================
+--- 7A: FAST ENTRY SIGNALS (EMA 44 se 2-3 din jaldi) ---
+1. EMA 9/21 Cross + Volume 1.5x + VWAP above
+2. RSI (14) < 30 se upar 35 cross + higher low
+3. MACD Histogram negative se positive
+4. Bollinger Lower Band touch + close inside
+5. 20-day low reclaim + volume spike
+6. Volume dry-up (3-4 din) + first green candle 1.5x
+
+--- 7B: TREND FILTER ---
+- Price > EMA 20 > EMA 50 > EMA 200
+- EMA 44 = secondary confirmation only
+- EMA 9/21 = primary fast entry (EMA 44 se 2-3 din jaldi)
+
+--- 7C: CONFIRMATION DELAY ---
+- Signal ke baad 1-2 din wait karo
+- Price support ke upar hold kar raha hai? Tabhi enter
+- Gap-up Check: Agar next day 3%+ gap-up = SKIP (late entry)
+
+========================================
+SECTION 8: PHASE 7 - RISK MANAGEMENT
+========================================
+- Stop Loss: 8-12% ya recent swing low
+- Position Size: 15-20% (geopolitical tension/strong DXY mein 10%)
+- Target: 15-30% (quarterly, monthly nahi - realistic)
+- Trailing Stop: 20% move ke baad breakeven
+- Thesis Invalidation: Debt badhna, OCF negative, moat break = EXIT
+
+========================================
+SECTION 9: PHASE 8 - EXIT RULES + TOP DETECTION
+========================================
+--- 9A: EXIT RULES ---
+- Target hit = partial profit (50%)
+- Stop hit = full exit
+- Thesis invalidation = full exit
+- Negative news sector = exit
+- 20% move ke baad trailing stop
+
+--- 9B: TOP DETECTION (POSITION CLOSE KARNE KE LIYE) ---
+1. Price > Graham Number * 1.5 = fundamental overvaluation
+2. EV/EBITDA > 5-year average * 1.5 = valuation top
+3. RSI > 80 + volume climax = technical top
+4. Delivery % suddenly 70%+ but price flat = distribution (bade players bech rahe)
+5. FII/DII quarterly holding girawat = institutional exit
+
+========================================
+SECTION 10: BOT ARCHITECTURE (MODULAR)
+========================================
+Layer 1: Data fetcher (bhavcopy, yfinance, NSE, shareholding, news API, DXY, crude)
+Layer 2: Market regime filter (VIX, MMI, breadth, FII/DII)
+Layer 3: Sector + news + macro filter (DXY, crude, geopolitical)
+Layer 4: Fundamental filter (hard reject + Piotroski + Graham + DCF)
+Layer 5: Movement score (Burst Power + RS)
+Layer 6: Accumulation detector (Wyckoff + VCP + delivery + bulk + quarterly holding)
+Layer 7: Entry trigger (fast EMA + RSI + VWAP)
+Layer 8: Risk manager (position size, stop)
+Layer 9: Exit manager (target, trailing, top detection)
+Layer 10: Scoring engine (combine all signals)
+Layer 11: News impact engine (real-time sector mapping)
+
+========================================
+SECTION 11: SCORING SYSTEM (Filters ko combine karo)
+========================================
+Hard Reject: Fundamental fail = 0 score
+Base Score: 50 (fundamental pass)
+
++10: Burst Power >= 15
++10: Promoter buying last 3 months (event)
++10: Wyckoff Spring detected
++10: Delivery 5-day avg > 60%
++10: Entry trigger confirmed
++10: Sector outperform
++10: FII/DII quarterly holding badh rahi (2-3 quarters)
++10: Bulk deal repeated prints
++5: Smart Money Total >= 70%
++5: Promoter pledge zero
++5: News impact positive for sector
+-10: News impact negative for sector
+-10: DXY strong AND stock sector in AVOID list
+-10: Brent > $105
+
+Score >= 85 = STRONG BUY (full size)
+Score 70-84 = BUY (75% size)
+Score 60-69 = BUY (50% size)
+Score < 60 = WATCHLIST
+
+========================================
+SECTION 12: OUTPUT FORMAT (DAILY)
+========================================
+Bot ko daily run karna hai aur output dena hai:
+- Stock symbol
+- Score
+- Entry price
+- Stop loss
+- Target
+- Position size suggestion
+- Reason (kaunse filters pass hue)
+- Quarterly institutional trend (FII/DII/MF)
+- News/geopolitical flag (agar applicable)
+- DXY/Crude flag (agar applicable)
+- Bottom/Top zone indicator (Graham/DCF/EV-EBITDA)
+
+========================================
+SECTION 13: BACKTEST FRAMEWORK
+========================================
+- Historical data: 2-3 saal ka
+- Metrics: Win rate, Risk-Reward, Max Drawdown, Sharpe Ratio
+- Paper trading mode default
+- Phase-by-phase backtest karo (kaunsa filter value add kar raha hai)
+- Overfitting se bacho: Out-of-sample test karo
+- News impact backtest: Historical news events ke saath test karo
+
+========================================
+IMPLEMENTATION COMMAND
+========================================
+"Yeh poora road map hain alredy bohat kam karchuke hai jo bacha hai use Python mein 
+implement karo. 
+Libraries: Nsc,Bsc,yfinance, pandas, numpy, nselib/pnsea, ta-lib, feedparser (news RSS)
+Modular code likho - har phase alag function.
+Backtest framework bhi banao.
+Paper trading mode default rakho.
+Data source limitations handle karo (quarterly vs daily).
+News impact engine ke liye sector mapping table banao.
+Error handling aur logging add karo.
+DXY aur Crude data daily fetch karo."
+
+========================================
+END OF PROMPT
