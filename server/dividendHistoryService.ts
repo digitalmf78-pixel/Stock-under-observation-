@@ -1,6 +1,10 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import type { DividendHistoryResponse, DividendYearPoint } from '../src/types/trading.ts';
+import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
@@ -11,37 +15,28 @@ interface CachedDividendEntry {
   payload: DividendHistoryResponse;
 }
 
-let writeQueue: Promise<void> = Promise.resolve();
-
 function cacheFilePath(): string {
   return path.resolve(process.cwd(), 'data', 'cache', 'dividend_history_cache.json');
 }
 
-function loadCache(): Record<string, CachedDividendEntry> {
-  const file = cacheFilePath();
-  if (!fs.existsSync(file)) return {};
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    return parsed && typeof parsed === 'object'
-      ? (parsed as Record<string, CachedDividendEntry>)
-      : {};
-  } catch {
-    return {};
-  }
+function isPlainRecord(val: unknown): val is Record<string, CachedDividendEntry> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
+function loadCache(throwOnCorruptWithoutBackup = false): Record<string, CachedDividendEntry> {
+  return readJsonSafe<Record<string, CachedDividendEntry>>(cacheFilePath(), {}, {
+    validate: isPlainRecord,
+    throwOnCorruptWithoutBackup,
+  });
 }
 
 async function saveCacheEntry(symbol: string, payload: DividendHistoryResponse): Promise<void> {
-  const cache = loadCache();
-  cache[symbol] = { cachedAtMs: Date.now(), payload };
-  const op = writeQueue.then(() => {
-    const file = cacheFilePath();
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(cache), 'utf-8');
-    fs.renameSync(tmp, file);
+  const file = cacheFilePath();
+  await withFileLock(file, () => {
+    const cache = loadCache(true);
+    cache[symbol] = { cachedAtMs: Date.now(), payload };
+    atomicWriteJsonSync(file, cache, { preserveBackup: true });
   });
-  writeQueue = op.catch(() => {});
-  await op;
 }
 
 function toIstIso(unixSec: number): string {

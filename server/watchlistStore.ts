@@ -1,6 +1,6 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import type { ScreenerRow, WatchlistResponse } from '../src/types/trading.ts';
+import { atomicWriteJsonSync, readJsonSafe } from './filePersistence.ts';
 
 interface WatchlistFile {
   updatedAtUtc: string;
@@ -11,39 +11,45 @@ function watchlistFilePath(): string {
   return path.join(process.cwd(), 'data', 'research', 'watchlist.json');
 }
 
-function atomicWriteJson(filePath: string, data: WatchlistFile): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+function isWatchlistShape(val: unknown): val is Partial<WatchlistFile> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
+function loadWatchlistSymbolsInternal(throwOnCorruptWithoutBackup = false): string[] {
+  const parsed = readJsonSafe<Partial<WatchlistFile>>(
+    watchlistFilePath(),
+    { updatedAtUtc: '', symbols: [] },
+    {
+      validate: isWatchlistShape,
+      throwOnCorruptWithoutBackup,
+    }
+  );
+  if (!Array.isArray(parsed.symbols)) return [];
+  return Array.from(
+    new Set(
+      parsed.symbols
+        .map((s) => (typeof s === 'string' ? s.trim().toUpperCase() : ''))
+        .filter(Boolean)
+    )
+  );
 }
 
 export function loadWatchlistSymbols(): string[] {
-  const file = watchlistFilePath();
-  if (!fs.existsSync(file)) return [];
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as WatchlistFile;
-    if (!Array.isArray(parsed?.symbols)) return [];
-    return Array.from(
-      new Set(
-        parsed.symbols
-          .map((s) => (typeof s === 'string' ? s.trim().toUpperCase() : ''))
-          .filter(Boolean)
-      )
-    );
-  } catch {
-    return [];
-  }
+  return loadWatchlistSymbolsInternal(false);
 }
 
 export function saveWatchlistSymbols(symbols: string[]): string[] {
   const clean = Array.from(
     new Set(symbols.map((s) => s.trim().toUpperCase()).filter(Boolean))
   );
-  atomicWriteJson(watchlistFilePath(), {
-    updatedAtUtc: new Date().toISOString(),
-    symbols: clean,
-  });
+  atomicWriteJsonSync(
+    watchlistFilePath(),
+    {
+      updatedAtUtc: new Date().toISOString(),
+      symbols: clean,
+    },
+    { pretty: true, preserveBackup: true }
+  );
   return clean;
 }
 
@@ -53,7 +59,7 @@ export function toggleWatchlistSymbol(symbol: string): {
 } {
   const sym = symbol.trim().toUpperCase();
   if (!sym) throw new Error('Symbol is required.');
-  const existing = loadWatchlistSymbols();
+  const existing = loadWatchlistSymbolsInternal(true);
   const has = existing.includes(sym);
   const next = has ? existing.filter((s) => s !== sym) : [sym, ...existing];
   const saved = saveWatchlistSymbols(next);
@@ -62,7 +68,7 @@ export function toggleWatchlistSymbol(symbol: string): {
 
 export function removeWatchlistSymbol(symbol: string): string[] {
   const sym = symbol.trim().toUpperCase();
-  const existing = loadWatchlistSymbols();
+  const existing = loadWatchlistSymbolsInternal(true);
   return saveWatchlistSymbols(existing.filter((s) => s !== sym));
 }
 

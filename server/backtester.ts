@@ -8,6 +8,7 @@ import type {
 } from '../src/types/trading.ts';
 import { nsePipeline } from './nsePipeline.ts';
 import { calculateEmaSeries, calculateRvolSeries } from './technicalIndicators.ts';
+import { computeDeliveryCategoryAtSlice } from './deliveryClassifier.ts';
 
 interface MergedBar {
   date: string;
@@ -153,40 +154,19 @@ function resolveRollingDeliveryCategory(
   const current = delivBars[idx];
   if (current.delivPer === null) return 'UNVERIFIED_6M';
 
-  const currMs = Date.parse(`${current.date}T00:00:00Z`);
-  const cutoffMs = currMs - 29 * 24 * 60 * 60 * 1000;
-  const window = delivBars
-    .slice(0, idx + 1)
-    .filter((b) => b.delivPer !== null && Date.parse(`${b.date}T00:00:00Z`) >= cutoffMs);
+  const slice = delivBars.slice(0, idx + 1);
+  const res = computeDeliveryCategoryAtSlice(slice, current.date, false);
+  if (res.deliveryCategory !== 'WAIT_FOR_DATA' && res.deliveryCategory !== 'NONE') {
+    return res.deliveryCategory;
+  }
 
-  if (window.length < 5) {
-    // Early Bhavcopy window: use single-session >= 60% institutional delivery threshold
+  // Early Bhavcopy window ramp-up inside historical backtest when fewer than 5 or 12 valid sessions exist
+  if (res.valid30dCount < 5) {
     return current.delivPer >= 60 ? 'B_ONLY' : 'NONE';
   }
-
-  let dailyGt60 = 0;
-  let rolling5dGt60 = 0;
-  for (let i = 0; i < window.length; i++) {
-    if ((window[i].delivPer ?? 0) >= 60) dailyGt60++;
-    if (i >= 4) {
-      const avg5 =
-        ((window[i - 4].delivPer ?? 0) +
-          (window[i - 3].delivPer ?? 0) +
-          (window[i - 2].delivPer ?? 0) +
-          (window[i - 1].delivPer ?? 0) +
-          (window[i].delivPer ?? 0)) /
-        5;
-      if (avg5 >= 60) rolling5dGt60++;
-    }
+  if (res.valid30dCount < 12 && res.rolling5dGt60Count >= 2 && current.delivPer >= 55) {
+    return 'B_ONLY';
   }
-
-  const passA = rolling5dGt60 >= 5;
-  const passB = dailyGt60 >= 5;
-  if (passA && passB) return 'A_AND_B';
-  if (passA) return 'A_ONLY';
-  if (passB) return 'B_ONLY';
-  // If rolling count hasn't reached 5 days yet (e.g. sessions 5-12 of cached window), allow strong 5D avg >= 60%
-  if (window.length < 12 && rolling5dGt60 >= 2 && current.delivPer >= 55) return 'B_ONLY';
   return 'NONE';
 }
 

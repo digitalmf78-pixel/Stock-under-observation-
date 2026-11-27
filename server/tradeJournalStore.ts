@@ -1,11 +1,11 @@
 import crypto from 'node:crypto';
-import fs from 'node:fs';
 import path from 'node:path';
 import type {
   TradeJournalAction,
   TradeJournalEntry,
   TradeJournalSentiment,
 } from '../src/types/trading.ts';
+import { atomicWriteJsonSync, readJsonSafe } from './filePersistence.ts';
 import { toIstDateIso } from './liveFetcher.ts';
 
 interface TradeJournalFile {
@@ -17,27 +17,27 @@ function journalFilePath(): string {
   return path.join(process.cwd(), 'data', 'research', 'trade_journal.json');
 }
 
-function atomicWriteJson(filePath: string, data: TradeJournalFile): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+function isJournalShape(val: unknown): val is Partial<TradeJournalFile> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
 }
 
-function loadJournalFile(): TradeJournalFile {
-  const file = journalFilePath();
-  if (!fs.existsSync(file)) {
-    return { updatedAtUtc: '', entries: [] };
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as TradeJournalFile;
-    return {
-      updatedAtUtc: parsed?.updatedAtUtc || '',
-      entries: Array.isArray(parsed?.entries) ? parsed.entries : [],
-    };
-  } catch {
-    return { updatedAtUtc: '', entries: [] };
-  }
+function loadJournalFile(throwOnCorruptWithoutBackup = false): TradeJournalFile {
+  const parsed = readJsonSafe<Partial<TradeJournalFile>>(
+    journalFilePath(),
+    { updatedAtUtc: '', entries: [] },
+    {
+      validate: isJournalShape,
+      throwOnCorruptWithoutBackup,
+    }
+  );
+  return {
+    updatedAtUtc: typeof parsed.updatedAtUtc === 'string' ? parsed.updatedAtUtc : '',
+    entries: Array.isArray(parsed.entries) ? parsed.entries : [],
+  };
+}
+
+function saveJournalFile(data: TradeJournalFile): void {
+  atomicWriteJsonSync(journalFilePath(), data, { pretty: true, preserveBackup: true });
 }
 
 function normalizePrice(val: unknown): number | null {
@@ -138,9 +138,9 @@ export function createTradeJournalEntry(input: CreateTradeJournalInput): {
     updatedAtUtc: nowUtc,
   };
 
-  const file = loadJournalFile();
+  const file = loadJournalFile(true);
   const nextEntries = [entry, ...file.entries];
-  atomicWriteJson(journalFilePath(), {
+  saveJournalFile({
     updatedAtUtc: nowUtc,
     entries: nextEntries,
   });
@@ -160,7 +160,7 @@ export function updateTradeJournalEntry(
   entries: TradeJournalEntry[];
 } {
   const sym = symbol.trim().toUpperCase();
-  const file = loadJournalFile();
+  const file = loadJournalFile(true);
   const idx = file.entries.findIndex((e) => e.id === id && e.symbol === sym);
   if (idx < 0) {
     throw new Error(`Journal entry ${id} not found for ${sym}.`);
@@ -222,7 +222,7 @@ export function updateTradeJournalEntry(
   };
 
   file.entries[idx] = updated;
-  atomicWriteJson(journalFilePath(), {
+  saveJournalFile({
     updatedAtUtc: updated.updatedAtUtc,
     entries: file.entries,
   });
@@ -238,13 +238,13 @@ export function deleteTradeJournalEntry(
   id: string
 ): { deleted: boolean; entries: TradeJournalEntry[] } {
   const sym = symbol.trim().toUpperCase();
-  const file = loadJournalFile();
+  const file = loadJournalFile(true);
   const next = file.entries.filter((e) => !(e.id === id && e.symbol === sym));
   const deleted = next.length !== file.entries.length;
   if (!deleted) {
     throw new Error(`Journal entry ${id} not found for ${sym}.`);
   }
-  atomicWriteJson(journalFilePath(), {
+  saveJournalFile({
     updatedAtUtc: new Date().toISOString(),
     entries: next,
   });

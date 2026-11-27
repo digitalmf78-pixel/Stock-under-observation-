@@ -8,6 +8,7 @@ import type {
   ScreenerRow,
   SectorNewsImpactSummary,
 } from '../src/types/trading.ts';
+import { getCachedBhavcopyDates } from './liveFetcher.ts';
 import { calculateLatestEma } from './technicalIndicators.ts';
 
 const UA =
@@ -867,7 +868,7 @@ export async function getOpenMacroAndNewsDashboard(params: {
         : 'Need >=10 stocks with 200+ sessions cached; showing live EMA21 liquid breadth',
       source: dma200Breadth.available
         ? 'Yahoo 3Y Cache (200-DMA Breadth)'
-        : 'NSE Bhavcopy 37-Session Cache',
+        : `NSE Bhavcopy ${getCachedBhavcopyDates().length}-Session Cache`,
       asOfDate: niftyRes.asOfDate,
     },
     fiiDiiDaily: fiiDiiRes,

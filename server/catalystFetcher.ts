@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { NSEApi } from 'nse-bse-api';
 import type {
@@ -16,6 +17,11 @@ import type {
   UpcomingResultStockItem,
 } from '../src/types/trading.ts';
 import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
+import {
   loadLiveFundamentalOverrides,
   type LiveFundamentalRecord,
   toIstDateIso,
@@ -28,7 +34,7 @@ const UA =
 let sharedNseHttpClient: NSEApi.HttpClient | null = null;
 function getNseHttpClient(): NSEApi.HttpClient {
   if (!sharedNseHttpClient) {
-    const cookieDir = path.join(process.cwd(), 'data');
+    const cookieDir = path.join(os.tmpdir(), 'nse-bse-api-cache');
     fs.mkdirSync(cookieDir, { recursive: true });
     sharedNseHttpClient = new NSEApi.HttpClient(cookieDir, true, 15000);
   }
@@ -69,54 +75,43 @@ function bseScripMapPath(): string {
   return path.join(process.cwd(), 'data', 'research', 'bse_scrip_map.json');
 }
 
-function atomicWriteJson(filePath: string, data: unknown): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+function isPlainRecord(val: unknown): val is Record<string, unknown> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
 }
 
-function loadCatalystCache(): CatalystCacheFile {
+function loadCatalystCache(throwOnCorruptWithoutBackup = false): CatalystCacheFile {
   const file = catalystsCachePath();
-  if (!fs.existsSync(file)) {
-    return { lastUniverseQuoteSyncUtc: '', bySymbol: {} };
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as CatalystCacheFile;
-    return {
-      lastUniverseQuoteSyncUtc: parsed?.lastUniverseQuoteSyncUtc || '',
-      bySymbol: parsed?.bySymbol && typeof parsed.bySymbol === 'object' ? parsed.bySymbol : {},
-    };
-  } catch {
-    return { lastUniverseQuoteSyncUtc: '', bySymbol: {} };
-  }
+  const parsed = readJsonSafe<Partial<CatalystCacheFile>>(file, {}, {
+    validate: (v): v is Partial<CatalystCacheFile> => isPlainRecord(v),
+    throwOnCorruptWithoutBackup,
+  });
+  return {
+    lastUniverseQuoteSyncUtc:
+      typeof parsed.lastUniverseQuoteSyncUtc === 'string' ? parsed.lastUniverseQuoteSyncUtc : '',
+    bySymbol:
+      parsed.bySymbol && isPlainRecord(parsed.bySymbol)
+        ? (parsed.bySymbol as Record<string, CachedStockCatalyst>)
+        : {},
+  };
 }
 
-function loadBulkBlockStore(): BulkBlockStoreFile {
+function loadBulkBlockStore(throwOnCorruptWithoutBackup = false): BulkBlockStoreFile {
   const file = bulkBlockStorePath();
-  if (!fs.existsSync(file)) {
-    return { lastSyncedUtc: '', deals: [] };
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as BulkBlockStoreFile;
-    return {
-      lastSyncedUtc: parsed?.lastSyncedUtc || '',
-      deals: Array.isArray(parsed?.deals) ? parsed.deals : [],
-    };
-  } catch {
-    return { lastSyncedUtc: '', deals: [] };
-  }
+  const parsed = readJsonSafe<Partial<BulkBlockStoreFile>>(file, {}, {
+    validate: (v): v is Partial<BulkBlockStoreFile> => isPlainRecord(v),
+    throwOnCorruptWithoutBackup,
+  });
+  return {
+    lastSyncedUtc: typeof parsed.lastSyncedUtc === 'string' ? parsed.lastSyncedUtc : '',
+    deals: Array.isArray(parsed.deals) ? (parsed.deals as BulkBlockDealItem[]) : [],
+  };
 }
 
-function loadBseScripMap(): Record<string, string> {
-  const file = bseScripMapPath();
-  if (!fs.existsSync(file)) return {};
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {};
-  } catch {
-    return {};
-  }
+function loadBseScripMap(throwOnCorruptWithoutBackup = false): Record<string, string> {
+  return readJsonSafe<Record<string, string>>(bseScripMapPath(), {}, {
+    validate: (v): v is Record<string, string> => isPlainRecord(v),
+    throwOnCorruptWithoutBackup,
+  });
 }
 
 let yahooCookie = '';
@@ -512,12 +507,20 @@ export async function syncNseBulkBlockDeals(
       // non-fatal fallback
     }
 
-    const mergedDeals = mergeAndDeduplicateBulkBlockDeals(existing.deals, fetched, activeRefIso);
-    const merged: BulkBlockStoreFile = {
-      lastSyncedUtc: fetched.length > 0 ? new Date().toISOString() : existing.lastSyncedUtc,
-      deals: mergedDeals,
-    };
-    atomicWriteJson(bulkBlockStorePath(), merged);
+    const merged: BulkBlockStoreFile = await withFileLock(bulkBlockStorePath(), () => {
+      const latestExisting = loadBulkBlockStore(true);
+      const mergedDeals = mergeAndDeduplicateBulkBlockDeals(
+        latestExisting.deals,
+        fetched,
+        activeRefIso
+      );
+      const nextStore: BulkBlockStoreFile = {
+        lastSyncedUtc: fetched.length > 0 ? new Date().toISOString() : latestExisting.lastSyncedUtc,
+        deals: mergedDeals,
+      };
+      atomicWriteJsonSync(bulkBlockStorePath(), nextStore, { pretty: true, preserveBackup: true });
+      return nextStore;
+    });
     return merged;
   };
 
@@ -815,7 +818,7 @@ export async function syncUniverseQuoteCalendarAndIpo(
               updatedCount++;
               recordsToUpsert.push({
                 symbol: sym,
-                asOfDate: prev?.asOfDate || '',
+                asOfDate: prev?.asOfDate || activeRefIso,
                 source: prev?.source || 'Listing & Calendar Metadata (.NS)',
                 sourceUrl: prev?.sourceUrl || '',
                 financialPeriodEnd: prev?.financialPeriodEnd || '',
@@ -844,7 +847,7 @@ export async function syncUniverseQuoteCalendarAndIpo(
                 epsCurrPeriod: prev?.epsCurrPeriod || '',
                 epsTtmPrev: prev?.epsTtmPrev ?? null,
                 epsTtmCurr: prev?.epsTtmCurr ?? null,
-                fetchedAtUtc: prev?.fetchedAtUtc || '',
+                fetchedAtUtc: prev?.fetchedAtUtc || new Date().toISOString(),
               });
             }
           }
@@ -861,10 +864,13 @@ export async function syncUniverseQuoteCalendarAndIpo(
     if (recordsToUpsert.length > 0) {
       await upsertAndSaveFundamentalOverrides(recordsToUpsert);
     }
-    const cache = loadCatalystCache();
-    cache.lastUniverseQuoteSyncUtc = new Date().toISOString();
-    atomicWriteJson(catalystsCachePath(), cache);
-    universeQuoteScanState.lastSyncedUtc = cache.lastUniverseQuoteSyncUtc;
+    const syncTs = new Date().toISOString();
+    await withFileLock(catalystsCachePath(), () => {
+      const cache = loadCatalystCache(true);
+      cache.lastUniverseQuoteSyncUtc = syncTs;
+      atomicWriteJsonSync(catalystsCachePath(), cache, { pretty: true, preserveBackup: true });
+    });
+    universeQuoteScanState.lastSyncedUtc = syncTs;
     if (onFinished) onFinished();
   } finally {
     universeQuoteScanState.running = false;
@@ -1070,15 +1076,25 @@ async function resolveBseScripCode(symbol: string): Promise<string> {
         windowSlice.includes(`${sym}&NBSP;`) ||
         windowSlice.includes(`<strong>${sym}</strong>`)
       ) {
-        scripMap[sym] = code;
-        atomicWriteJson(bseScripMapPath(), scripMap);
+        await withFileLock(bseScripMapPath(), () => {
+          const latestMap = loadBseScripMap(true);
+          if (latestMap[sym] !== code) {
+            latestMap[sym] = code;
+            atomicWriteJsonSync(bseScripMapPath(), latestMap, { pretty: true, preserveBackup: true });
+          }
+        });
         return code;
       }
     }
     const first = html.match(/liclick\('(\d{6})'/);
     if (first?.[1]) {
-      scripMap[sym] = first[1];
-      atomicWriteJson(bseScripMapPath(), scripMap);
+      await withFileLock(bseScripMapPath(), () => {
+        const latestMap = loadBseScripMap(true);
+        if (latestMap[sym] !== first[1]) {
+          latestMap[sym] = first[1];
+          atomicWriteJsonSync(bseScripMapPath(), latestMap, { pretty: true, preserveBackup: true });
+        }
+      });
       return first[1];
     }
   } catch {
@@ -1447,9 +1463,11 @@ export async function fetchAndCacheStockCatalysts(params: {
     fetchedAtUtc: new Date().toISOString(),
   };
 
-  const latestCache = loadCatalystCache();
-  latestCache.bySymbol[sym] = entry;
-  atomicWriteJson(catalystsCachePath(), latestCache);
+  await withFileLock(catalystsCachePath(), () => {
+    const latestCache = loadCatalystCache(true);
+    latestCache.bySymbol[sym] = entry;
+    atomicWriteJsonSync(catalystsCachePath(), latestCache, { pretty: true, preserveBackup: true });
+  });
 
   return buildStockCatalystProfile({
     row,

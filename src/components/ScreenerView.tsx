@@ -19,6 +19,7 @@ import type {
 } from '../types/trading';
 import { getCapBadgeClass, getCapShortLabel } from '../utils/marketCap';
 import { evaluateQuoteFreshness } from '../utils/quoteFreshness';
+import { authFetch } from '../utils/authClient';
 import { T1T2DailyReportModal } from './T1T2DailyReportModal';
 import { SwingTierSpecPanel } from './SwingTierSpecPanel';
 
@@ -212,7 +213,7 @@ export const ScreenerView: React.FC<ScreenerViewProps> = ({
     setBatchFetching(true);
     setBatchNotice(null);
     try {
-      const res = await fetch('/api/refresh/fundamentals', {
+      const res = await authFetch('/api/refresh/fundamentals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ batchMissing: true, limit: 25 }),
@@ -885,7 +886,7 @@ export const ScreenerView: React.FC<ScreenerViewProps> = ({
                 {
                   key: 'TIER_3_RVOL_WATCH',
                   label: 'T3 RVOL',
-                  tip: 'Early Volume Mover: Liq>=1.5Cr + RVOL>1.5x + Green close (without Deliv A/B / EMA21)',
+                  tip: 'Early Volume Mover: Liq>=1.5Cr + RVOL>1.5x + Green close (not yet T1/T2)',
                 },
               ].map((opt) => (
                 <button
@@ -912,6 +913,7 @@ export const ScreenerView: React.FC<ScreenerViewProps> = ({
             <div className="inline-flex flex-wrap max-w-full gap-0.5 p-0.5 bg-slate-100 rounded-md">
               {[
                 { key: 'UNION', label: 'A OR B' },
+                { key: 'UNION_OR_RVOL', label: 'A/B or RVOL' },
                 { key: 'A_AND_B', label: 'A_AND_B' },
                 { key: 'A_ONLY', label: 'A_ONLY' },
                 { key: 'B_ONLY', label: 'B_ONLY' },
@@ -941,6 +943,7 @@ export const ScreenerView: React.FC<ScreenerViewProps> = ({
               {[
                 { key: 'ALL', label: 'All' },
                 { key: 'HIGH', label: 'HIGH (>1.5x)' },
+                { key: 'HIGH_OR_DELIV_EXP', label: 'RVOL>1.5 / Deliv>=1.2x' },
                 { key: 'LOW', label: 'LOW' },
               ].map((opt) => (
                 <button

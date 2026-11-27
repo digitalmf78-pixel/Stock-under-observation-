@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { authFetch } from '../utils/authClient';
 import {
   Activity,
   ArrowUpRight,
@@ -90,7 +91,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     e.preventDefault();
     setRuleSaving(true);
     try {
-      const res = await fetch('/api/fundamentals/thresholds', {
+      const res = await authFetch('/api/fundamentals/thresholds', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -300,7 +301,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   ) => {
     setSyncNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/save-to-cache', {
+      const res = await authFetch('/api/fundamentals/save-to-cache', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveAll: true, scope }),
@@ -311,8 +312,8 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
       setSyncNotice({
         tone: 'ok',
         text: json.started
-          ? `Saving all ${json.total} NSE symbols (${scope}) to disk cache in background...`
-          : json.message || 'All NSE fundamentals already saved & up to date.',
+          ? `Saving ${json.total} Tier 1–3 symbols (${scope}) to disk cache in background...`
+          : json.message || 'All Tier 1–3 fundamentals already saved & up to date.',
       });
     } catch (err) {
       setSyncNotice({ tone: 'err', text: (err as Error).message });
@@ -325,7 +326,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   ) => {
     setSyncNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/collect-all', {
+      const res = await authFetch('/api/fundamentals/collect-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ scope, limit }),
@@ -345,7 +346,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     setSyncingBhav(true);
     setSyncNotice(null);
     try {
-      const res = await fetch('/api/scanner/reload-all', {
+      const res = await authFetch('/api/scanner/reload-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
@@ -368,7 +369,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     setFetchingFund(true);
     setSyncNotice(null);
     try {
-      const res = await fetch('/api/refresh/fundamentals', {
+      const res = await authFetch('/api/refresh/fundamentals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ batchMissing: true, limit: 20 }),
@@ -414,8 +415,23 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     }
   };
 
+  const openAuditScreener = (freshness: FundamentalFreshness | 'ALL') => {
+    if (onOpenScreener) {
+      openScreenerPreset({ swingTier: 'ANY_SWING', freshness });
+    } else {
+      onFilterByFreshness(freshness);
+    }
+  };
+
   const totalWatchlistCount =
     funnel.tier1ReadyCount + funnel.tier2AccumulationCount + funnel.tier3RvolWatchCount;
+
+  const step2FlowCount = funnel.funnelStep2FlowCount ?? funnel.deliveryAorBUnion;
+  const nonAbHighRvolCount = funnel.nonAbHighRvolCount ?? Math.max(0, step2FlowCount - funnel.deliveryAorBUnion);
+  const step3LiquidityCount = funnel.funnelStep3LiquidityCount ?? funnel.liquidityPassInUnion;
+  const step4TriggerCount = funnel.funnelStep4TriggerCount ?? funnel.rvolHighInLiquidUnion;
+  const liquidHighRvolTotal = funnel.liquidHighRvolTotalCount ?? funnel.rvolHighInLiquidUnion;
+  const liquidDelivExpLowRvol = funnel.liquidDelivExpLowRvolCount ?? Math.max(0, step4TriggerCount - liquidHighRvolTotal);
 
   const stages = [
     {
@@ -430,56 +446,58 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     },
     {
       step: '02',
-      title: '30-Day Delivery A OR B Union',
-      detail: `${funnel.deliveryAAndB} A_AND_B · ${funnel.deliveryAOnly} A_ONLY · ${funnel.deliveryBOnly} B_ONLY`,
-      count: funnel.deliveryAorBUnion,
-      pct: (funnel.deliveryAorBUnion / maxCount) * 100,
+      title: '30-Day Delivery A/B OR High-RVOL (>1.5x) Flow',
+      detail: `${funnel.deliveryAAndB} A_AND_B · ${funnel.deliveryAOnly} A_ONLY · ${funnel.deliveryBOnly} B_ONLY · ${nonAbHighRvolCount} Non-A/B High-RVOL`,
+      count: step2FlowCount,
+      pct: (step2FlowCount / maxCount) * 100,
       tone: 'bg-blue-700',
-      preset: { delivery: 'UNION', liquidity: 'ALL' } as ScreenerFilterPatch,
+      preset: { delivery: 'UNION_OR_RVOL', liquidity: 'ALL', rvol: 'ALL' } as ScreenerFilterPatch,
       chips: [
         { label: `A_AND_B (${funnel.deliveryAAndB})`, preset: { delivery: 'A_AND_B', liquidity: 'ALL' } },
         { label: `A_ONLY (${funnel.deliveryAOnly})`, preset: { delivery: 'A_ONLY', liquidity: 'ALL' } },
         { label: `B_ONLY (${funnel.deliveryBOnly})`, preset: { delivery: 'B_ONLY', liquidity: 'ALL' } },
+        { label: `Early RVOL>1.5x (${nonAbHighRvolCount})`, preset: { delivery: 'NON_AB_HIGH_RVOL', liquidity: 'ALL' } },
       ],
     },
     {
       step: '03',
       title: '20-Session Liquidity Gate (Avg >= ₹1.5 Cr)',
-      detail: `${funnel.liquidityPassInUnion} PASS · ${funnel.liquidityBelowMinInUnion} BELOW_MIN`,
-      count: funnel.liquidityPassInUnion,
-      pct: (funnel.liquidityPassInUnion / maxCount) * 100,
+      detail: `${step3LiquidityCount} Liquid (${funnel.liquidityPassInUnion} A/B + ${Math.max(0, step3LiquidityCount - funnel.liquidityPassInUnion)} Early RVOL)`,
+      count: step3LiquidityCount,
+      pct: (step3LiquidityCount / maxCount) * 100,
       tone: 'bg-emerald-600',
-      preset: { delivery: 'UNION', liquidity: 'PASS' } as ScreenerFilterPatch,
+      preset: { delivery: 'UNION_OR_RVOL', liquidity: 'PASS', rvol: 'ALL' } as ScreenerFilterPatch,
       chips: [
-        { label: `PASS (${funnel.liquidityPassInUnion})`, preset: { delivery: 'UNION', liquidity: 'PASS' } },
-        { label: `BELOW_MIN (${funnel.liquidityBelowMinInUnion})`, preset: { delivery: 'UNION', liquidity: 'BELOW_MIN' } },
+        { label: `Liquid A/B (${funnel.liquidityPassInUnion})`, preset: { delivery: 'UNION', liquidity: 'PASS' } },
+        { label: `All Liquid Flow (${step3LiquidityCount})`, preset: { delivery: 'UNION_OR_RVOL', liquidity: 'PASS' } },
+        { label: `A/B BELOW_MIN (${funnel.liquidityBelowMinInUnion})`, preset: { delivery: 'UNION', liquidity: 'BELOW_MIN' } },
       ],
     },
     {
       step: '04',
-      title: 'RVOL > 1.5x in Liquid A/B Union',
-      detail: `${funnel.rvolHighInLiquidUnion} HIGH · ${funnel.rvolLowInLiquidUnion} LOW · ${funnel.rvolWaitInLiquidUnion} WAIT_FOR_DATA`,
-      count: funnel.rvolHighInLiquidUnion,
-      pct: (funnel.rvolHighInLiquidUnion / maxCount) * 100,
+      title: 'Breakout / Accumulation Trigger (RVOL > 1.5x OR DelivQty >= 1.2x)',
+      detail: `${liquidHighRvolTotal} RVOL > 1.5x · ${liquidDelivExpLowRvol} Low-RVOL DelivQty Accum`,
+      count: step4TriggerCount,
+      pct: (step4TriggerCount / maxCount) * 100,
       tone: 'bg-indigo-600',
-      preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH' } as ScreenerFilterPatch,
+      preset: { delivery: 'UNION_OR_RVOL', liquidity: 'PASS', rvol: 'HIGH_OR_DELIV_EXP' } as ScreenerFilterPatch,
       chips: [
-        { label: `HIGH (${funnel.rvolHighInLiquidUnion})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH' } },
-        { label: `LOW (${funnel.rvolLowInLiquidUnion})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'LOW' } },
+        { label: `RVOL > 1.5x (${liquidHighRvolTotal})`, preset: { delivery: 'UNION_OR_RVOL', liquidity: 'PASS', rvol: 'HIGH' } },
+        { label: `DelivQty Accum (${liquidDelivExpLowRvol})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'LOW_DELIV_EXP' } },
       ],
     },
     {
       step: '05',
-      title: 'Tiered Swing Watchlist (Stage 4 Sequential Subset)',
-      detail: `T1 Ready: ${funnel.sequentialTier1Count} · T2 Accum: ${funnel.sequentialTier2Count} · T3 RVOL: ${funnel.sequentialTier3Count} · All-Universe Watchlist: ${totalWatchlistCount} (${funnel.tier1ReadyCount}+${funnel.tier2AccumulationCount}+${funnel.tier3RvolWatchCount})`,
+      title: 'Tiered Swing Watchlist (T1 + T2 + T3)',
+      detail: `T1 Ready: ${funnel.sequentialTier1Count} · T2 Accum: ${funnel.sequentialTier2Count} · T3 RVOL: ${funnel.sequentialTier3Count}`,
       count: funnel.sequentialTieredCount,
       pct: (funnel.sequentialTieredCount / maxCount) * 100,
       tone: 'bg-teal-600',
-      preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH', swingTier: 'ANY_SWING' } as ScreenerFilterPatch,
+      preset: { delivery: 'ALL', liquidity: 'PASS', swingTier: 'ANY_SWING' } as ScreenerFilterPatch,
       chips: [
-        { label: `T1 Ready (${funnel.sequentialTier1Count})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH', swingTier: 'TIER_1_READY' } },
-        { label: `T2 Accum (${funnel.sequentialTier2Count})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH', swingTier: 'TIER_2_ACCUMULATION' } },
-        { label: `T3 RVOL (${funnel.sequentialTier3Count})`, preset: { delivery: 'UNION', liquidity: 'PASS', rvol: 'HIGH', swingTier: 'TIER_3_RVOL_WATCH' } },
+        { label: `T1 Ready (${funnel.sequentialTier1Count})`, preset: { delivery: 'ALL', liquidity: 'PASS', swingTier: 'TIER_1_READY' } },
+        { label: `T2 Accum (${funnel.sequentialTier2Count})`, preset: { delivery: 'ALL', liquidity: 'PASS', swingTier: 'TIER_2_ACCUMULATION' } },
+        { label: `T3 RVOL (${funnel.sequentialTier3Count})`, preset: { delivery: 'ALL', liquidity: 'PASS', swingTier: 'TIER_3_RVOL_WATCH' } },
         { label: `All Watchlist (${totalWatchlistCount})`, preset: { delivery: 'ALL', liquidity: 'PASS', swingTier: 'ANY_SWING' } },
       ],
     },
@@ -841,10 +859,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             <div>
               <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
                 <Database className="w-4 h-4 text-blue-700" />
-                All-Stock Fundamental Audit &amp; Freshness Remarks (Screener.in + BSE + NSE XBRL)
+                Tier 1–3 Fundamental Deep Audit &amp; Freshness Remarks (Screener.in + BSE + NSE XBRL)
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Audits all {fundamentalAudit.totalStocks.toLocaleString()} Mainboard stocks · Click any status card below to inspect stocks &amp; remarks in Screener
+                Audits {fundamentalAudit.totalStocks.toLocaleString()} Tier 1, Tier 2 &amp; Tier 3 selected stocks (never Mainboard-wide) · Click any status card below to inspect stocks in Screener
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
@@ -854,21 +872,21 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${collectStatus?.running ? 'animate-spin' : ''}`} />
-                Save All NSE Fundamentals
+                Audit Tier 1–3 Fundamentals
               </button>
               <button
                 onClick={() => handleStartCollection('LIQUID', 150)}
                 disabled={Boolean(collectStatus?.running)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap"
               >
-                Liquid Batch (150)
+                Refresh Tier 1–3 Batch
               </button>
               <button
                 onClick={() => handleStartCollection('NOT_AVAILABLE', 250)}
                 disabled={Boolean(collectStatus?.running)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap"
               >
-                Abhi Mila Nahi (250)
+                Abhi Mila Nahi (Tier 1–3)
               </button>
             </div>
           </div>
@@ -905,7 +923,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <button
               type="button"
-              onClick={() => onFilterByFreshness('LATEST')}
+              onClick={() => openAuditScreener('LATEST')}
               className="text-left p-3.5 rounded-md border border-emerald-200 bg-emerald-50/40 hover:bg-emerald-50 transition-colors"
             >
               <div className="flex items-center justify-between text-xs font-medium text-emerald-800">
@@ -922,7 +940,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
             <button
               type="button"
-              onClick={() => onFilterByFreshness('OLD_3M')}
+              onClick={() => openAuditScreener('OLD_3M')}
               className="text-left p-3.5 rounded-md border border-amber-200 bg-amber-50/40 hover:bg-amber-50 transition-colors"
             >
               <div className="flex items-center justify-between text-xs font-medium text-amber-800">
@@ -939,7 +957,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
             <button
               type="button"
-              onClick={() => onFilterByFreshness('STALE')}
+              onClick={() => openAuditScreener('STALE')}
               className="text-left p-3.5 rounded-md border border-orange-200 bg-orange-50/40 hover:bg-orange-50 transition-colors"
             >
               <div className="flex items-center justify-between text-xs font-medium text-orange-800">
@@ -956,7 +974,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
             <button
               type="button"
-              onClick={() => onFilterByFreshness('NOT_AVAILABLE')}
+              onClick={() => openAuditScreener('NOT_AVAILABLE')}
               className="text-left p-3.5 rounded-md border border-rose-200 bg-rose-50/40 hover:bg-rose-50 transition-colors"
             >
               <div className="flex items-center justify-between text-xs font-medium text-rose-800">
@@ -979,10 +997,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             </div>
             <button
               type="button"
-              onClick={() => onFilterByFreshness('ALL')}
+              onClick={() => openAuditScreener('ALL')}
               className="text-blue-700 hover:underline font-medium"
             >
-              View All Remarks in Screener →
+              View Tier 1–3 Remarks in Screener →
             </button>
           </div>
         </div>

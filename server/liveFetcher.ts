@@ -1,6 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseBhavDateToIso } from './csvParser.ts';
+import {
+  atomicWriteFileSync,
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 import type { IndianFundamentalsPayload } from './indianFundamentals.ts';
 import {
   getVerifiedFundamentals,
@@ -127,23 +133,20 @@ function overridesPath(): string {
   return path.join(process.cwd(), 'data', 'research', 'live_fundamental_overrides.json');
 }
 
+function isPlainRecord(val: unknown): val is Record<string, LiveFundamentalRecord> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
 export function loadLiveFundamentalOverrides(): Record<string, LiveFundamentalRecord> {
-  const file = overridesPath();
-  if (!fs.existsSync(file)) return {};
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+  return readJsonSafe<Record<string, LiveFundamentalRecord>>(
+    overridesPath(),
+    {},
+    { validate: isPlainRecord }
+  );
 }
 
 function saveLiveFundamentalOverrides(map: Record<string, LiveFundamentalRecord>): void {
-  const file = overridesPath();
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  const tmpFile = `${file}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmpFile, JSON.stringify(map, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmpFile, file);
+  atomicWriteJsonSync(overridesPath(), map, { pretty: true, preserveBackup: true });
 }
 
 function isTrustedIndianSourceList(sources: string[] | undefined): boolean {
@@ -161,10 +164,14 @@ function mergeFundamentalRecords(
     ? (prev.sources || []).filter((s) => s !== 'YFinance (.NS)' && s !== 'BSE (.BO)')
     : prev.sources || [];
   const mergedSources = Array.from(new Set([...prevCleanSources, ...(next.sources || [])]));
+  const isIsoDate = (v: string | undefined): boolean => Boolean(v && /^\d{4}-\d{2}-\d{2}$/.test(v));
   const bestPeriod =
-    next.financialPeriodEnd && (!prev.financialPeriodEnd || next.financialPeriodEnd >= prev.financialPeriodEnd)
+    isIsoDate(next.financialPeriodEnd) &&
+    (!isIsoDate(prev.financialPeriodEnd) || next.financialPeriodEnd >= prev.financialPeriodEnd)
       ? next.financialPeriodEnd
-      : prev.financialPeriodEnd;
+      : isIsoDate(prev.financialPeriodEnd)
+        ? prev.financialPeriodEnd
+        : next.financialPeriodEnd || prev.financialPeriodEnd;
   return {
     ...prev,
     ...next,
@@ -204,26 +211,24 @@ function mergeFundamentalRecords(
   };
 }
 
-let writeQueue: Promise<void> = Promise.resolve();
-
 export async function upsertAndSaveFundamentalOverrides(
   records: LiveFundamentalRecord[]
 ): Promise<number> {
   if (records.length === 0) return 0;
-  let totalSaved = 0;
-  const op = writeQueue.then(() => {
-    const current = loadLiveFundamentalOverrides();
+  return withFileLock(overridesPath(), () => {
+    const current = readJsonSafe<Record<string, LiveFundamentalRecord>>(
+      overridesPath(),
+      {},
+      { validate: isPlainRecord, throwOnCorruptWithoutBackup: true }
+    );
     for (const rec of records) {
       const sym = rec.symbol.trim().toUpperCase();
       if (!sym) continue;
       current[sym] = mergeFundamentalRecords(current[sym], { ...rec, symbol: sym });
     }
     saveLiveFundamentalOverrides(current);
-    totalSaved = Object.keys(current).length;
+    return Object.keys(current).length;
   });
-  writeQueue = op.catch(() => {});
-  await op;
-  return totalSaved;
 }
 
 function toLiveFundamentalRecord(p: IndianFundamentalsPayload): LiveFundamentalRecord {
@@ -290,13 +295,22 @@ const EPS_ATTEMPT_CACHE = new Map<string, number>();
 export async function saveSymbolFundamentalsToCache(
   symbol: string,
   xbrlFilings?: XbrlFiling[],
-  forceBseProbe = true
+  forceBseProbe = true,
+  options?: { isEligible?: (symbol: string) => boolean }
 ): Promise<{
   record: LiveFundamentalRecord | null;
   totalSavedCount: number;
   error?: string;
 }> {
   const sym = symbol.trim().toUpperCase();
+  if (options?.isEligible && !options.isEligible(sym)) {
+    const current = loadLiveFundamentalOverrides();
+    return {
+      record: current[sym] ?? null,
+      totalSavedCount: Object.keys(current).length,
+      error: `Symbol ${sym} is not in Tier 1, Tier 2, or Tier 3 (Fundamental Deep Audit is restricted to Tier 1–3 stocks).`,
+    };
+  }
   try {
     const fresh = await fetchTrustedFundamentalsForSymbol(sym, xbrlFilings, forceBseProbe, true);
     const totalSavedCount = await upsertAndSaveFundamentalOverrides([fresh]);
@@ -313,7 +327,8 @@ export async function saveSymbolFundamentalsToCache(
 
 export async function ensureLiveFundamentalsForSymbol(
   symbol: string,
-  xbrlFilings?: XbrlFiling[]
+  xbrlFilings?: XbrlFiling[],
+  options?: { isEligible?: (symbol: string) => boolean }
 ): Promise<LiveFundamentalRecord | null> {
   const sym = symbol.trim().toUpperCase();
   const overrides = loadLiveFundamentalOverrides();
@@ -327,6 +342,10 @@ export async function ensureLiveFundamentalsForSymbol(
     cached.epsTtmCurr !== undefined
   ) {
     return cached;
+  }
+
+  if (options?.isEligible && !options.isEligible(sym)) {
+    return cached ?? null;
   }
 
   const lastTry = EPS_ATTEMPT_CACHE.get(sym) ?? 0;
@@ -347,12 +366,32 @@ export async function ensureLiveFundamentalsForSymbol(
 export async function refreshFundamentalsBatch(
   symbols: string[],
   xbrlBySymbol?: Map<string, XbrlFiling[]>,
-  forceBseProbe = false
+  forceBseProbe = false,
+  options?: { isEligible?: (symbol: string) => boolean }
 ): Promise<{
   succeeded: string[];
   failed: Array<{ symbol: string; error: string }>;
 }> {
-  const batch = await getVerifiedFundamentalsBatch(symbols, {
+  const normalized = symbols.map((s) => s.trim().toUpperCase()).filter(Boolean);
+  const failed: Array<{ symbol: string; error: string }> = [];
+  const eligibleSymbols: string[] = [];
+
+  for (const sym of normalized) {
+    if (options?.isEligible && !options.isEligible(sym)) {
+      failed.push({
+        symbol: sym,
+        error: `Symbol ${sym} is not in Tier 1, Tier 2, or Tier 3.`,
+      });
+    } else {
+      eligibleSymbols.push(sym);
+    }
+  }
+
+  if (eligibleSymbols.length === 0) {
+    return { succeeded: [], failed };
+  }
+
+  const batch = await getVerifiedFundamentalsBatch(eligibleSymbols, {
     xbrlBySymbol,
     forceBseProbe,
     forceRefresh: true,
@@ -373,7 +412,7 @@ export async function refreshFundamentalsBatch(
     await upsertAndSaveFundamentalOverrides(recordsToSave);
   }
 
-  return { succeeded: batch.succeeded, failed: batch.failed };
+  return { succeeded: batch.succeeded, failed: [...failed, ...batch.failed] };
 }
 
 let collectionStatus: FundamentalCollectionStatus = {
@@ -400,23 +439,32 @@ export function startFullFundamentalCollection(
   symbols: string[],
   scope: string,
   xbrlBySymbol: Map<string, XbrlFiling[]>,
-  onCheckpointReload: () => void
+  onCheckpointReload: () => void,
+  options?: { isEligible?: (symbol: string) => boolean }
 ): FundamentalCollectionStatus {
   if (collectionStatus.running) {
+    return getCollectionJobStatus();
+  }
+
+  const targetSymbols = options?.isEligible
+    ? symbols.map((s) => s.trim().toUpperCase()).filter((s) => options.isEligible!(s))
+    : symbols.map((s) => s.trim().toUpperCase()).filter(Boolean);
+
+  if (targetSymbols.length === 0) {
     return getCollectionJobStatus();
   }
 
   collectionStatus = {
     running: true,
     scope,
-    total: symbols.length,
+    total: targetSymbols.length,
     processed: 0,
     succeeded: 0,
     failed: 0,
     nseXbrlHits: 0,
     yahooNsHits: 0,
     bseBoHits: 0,
-    currentSymbol: symbols[0] || '',
+    currentSymbol: targetSymbols[0] || '',
     startedAtUtc: new Date().toISOString(),
     finishedAtUtc: '',
     lastError: null,
@@ -427,8 +475,8 @@ export function startFullFundamentalCollection(
     const CHUNK_SIZE = 2;
 
     try {
-      for (let i = 0; i < symbols.length; i += CHUNK_SIZE) {
-        const chunk = symbols.slice(i, i + CHUNK_SIZE);
+      for (let i = 0; i < targetSymbols.length; i += CHUNK_SIZE) {
+        const chunk = targetSymbols.slice(i, i + CHUNK_SIZE);
         collectionStatus.currentSymbol = chunk[0] || '';
         const settled = await Promise.allSettled(
           chunk.map((sym) => fetchTrustedFundamentalsForSymbol(sym, xbrlBySymbol.get(sym), true, false))
@@ -457,7 +505,7 @@ export function startFullFundamentalCollection(
           onCheckpointReload();
         }
 
-        if (i + CHUNK_SIZE < symbols.length) {
+        if (i + CHUNK_SIZE < targetSymbols.length) {
           await new Promise((r) => setTimeout(r, 350));
         }
       }
@@ -479,6 +527,160 @@ export function startFullFundamentalCollection(
   return getCollectionJobStatus();
 }
 
+interface NseCalendarYear {
+  holidays?: string[];
+  special_sessions?: Record<string, string>;
+}
+
+interface NseTradingCalendarData {
+  holidaysByYear: Map<string, Set<string>>;
+  specialSessions: Set<string>;
+}
+
+export function loadNseTradingCalendar(rootDir: string = process.cwd()): NseTradingCalendarData {
+  const file = path.join(rootDir, 'data', 'inputs', 'nse_trading_calendar.json');
+  const holidaysByYear = new Map<string, Set<string>>();
+  const specialSessions = new Set<string>();
+  if (!fs.existsSync(file)) {
+    return { holidaysByYear, specialSessions };
+  }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as {
+      years?: Record<string, NseCalendarYear>;
+    };
+    for (const [year, info] of Object.entries(parsed?.years ?? {})) {
+      holidaysByYear.set(
+        year,
+        new Set((info?.holidays ?? []).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)))
+      );
+      for (const dt of Object.keys(info?.special_sessions ?? {})) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dt)) {
+          specialSessions.add(dt);
+        }
+      }
+    }
+  } catch {
+    // Fallback to weekday-only heuristic when calendar unreadable
+  }
+  return { holidaysByYear, specialSessions };
+}
+
+export function isNseTradingDay(isoDate: string, calendar?: NseTradingCalendarData): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return false;
+  const cal = calendar ?? loadNseTradingCalendar();
+  if (cal.specialSessions.has(isoDate)) return true;
+  const d = new Date(`${isoDate}T00:00:00Z`);
+  if (!Number.isFinite(d.getTime())) return false;
+  const dow = d.getUTCDay();
+  if (dow === 0 || dow === 6) return false;
+  const yr = isoDate.slice(0, 4);
+  const yearHolidays = cal.holidaysByYear.get(yr);
+  if (yearHolidays?.has(isoDate)) return false;
+  return true;
+}
+
+export function getCachedBhavcopyDates(deliveryDir?: string): string[] {
+  const dir = deliveryDir ?? path.join(process.cwd(), 'data', 'cache', 'delivery');
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .map((f) => {
+      const m = f.match(/^sec_bhavdata_full_(\d{2})(\d{2})(\d{4})\.csv$/);
+      if (!m) return '';
+      const fullPath = path.join(dir, f);
+      try {
+        if (fs.statSync(fullPath).size <= 1000) return '';
+      } catch {
+        return '';
+      }
+      return `${m[3]}-${m[2]}-${m[1]}`;
+    })
+    .filter(Boolean)
+    .sort();
+}
+
+async function downloadAndValidateBhavcopyForDate(
+  iso: string,
+  deliveryDir: string
+): Promise<{
+  status: 'DOWNLOADED' | 'ALREADY_CACHED' | 'UNAVAILABLE';
+  filePath: string;
+  filename: string;
+  rowsCount?: number;
+  error?: string;
+}> {
+  const [yyyy, mm, dd] = iso.split('-');
+  const token = `${dd}${mm}${yyyy}`;
+  const filename = `sec_bhavdata_full_${token}.csv`;
+  const filePath = path.join(deliveryDir, filename);
+
+  // Never overwrite or delete already-cached historical Bhavcopy files
+  if (fs.existsSync(filePath) && fs.statSync(filePath).size > 1000) {
+    return { status: 'ALREADY_CACHED', filePath, filename };
+  }
+
+  const url = `https://nsearchives.nseindia.com/products/content/${filename}`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': UA,
+        Accept: 'text/csv,text/plain,*/*',
+        Referer: 'https://www.nseindia.com/all-reports',
+      },
+      signal: AbortSignal.timeout(12000),
+    });
+    if (!res.ok) {
+      return { status: 'UNAVAILABLE', filePath, filename, error: `${iso}: HTTP ${res.status}` };
+    }
+    const text = await res.text();
+    const trimmed = text.trimStart();
+    if (!trimmed || trimmed.toLowerCase().startsWith('<html') || trimmed.startsWith('<!')) {
+      return { status: 'UNAVAILABLE', filePath, filename, error: `${iso}: NSE returned HTML instead of CSV` };
+    }
+    const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    if (lines.length < 100) {
+      return { status: 'UNAVAILABLE', filePath, filename, error: `${iso}: CSV too short (${lines.length} lines)` };
+    }
+    const headers = lines[0].split(',').map((h) => h.trim().toUpperCase());
+    const dateIdx = headers.indexOf('DATE1');
+    if (
+      dateIdx < 0 ||
+      !headers.includes('SYMBOL') ||
+      !headers.includes('CLOSE_PRICE') ||
+      !headers.includes('DELIV_PER')
+    ) {
+      return { status: 'UNAVAILABLE', filePath, filename, error: `${iso}: Required Bhavcopy columns missing` };
+    }
+    const firstDateRaw = lines[1].split(',')[dateIdx] || '';
+    const lastDateRaw = lines[lines.length - 1].split(',')[dateIdx] || '';
+    const parsedFirst = parseBhavDateToIso(firstDateRaw);
+    const parsedLast = parseBhavDateToIso(lastDateRaw);
+    if (parsedFirst !== iso || (parsedLast && parsedLast !== iso)) {
+      return {
+        status: 'UNAVAILABLE',
+        filePath,
+        filename,
+        error: `${iso}: Internal DATE1 (${parsedFirst}/${parsedLast}) mismatches filename date`,
+      };
+    }
+
+    atomicWriteFileSync(filePath, text);
+    return {
+      status: 'DOWNLOADED',
+      filePath,
+      filename,
+      rowsCount: lines.length - 1,
+    };
+  } catch (err) {
+    return {
+      status: 'UNAVAILABLE',
+      filePath,
+      filename,
+      error: `${iso}: ${(err as Error).message}`,
+    };
+  }
+}
+
 export async function fetchNseBhavcopyForDate(
   targetIsoDate?: string
 ): Promise<{
@@ -488,17 +690,18 @@ export async function fetchNseBhavcopyForDate(
   rowsCount?: number;
   message: string;
 }> {
+  const calendar = loadNseTradingCalendar();
   const candidates: string[] = [];
   if (targetIsoDate && /^\d{4}-\d{2}-\d{2}$/.test(targetIsoDate)) {
     candidates.push(targetIsoDate);
   } else {
-    // Check IST today and walk back up to 5 calendar days for latest trading session
+    // Check IST today and walk back up to 7 calendar days for latest trading session
     const nowIst = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
-    for (let offset = 0; offset < 6; offset++) {
+    for (let offset = 0; offset < 7; offset++) {
       const d = new Date(nowIst.getTime() - offset * 24 * 60 * 60 * 1000);
-      const dayOfWeek = d.getUTCDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-      candidates.push(d.toISOString().slice(0, 10));
+      const iso = d.toISOString().slice(0, 10);
+      if (!isNseTradingDay(iso, calendar)) continue;
+      candidates.push(iso);
     }
   }
 
@@ -508,75 +711,122 @@ export async function fetchNseBhavcopyForDate(
   const errors: string[] = [];
 
   for (const iso of candidates) {
-    const [yyyy, mm, dd] = iso.split('-');
-    const token = `${dd}${mm}${yyyy}`;
-    const filename = `sec_bhavdata_full_${token}.csv`;
-    const filePath = path.join(deliveryDir, filename);
-
-    if (fs.existsSync(filePath) && fs.statSync(filePath).size > 1000) {
+    const res = await downloadAndValidateBhavcopyForDate(iso, deliveryDir);
+    if (res.status === 'ALREADY_CACHED') {
       return {
         status: 'ALREADY_CACHED',
         date: iso,
-        filePath: filename,
+        filePath: res.filename,
         message: `Latest available NSE Bhavcopy (${iso}) is already cached locally.`,
       };
     }
-
-    const url = `https://nsearchives.nseindia.com/products/content/${filename}`;
-    try {
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': UA,
-          Accept: 'text/csv,text/plain,*/*',
-          Referer: 'https://www.nseindia.com/',
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) {
-        errors.push(`${iso}: HTTP ${res.status}`);
-        continue;
-      }
-      const text = await res.text();
-      if (!text || text.trimStart().toLowerCase().startsWith('<html') || text.trimStart().startsWith('<!')) {
-        errors.push(`${iso}: NSE returned HTML instead of CSV`);
-        continue;
-      }
-      const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-      if (lines.length < 100) {
-        errors.push(`${iso}: CSV too short (${lines.length} lines)`);
-        continue;
-      }
-      const headers = lines[0].split(',').map((h) => h.trim().toUpperCase());
-      const dateIdx = headers.indexOf('DATE1');
-      if (dateIdx < 0 || !headers.includes('SYMBOL') || !headers.includes('DELIV_PER')) {
-        errors.push(`${iso}: Required Bhavcopy columns missing`);
-        continue;
-      }
-      // Integrity check matching delivery_filter.py validate_delivery_report_date
-      const sampleDateRaw = lines[1].split(',')[dateIdx] || '';
-      const parsedDate = parseBhavDateToIso(sampleDateRaw);
-      if (parsedDate !== iso) {
-        errors.push(`${iso}: Internal DATE1 (${parsedDate}) mismatches filename date`);
-        continue;
-      }
-
-      fs.writeFileSync(filePath, text, 'utf-8');
+    if (res.status === 'DOWNLOADED') {
       return {
         status: 'DOWNLOADED',
         date: iso,
-        filePath: filename,
-        rowsCount: lines.length - 1,
-        message: `Downloaded and validated NSE Bhavcopy for ${iso} (${lines.length - 1} rows).`,
+        filePath: res.filename,
+        rowsCount: res.rowsCount,
+        message: `Downloaded and validated NSE Bhavcopy for ${iso} (${res.rowsCount} rows).`,
       };
-    } catch (err) {
-      errors.push(`${iso}: ${(err as Error).message}`);
     }
+    if (res.error) errors.push(res.error);
   }
 
   return {
     status: 'UNAVAILABLE',
     date: candidates[0] || '',
     message: `No newer NSE Bhavcopy available yet (${errors.join(' | ') || 'no trading days matched'}).`,
+  };
+}
+
+export async function backfillNseBhavcopiesToMinSessions(options?: {
+  minSessions?: number;
+  targetSessions?: number;
+  maxLookbackCalendarDays?: number;
+  referenceIsoDate?: string;
+  concurrency?: number;
+}): Promise<{
+  initialCachedCount: number;
+  finalCachedCount: number;
+  downloadedDates: string[];
+  meetsMinSessions: boolean;
+  minSessions: number;
+  message: string;
+}> {
+  const minSessions = Math.max(1, options?.minSessions ?? 200);
+  const targetSessions = Math.max(minSessions, options?.targetSessions ?? 220);
+  const maxLookback = Math.max(minSessions, options?.maxLookbackCalendarDays ?? 400);
+  const concurrency = Math.min(8, Math.max(1, options?.concurrency ?? 5));
+
+  const deliveryDir = path.join(process.cwd(), 'data', 'cache', 'delivery');
+  fs.mkdirSync(deliveryDir, { recursive: true });
+
+  const existingDates = getCachedBhavcopyDates(deliveryDir);
+  const initialCachedCount = existingDates.length;
+  if (initialCachedCount >= targetSessions) {
+    return {
+      initialCachedCount,
+      finalCachedCount: initialCachedCount,
+      downloadedDates: [],
+      meetsMinSessions: initialCachedCount >= minSessions,
+      minSessions,
+      message: `Local Bhavcopy archive already holds ${initialCachedCount} actual trading sessions (>= ${minSessions}).`,
+    };
+  }
+
+  const existingSet = new Set(existingDates);
+  const calendar = loadNseTradingCalendar();
+  const refIso = options?.referenceIsoDate || toIstDateIso();
+  const refMs = Date.parse(`${refIso}T00:00:00Z`);
+
+  const missingCandidates: string[] = [];
+  for (let offset = 0; offset <= maxLookback; offset++) {
+    const iso = new Date(refMs - offset * 86_400_000).toISOString().slice(0, 10);
+    if (!isNseTradingDay(iso, calendar)) continue;
+    if (!existingSet.has(iso)) {
+      missingCandidates.push(iso);
+    }
+  }
+
+  const downloadedDates: string[] = [];
+  let currentCount = initialCachedCount;
+
+  for (let i = 0; i < missingCandidates.length && currentCount < targetSessions; i += concurrency) {
+    const needed = targetSessions - currentCount;
+    const batch = missingCandidates.slice(i, i + Math.min(concurrency, needed + 1));
+    const settled = await Promise.all(
+      batch.map(async (iso) => ({
+        iso,
+        res: await downloadAndValidateBhavcopyForDate(iso, deliveryDir),
+      }))
+    );
+
+    for (const item of settled) {
+      if (item.res.status === 'DOWNLOADED') {
+        downloadedDates.push(item.iso);
+        currentCount += 1;
+      }
+    }
+
+    if (currentCount < targetSessions && i + batch.length < missingCandidates.length) {
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
+
+  downloadedDates.sort();
+  const finalDates = getCachedBhavcopyDates(deliveryDir);
+  const finalCachedCount = finalDates.length;
+
+  return {
+    initialCachedCount,
+    finalCachedCount,
+    downloadedDates,
+    meetsMinSessions: finalCachedCount >= minSessions,
+    minSessions,
+    message:
+      downloadedDates.length > 0
+        ? `Backfilled ${downloadedDates.length} NSE Bhavcopy session(s) (${downloadedDates[0]} to ${downloadedDates[downloadedDates.length - 1]}). Total cached sessions: ${finalCachedCount}.`
+        : `Cached ${finalCachedCount} NSE Bhavcopy sessions (target ${minSessions}).`,
   };
 }
 
@@ -591,16 +841,17 @@ export async function syncLatestBhavcopiesCatchup(lookbackCalendarDays = 10): Pr
   const deliveryDir = path.join(process.cwd(), 'data', 'cache', 'delivery');
   fs.mkdirSync(deliveryDir, { recursive: true });
 
+  const calendar = loadNseTradingCalendar();
   const nowIst = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
   const todayIstIso = nowIst.toISOString().slice(0, 10);
 
-  // Build weekday candidates ordered oldest -> newest so multi-day catchup fills chronologically
+  // Build trading-day candidates ordered oldest -> newest using NSE calendar (includes Muhurat special sessions)
   const candidates: string[] = [];
   for (let offset = lookbackCalendarDays; offset >= 0; offset--) {
     const d = new Date(nowIst.getTime() - offset * 24 * 60 * 60 * 1000);
-    const dow = d.getUTCDay();
-    if (dow === 0 || dow === 6) continue;
-    candidates.push(d.toISOString().slice(0, 10));
+    const iso = d.toISOString().slice(0, 10);
+    if (!isNseTradingDay(iso, calendar)) continue;
+    candidates.push(iso);
   }
 
   const downloadedDates: string[] = [];
@@ -609,64 +860,23 @@ export async function syncLatestBhavcopiesCatchup(lookbackCalendarDays = 10): Pr
 
   for (const iso of candidates) {
     checkedDates.push(iso);
-    const [yyyy, mm, dd] = iso.split('-');
-    const token = `${dd}${mm}${yyyy}`;
-    const filename = `sec_bhavdata_full_${token}.csv`;
-    const filePath = path.join(deliveryDir, filename);
-
-    if (fs.existsSync(filePath) && fs.statSync(filePath).size > 1000) {
+    const res = await downloadAndValidateBhavcopyForDate(iso, deliveryDir);
+    if (res.status === 'ALREADY_CACHED') {
       if (iso === todayIstIso) todayPublishedYet = true;
       continue;
     }
-
-    const url = `https://nsearchives.nseindia.com/products/content/${filename}`;
-    try {
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': UA,
-          Accept: 'text/csv,text/plain,*/*',
-          Referer: 'https://www.nseindia.com/',
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (!text || text.trimStart().toLowerCase().startsWith('<html') || text.trimStart().startsWith('<!')) {
-        continue;
-      }
-      const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-      if (lines.length < 100) continue;
-      const headers = lines[0].split(',').map((h) => h.trim().toUpperCase());
-      const dateIdx = headers.indexOf('DATE1');
-      if (dateIdx < 0 || !headers.includes('SYMBOL') || !headers.includes('DELIV_PER')) {
-        continue;
-      }
-      const sampleDateRaw = lines[1].split(',')[dateIdx] || '';
-      const parsedDate = parseBhavDateToIso(sampleDateRaw);
-      if (parsedDate !== iso) continue;
-
-      fs.writeFileSync(filePath, text, 'utf-8');
+    if (res.status === 'DOWNLOADED') {
       downloadedDates.push(iso);
       if (iso === todayIstIso) todayPublishedYet = true;
-    } catch {
-      // Ignore holidays / not-yet-published EOD files
     }
   }
 
-  // Determine actual latest cached ISO date
-  const cachedIsos = fs
-    .readdirSync(deliveryDir)
-    .map((f) => {
-      const m = f.match(/^sec_bhavdata_full_(\d{2})(\d{2})(\d{4})\.csv$/);
-      return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
-    })
-    .filter(Boolean)
-    .sort();
+  const cachedIsos = getCachedBhavcopyDates(deliveryDir);
   const latestCachedDate = cachedIsos[cachedIsos.length - 1] || '';
 
-  const isWeekdayToday = [1, 2, 3, 4, 5].includes(nowIst.getUTCDay());
+  const isTradingToday = isNseTradingDay(todayIstIso, calendar);
   const pendingNote =
-    isWeekdayToday && !todayPublishedYet && latestCachedDate < todayIstIso
+    isTradingToday && !todayPublishedYet && latestCachedDate < todayIstIso
       ? ` (Note: Today's ${todayIstIso} Bhavcopy is published by NSE after market close ~18:00 IST)`
       : '';
 

@@ -5,6 +5,7 @@ import type {
   TradeJournalEntry,
   TradeJournalSentiment,
 } from '../types/trading';
+import { authFetch } from '../utils/authClient';
 
 interface TradeJournalPanelProps {
   symbol: string;
@@ -174,7 +175,7 @@ export const TradeJournalPanel: React.FC<TradeJournalPanelProps> = ({
         : `/api/stock/${encodeURIComponent(symbol)}/journal`;
       const method = editingId ? 'PATCH' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -207,7 +208,7 @@ export const TradeJournalPanel: React.FC<TradeJournalPanelProps> = ({
   const handleDelete = async (entry: TradeJournalEntry) => {
     setError(null);
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `/api/stock/${encodeURIComponent(entry.symbol)}/journal/${encodeURIComponent(entry.id)}`,
         { method: 'DELETE' }
       );

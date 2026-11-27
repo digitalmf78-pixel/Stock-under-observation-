@@ -7,8 +7,10 @@ import { evaluateRiskControls } from './server/riskControls.ts';
 import { runEcmsGeminiResearch } from './server/geminiResearch.ts';
 import { fetch5YearDividendHistory } from './server/dividendHistoryService.ts';
 import {
+  backfillNseBhavcopiesToMinSessions,
   ensureLiveFundamentalsForSymbol,
   fetchNseBhavcopyForDate,
+  getCachedBhavcopyDates,
   getCollectionJobStatus,
   refreshFundamentalsBatch,
   saveSymbolFundamentalsToCache,
@@ -65,21 +67,75 @@ import {
   getVerifiedFundamentals,
 } from './server/services/fundamentalService.ts';
 import { getCatalystNewsWithAiSummary } from './server/services/catalystNewsService.ts';
+import { adminAuth } from './server/adminAuth.ts';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const HOST = '0.0.0.0';
 
 async function startServer() {
   const app = express();
   app.use(express.json({ limit: '1mb' }));
 
-  // Preload NSE datasets & synchronize daily T1/T2 snapshot memory once on startup
-  nsePipeline.ensureLoaded();
-  syncT1T2DailySnapshots();
-
-  // Health endpoint
+  // Health endpoint responds immediately even while initial Bhavcopy warmup runs after bind
   app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok' });
+    const initialized = nsePipeline.isLoaded();
+    const sessionsLoaded = initialized
+      ? nsePipeline.getCachedSessionCount()
+      : getCachedBhavcopyDates().length;
+    res.json({
+      status: 'ok',
+      warmingUp: !initialized,
+      sessionsLoaded,
+      minRequiredSessions: 200,
+      meetsMinSessions: sessionsLoaded >= 200,
+    });
+  });
+
+  // Admin Auth status & passcode unlock endpoints (in-memory Bearer token; never exposes secrets)
+  app.get('/api/auth/status', (req, res) => {
+    res.json(adminAuth.getStatus(req));
+  });
+
+  app.post('/api/auth/setup', (req, res) => {
+    const passcode = typeof req.body?.passcode === 'string' ? req.body.passcode : '';
+    const result = adminAuth.claimFirstPasscode(passcode);
+    if (!result.ok || !result.token) {
+      return res.status(result.statusCode).json({ error: result.error });
+    }
+    return res.status(result.statusCode).json({
+      token: result.token,
+      ...adminAuth.getStatus({ headers: { authorization: `Bearer ${result.token}` } }),
+    });
+  });
+
+  app.post('/api/auth/login', (req, res) => {
+    const passcode = typeof req.body?.passcode === 'string' ? req.body.passcode : '';
+    const result = adminAuth.loginWithPasscode(passcode);
+    if (!result.ok || !result.token) {
+      return res.status(result.statusCode).json({ error: result.error });
+    }
+    return res.status(result.statusCode).json({
+      token: result.token,
+      ...adminAuth.getStatus({ headers: { authorization: `Bearer ${result.token}` } }),
+    });
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    adminAuth.revokeToken(req);
+    res.json({ ok: true });
+  });
+
+  // Ensure data endpoints await non-blocking async pipeline warmup without blocking Vite or /api/health
+  app.use('/api', async (req, res, next) => {
+    if (req.path === '/health' || req.path.startsWith('/auth/')) {
+      return next();
+    }
+    try {
+      await nsePipeline.ensureLoadedAsync();
+      next();
+    } catch (err) {
+      res.status(500).json({ error: (err as Error).message });
+    }
   });
 
   // V8 Pipeline Overview & Funnel
@@ -91,7 +147,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/fundamentals/thresholds', (req, res) => {
+  app.post('/api/fundamentals/thresholds', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const updated = nsePipeline.updateThresholds(process.cwd(), req.body);
       res.json({ success: true, thresholds: updated });
@@ -209,7 +265,7 @@ async function startServer() {
   });
 
   // Sync NSE Bulk/Block 30D Deals + Yahoo Quote Calendar & IPO First-Trade Dates across All NSE Symbols
-  app.post('/api/catalysts/sync', async (req, res) => {
+  app.post('/api/catalysts/sync', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const refIso = nsePipeline.getLatestSessionRefIso();
       const bulkStore = await syncNseBulkBlockDeals(refIso, { force: true });
@@ -414,6 +470,7 @@ async function startServer() {
         typeof req.query.epsPrev === 'string' && typeof req.query.epsCurr === 'string';
       if (
         !hasManualEps &&
+        nsePipeline.isSymbolEligibleForFundamentalAudit(sym) &&
         (detail.fundamentals?.epsPrev === null ||
           detail.fundamentals?.epsPrev === undefined ||
           detail.fundamentals?.epsCurr === null ||
@@ -421,7 +478,8 @@ async function startServer() {
       ) {
         const fetched = await ensureLiveFundamentalsForSymbol(
           sym,
-          nsePipeline.getXbrlFilingsForSymbol(sym)
+          nsePipeline.getXbrlFilingsForSymbol(sym),
+          { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
         );
         if (fetched && (fetched.epsCurr !== null || fetched.trailingPE !== null)) {
           nsePipeline.reload();
@@ -506,6 +564,7 @@ async function startServer() {
 
       if (
         !hasManualOverride &&
+        nsePipeline.isSymbolEligibleForFundamentalAudit(sym) &&
         (detail.fundamentals?.epsCurr === null ||
           detail.fundamentals?.epsCurr === undefined ||
           detail.fundamentals?.epsTtmCurr === null ||
@@ -513,7 +572,8 @@ async function startServer() {
       ) {
         const fetched = await ensureLiveFundamentalsForSymbol(
           sym,
-          nsePipeline.getXbrlFilingsForSymbol(sym)
+          nsePipeline.getXbrlFilingsForSymbol(sym),
+          { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
         );
         if (fetched && (fetched.epsCurr !== null || fetched.epsTtmCurr !== null)) {
           nsePipeline.reload();
@@ -577,19 +637,27 @@ async function startServer() {
     }
   });
 
-  // Automatic & Explicit Fundamental Save-to-Cache (Single Symbol or Full NSE Universe)
-  app.post('/api/fundamentals/save-to-cache', async (req, res) => {
+  // Automatic & Explicit Fundamental Save-to-Cache (Restricted Strictly to Tier 1-3 Selected Stocks)
+  app.post('/api/fundamentals/save-to-cache', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const symbol =
         typeof req.body?.symbol === 'string' ? req.body.symbol.trim().toUpperCase() : '';
       const saveAll = Boolean(req.body?.saveAll);
 
       if (symbol) {
+        if (!nsePipeline.isSymbolEligibleForFundamentalAudit(symbol)) {
+          return res.status(403).json({
+            saved: false,
+            symbol,
+            error: `Symbol ${symbol} is not in Tier 1, Tier 2, or Tier 3. Fundamental Deep Audit runs strictly on selected Tier 1–3 stocks.`,
+          });
+        }
         const forceBse = req.body?.force !== undefined ? Boolean(req.body.force) : true;
         const result = await saveSymbolFundamentalsToCache(
           symbol,
           nsePipeline.getXbrlFilingsForSymbol(symbol),
-          forceBse
+          forceBse,
+          { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
         );
         if (result.record) {
           nsePipeline.reload();
@@ -618,7 +686,7 @@ async function startServer() {
           return res.json({
             started: false,
             ...getCollectionJobStatus(),
-            message: 'All NSE stocks in selected scope are already saved & up to date in cache.',
+            message: 'All Tier 1–3 stocks in selected scope are already saved & up to date in cache.',
           });
         }
 
@@ -626,7 +694,8 @@ async function startServer() {
           targets,
           scope,
           nsePipeline.getXbrlBySymbolMap(),
-          () => nsePipeline.reload()
+          () => nsePipeline.reload(),
+          { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
         );
         return res.json({
           started: true,
@@ -642,8 +711,8 @@ async function startServer() {
     }
   });
 
-  // Live Fundamental Fetcher (Single Symbol or Batch Missing Liquidity-Qualified)
-  app.post('/api/refresh/fundamentals', async (req, res) => {
+  // Live Fundamental Fetcher (Restricted Strictly to Tier 1-3 Selected Stocks)
+  app.post('/api/refresh/fundamentals', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const symbol = typeof req.body?.symbol === 'string' ? req.body.symbol.trim().toUpperCase() : '';
       const batchMissing = Boolean(req.body?.batchMissing);
@@ -651,6 +720,11 @@ async function startServer() {
 
       let targets: string[] = [];
       if (symbol) {
+        if (!nsePipeline.isSymbolEligibleForFundamentalAudit(symbol)) {
+          return res.status(403).json({
+            error: `Symbol ${symbol} is not in Tier 1, Tier 2, or Tier 3. Fundamental Deep Audit runs strictly on selected Tier 1–3 stocks.`,
+          });
+        }
         targets = [symbol];
       } else if (batchMissing) {
         targets = nsePipeline.getMissingFundamentalCandidates(limit);
@@ -662,12 +736,14 @@ async function startServer() {
         return res.json({
           succeeded: [],
           failed: [],
-          message: 'All liquidity-qualified candidates already have complete fundamentals.',
+          message: 'All Tier 1–3 selected candidates already have complete fundamentals.',
         });
       }
 
       const forceBse = Boolean(req.body?.forceBse);
-      const result = await refreshFundamentalsBatch(targets, nsePipeline.getXbrlBySymbolMap(), forceBse);
+      const result = await refreshFundamentalsBatch(targets, nsePipeline.getXbrlBySymbolMap(), forceBse, {
+        isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s),
+      });
       if (result.succeeded.length > 0) {
         nsePipeline.reload();
       }
@@ -697,8 +773,8 @@ async function startServer() {
     }
   });
 
-  // Full-Universe Multi-Source Fundamental Collection (NSE XBRL + YFinance .NS + BSE .BO)
-  app.post('/api/fundamentals/collect-all', (req, res) => {
+  // Tier 1-3 Selected Watchlist Multi-Source Fundamental Collection (NSE XBRL + Screener.in + BSE Official)
+  app.post('/api/fundamentals/collect-all', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const rawScope = typeof req.body?.scope === 'string' ? req.body.scope.toUpperCase() : 'MISSING_OR_OLD';
       const scope: 'MISSING_OR_OLD' | 'NOT_AVAILABLE' | 'LIQUID' | 'ALL' =
@@ -712,7 +788,7 @@ async function startServer() {
       if (targets.length === 0) {
         return res.json({
           ...getCollectionJobStatus(),
-          message: 'All stocks in selected scope already have latest fundamentals.',
+          message: 'All Tier 1–3 stocks in selected scope already have latest fundamentals.',
         });
       }
 
@@ -720,7 +796,8 @@ async function startServer() {
         targets,
         scope,
         nsePipeline.getXbrlBySymbolMap(),
-        () => nsePipeline.reload()
+        () => nsePipeline.reload(),
+        { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
       );
       return res.json(status);
     } catch (err) {
@@ -732,12 +809,17 @@ async function startServer() {
     res.json(getCollectionJobStatus());
   });
 
-  // Verified Fundamental Data Service (Screener.in + BSE Official + NSE XBRL + guarded Yahoo fallback)
+  // Verified Fundamental Data Service (Restricted Strictly to Tier 1-3 Selected Stocks)
   app.get('/api/fundamentals/verified/:symbol', async (req, res) => {
     try {
       const sym = String(req.params.symbol || '').trim().toUpperCase();
       if (!sym) {
         return res.status(400).json({ error: 'Symbol is required.' });
+      }
+      if (!nsePipeline.isSymbolEligibleForFundamentalAudit(sym)) {
+        return res.status(403).json({
+          error: `Symbol ${sym} is not in Tier 1, Tier 2, or Tier 3. Fundamental Deep Audit runs strictly on selected Tier 1–3 stocks.`,
+        });
       }
       const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
       const forceBseProbe = req.query.bse === '1' || req.query.bse === 'true';
@@ -764,20 +846,20 @@ async function startServer() {
     }
   });
 
-  app.post('/api/fundamentals/cache/evict', (req, res) => {
+  app.post('/api/fundamentals/cache/evict', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const symbol =
         typeof req.body?.symbol === 'string' && req.body.symbol.trim()
           ? req.body.symbol.trim().toUpperCase()
           : undefined;
-      return res.json(evictFundamentalCache(symbol));
+      return res.json(await evictFundamentalCache(symbol));
     } catch (err) {
       return res.status(500).json({ error: (err as Error).message });
     }
   });
 
   // Live NSE Bhavcopy Sync (catches up all missing sessions automatically unless target date given)
-  app.post('/api/refresh/bhavcopy', async (req, res) => {
+  app.post('/api/refresh/bhavcopy', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const targetDate = typeof req.body?.date === 'string' ? req.body.date.trim() : undefined;
       if (targetDate) {
@@ -806,21 +888,30 @@ async function startServer() {
   });
 
   // 1-Click Full Scanner Reload: Catch up missing Bhavcopies + Sync 30D Bulk/Block + Recompute Entire Pipeline
-  app.post('/api/scanner/reload-all', async (_req, res) => {
+  app.post('/api/scanner/reload-all', adminAuth.requireAdminAuth, async (_req, res) => {
     try {
+      let backfilledDates: string[] = [];
+      if (getCachedBhavcopyDates().length < 200) {
+        const backfill = await backfillNseBhavcopiesToMinSessions({
+          minSessions: 200,
+          targetSessions: 220,
+        });
+        backfilledDates = backfill.downloadedDates;
+      }
       const catchup = await syncLatestBhavcopiesCatchup(12);
       nsePipeline.reload();
       syncT1T2DailySnapshots();
       const refIso = nsePipeline.getLatestSessionRefIso();
       const bulkStore = await syncNseBulkBlockDeals(refIso, { force: true });
       const overview = nsePipeline.getOverview();
+      const allDownloaded = Array.from(new Set([...backfilledDates, ...catchup.downloadedDates])).sort();
 
       return res.json({
         reloaded: true,
         latestSessionDate: overview.latestSessionDate,
         sessionsLoaded: overview.sessionsLoaded,
         totalStocks: overview.funnel.universeMainboard,
-        downloadedDates: catchup.downloadedDates,
+        downloadedDates: allDownloaded,
         latestCachedDate: catchup.latestCachedDate,
         todayIstIso: catchup.todayIstIso,
         todayPublishedYet: catchup.todayPublishedYet,
@@ -851,7 +942,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/stock/:symbol/journal', (req, res) => {
+  app.post('/api/stock/:symbol/journal', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const sym = req.params.symbol.trim().toUpperCase();
       const result = createTradeJournalEntry({
@@ -873,7 +964,7 @@ async function startServer() {
     }
   });
 
-  app.patch('/api/stock/:symbol/journal/:id', (req, res) => {
+  app.patch('/api/stock/:symbol/journal/:id', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const sym = req.params.symbol.trim().toUpperCase();
       const id = req.params.id.trim();
@@ -885,7 +976,7 @@ async function startServer() {
     }
   });
 
-  app.delete('/api/stock/:symbol/journal/:id', (req, res) => {
+  app.delete('/api/stock/:symbol/journal/:id', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const sym = req.params.symbol.trim().toUpperCase();
       const id = req.params.id.trim();
@@ -906,7 +997,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/watchlist/toggle', (req, res) => {
+  app.post('/api/watchlist/toggle', adminAuth.requireAdminAuth, (req, res) => {
     try {
       const symbol = typeof req.body?.symbol === 'string' ? req.body.symbol : '';
       const toggled = toggleWatchlistSymbol(symbol);
@@ -919,7 +1010,7 @@ async function startServer() {
     }
   });
 
-  app.delete('/api/watchlist/:symbol', (req, res) => {
+  app.delete('/api/watchlist/:symbol', adminAuth.requireAdminAuth, (req, res) => {
     try {
       removeWatchlistSymbol(req.params.symbol);
       return res.json(buildWatchlistResponse(nsePipeline.getAllScreenerRows()));
@@ -1081,7 +1172,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/paper-trades/sync', async (req, res) => {
+  app.post('/api/paper-trades/sync', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const clientTrades = Array.isArray(req.body?.trades) ? req.body.trades : [];
       const deletedIds = Array.isArray(req.body?.deletedIds) ? req.body.deletedIds : [];
@@ -1093,7 +1184,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/paper-trades/buy', async (req, res) => {
+  app.post('/api/paper-trades/buy', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const result = await createPaperBuyTrade({
         symbol: typeof req.body?.symbol === 'string' ? req.body.symbol : '',
@@ -1111,7 +1202,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/paper-trades/:id/sell', async (req, res) => {
+  app.post('/api/paper-trades/:id/sell', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const result = await closePaperSellTrade(req.params.id, {
         exitPrice: req.body?.exitPrice,
@@ -1124,7 +1215,7 @@ async function startServer() {
     }
   });
 
-  app.delete('/api/paper-trades/:id', async (req, res) => {
+  app.delete('/api/paper-trades/:id', adminAuth.requireAdminAuth, async (req, res) => {
     try {
       const portfolio = await deletePaperTrade(req.params.id);
       return res.json(portfolio);
@@ -1175,61 +1266,94 @@ async function startServer() {
   app.listen(PORT, HOST, () => {
     console.log(`NSE V8 & ECMS Research server running at http://${HOST}:${PORT}`);
 
-    // Non-blocking startup sync: Catch up latest NSE Bhavcopy + 30D Bulk/Block CSV + Quote Calendar & IPO Dates + Auto Fundamental Collector
+    // Defer yielding Bhavcopy dataset warmup until after port 3000 is bound so Vite/health/TCP probes respond immediately
     setTimeout(() => {
       void (async () => {
         try {
-          const catchup = await syncLatestBhavcopiesCatchup(10);
-          if (catchup.downloadedDates.length > 0) {
-            console.log(`Startup Bhavcopy catchup downloaded: ${catchup.downloadedDates.join(', ')}`);
-            nsePipeline.reload();
-          }
-
-          const refIso = nsePipeline.getLatestSessionRefIso();
-          await syncNseBulkBlockDeals(refIso);
-
-          const catalystCacheFile = path.join(
-            process.cwd(),
-            'data',
-            'research',
-            'catalysts_cache.json'
-          );
-          let lastQuoteSyncMs = 0;
-          if (fs.existsSync(catalystCacheFile)) {
-            try {
-              const raw = JSON.parse(fs.readFileSync(catalystCacheFile, 'utf-8')) as {
-                lastUniverseQuoteSyncUtc?: string;
-              };
-              if (raw?.lastUniverseQuoteSyncUtc) {
-                lastQuoteSyncMs = Date.parse(raw.lastUniverseQuoteSyncUtc) || 0;
-              }
-            } catch {
-              lastQuoteSyncMs = 0;
-            }
-          }
-
-          if (!lastQuoteSyncMs || Date.now() - lastQuoteSyncMs > 6 * 60 * 60 * 1000) {
-            await syncUniverseQuoteCalendarAndIpo(nsePipeline.getAllSymbols(), refIso, () =>
-              nsePipeline.reload()
-            );
-          }
-
-          if (!getCollectionJobStatus().running) {
-            const missingTargets = nsePipeline.getAuditCollectionTargets('MISSING_OR_OLD', 40);
-            if (missingTargets.length > 0) {
-              startFullFundamentalCollection(
-                missingTargets,
-                'AUTO_MISSING_OR_OLD',
-                nsePipeline.getXbrlBySymbolMap(),
-                () => nsePipeline.reload()
-              );
-            }
-          }
+          await nsePipeline.ensureLoadedAsync();
+          syncT1T2DailySnapshots();
         } catch (err) {
-          console.error('Startup background sync warning:', (err as Error).message);
+          console.error('Startup dataset warmup error:', (err as Error).message);
         }
+
+        // Non-blocking startup sync: Catch up latest NSE Bhavcopy + 30D Bulk/Block CSV + Quote Calendar & IPO Dates + Auto Fundamental Collector
+        setTimeout(() => {
+          void (async () => {
+            try {
+              let backfilledCount = 0;
+              if (getCachedBhavcopyDates().length < 200) {
+                const backfill = await backfillNseBhavcopiesToMinSessions({
+                  minSessions: 200,
+                  targetSessions: 220,
+                });
+                backfilledCount = backfill.downloadedDates.length;
+                if (backfilledCount > 0) {
+                  console.log(backfill.message);
+                }
+              }
+              const catchup = await syncLatestBhavcopiesCatchup(10);
+              if (catchup.downloadedDates.length > 0 || backfilledCount > 0) {
+                console.log(
+                  `Startup Bhavcopy catchup downloaded: ${
+                    catchup.downloadedDates.length > 0
+                      ? catchup.downloadedDates.join(', ')
+                      : `${backfilledCount} historical sessions`
+                  }`
+                );
+                await nsePipeline.reloadAsync();
+                syncT1T2DailySnapshots();
+              }
+
+              const refIso = nsePipeline.getLatestSessionRefIso();
+              await syncNseBulkBlockDeals(refIso);
+
+              const catalystCacheFile = path.join(
+                process.cwd(),
+                'data',
+                'research',
+                'catalysts_cache.json'
+              );
+              let lastQuoteSyncMs = 0;
+              if (fs.existsSync(catalystCacheFile)) {
+                try {
+                  const raw = JSON.parse(fs.readFileSync(catalystCacheFile, 'utf-8')) as {
+                    lastUniverseQuoteSyncUtc?: string;
+                  };
+                  if (raw?.lastUniverseQuoteSyncUtc) {
+                    lastQuoteSyncMs = Date.parse(raw.lastUniverseQuoteSyncUtc) || 0;
+                  }
+                } catch {
+                  lastQuoteSyncMs = 0;
+                }
+              }
+
+              if (!lastQuoteSyncMs || Date.now() - lastQuoteSyncMs > 6 * 60 * 60 * 1000) {
+                await syncUniverseQuoteCalendarAndIpo(nsePipeline.getAllSymbols(), refIso, () => {
+                  void nsePipeline.reloadAsync();
+                });
+              }
+
+              if (!getCollectionJobStatus().running) {
+                const missingTargets = nsePipeline.getAuditCollectionTargets('MISSING_OR_OLD', 40);
+                if (missingTargets.length > 0) {
+                  startFullFundamentalCollection(
+                    missingTargets,
+                    'AUTO_MISSING_OR_OLD',
+                    nsePipeline.getXbrlBySymbolMap(),
+                    () => {
+                      void nsePipeline.reloadAsync();
+                    },
+                    { isEligible: (s) => nsePipeline.isSymbolEligibleForFundamentalAudit(s) }
+                  );
+                }
+              }
+            } catch (err) {
+              console.error('Startup background sync warning:', (err as Error).message);
+            }
+          })();
+        }, 2500);
       })();
-    }, 2500);
+    }, 150);
   });
 }
 

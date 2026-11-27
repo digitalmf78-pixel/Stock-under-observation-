@@ -6,3 +6,7 @@ coverage/
 *.log
 .env*
 !.env.example
+data/nse_cookies*.json
+*cookies*.json
+*.cookie
+**/.admin_auth*

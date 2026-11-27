@@ -17,6 +17,7 @@ import type {
   StockCatalystProfile,
 } from '../types/trading';
 import { formatMarketCapCr, getCapBadgeClass, getCapShortLabel } from '../utils/marketCap';
+import { authFetch } from '../utils/authClient';
 
 interface CatalystGateViewProps {
   onSelectSymbol: (symbol: string) => void;
@@ -78,7 +79,7 @@ export const CatalystGateView: React.FC<CatalystGateViewProps> = ({
     setSyncing(true);
     setNotice(null);
     try {
-      const res = await fetch('/api/catalysts/sync', {
+      const res = await authFetch('/api/catalysts/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ background: false }),

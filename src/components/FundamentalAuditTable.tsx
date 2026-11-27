@@ -8,10 +8,12 @@ import {
   Search,
   ShieldCheck,
 } from 'lucide-react';
-import type { AuditFreshnessTier, FundamentalAuditEntry } from '../types/trading';
+import type { AuditFreshnessTier, FundamentalAuditEntry, SwingTier } from '../types/trading';
+import { authFetch } from '../utils/authClient';
 
 interface FundamentalAuditTableProps {
   activeSymbol: string;
+  activeSwingTier?: SwingTier;
   initialRows: FundamentalAuditEntry[];
   onSelectSymbol: (symbol: string) => void;
   onStockRefreshed: () => Promise<void>;
@@ -73,6 +75,7 @@ function formatFreshnessLabel(tier: AuditFreshnessTier): string {
 
 export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
   activeSymbol,
+  activeSwingTier,
   initialRows,
   onSelectSymbol,
   onStockRefreshed,
@@ -194,7 +197,7 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
     setSavingAllCache(true);
     setActionNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/save-to-cache', {
+      const res = await authFetch('/api/fundamentals/save-to-cache', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveAll: true, scope: 'MISSING_OR_OLD' }),
@@ -203,8 +206,8 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
       setActionNotice(
         json.started
-          ? `Saving all ${json.total} missing/old NSE symbols to cache automatically in background.`
-          : json.message || 'All NSE fundamentals are already saved to cache.'
+          ? `Saving ${json.total} missing/old Tier 1–3 symbols to cache automatically in background.`
+          : json.message || 'All Tier 1–3 fundamentals are already saved to cache.'
       );
     } catch (err) {
       setActionNotice(`Save-to-cache error: ${(err as Error).message}`);
@@ -217,7 +220,7 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
     setVerifyingSymbol(sym);
     setActionNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/save-to-cache', {
+      const res = await authFetch('/api/fundamentals/save-to-cache', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symbol: sym, force: true }),
@@ -296,7 +299,7 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
     const url = URL.createObjectURL(blob);
     const todayIso = new Date().toISOString().slice(0, 10);
     const scopeTag =
-      scope === 'UNIVERSE' ? 'universe' : `${activeSymbol.toLowerCase()}_peers`;
+      scope === 'UNIVERSE' ? 'tier1_to_3_watchlist' : `${activeSymbol.toLowerCase()}_peers`;
     const filename = `fundamental_audit_${scopeTag}_${basis.toLowerCase()}_${todayIso}.csv`;
 
     const link = document.createElement('a');
@@ -386,7 +389,7 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
               }`}
             >
               <Database className="w-3 h-3" />
-              All NSE/BSE Universe
+              Tier 1–3 Watchlist
             </button>
           </div>
 
@@ -425,7 +428,7 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-xs font-medium text-white whitespace-nowrap transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${savingAllCache ? 'animate-spin' : ''}`} />
-            {savingAllCache ? 'Starting...' : 'Save All NSE to Cache'}
+            {savingAllCache ? 'Starting...' : 'Save Tier 1–3 to Cache'}
           </button>
 
           <button
@@ -699,17 +702,26 @@ export const FundamentalAuditTable: React.FC<FundamentalAuditTableProps> = ({
 
                     {/* Action */}
                     <td className="py-2.5 px-4 text-right align-top">
-                      <button
-                        type="button"
-                        onClick={() => void handleVerifyBothExchanges(entry.symbol)}
-                        disabled={verifyingSymbol !== null}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 text-[11px] font-medium text-slate-700 whitespace-nowrap transition-colors"
-                      >
-                        <RefreshCw
-                          className={`w-3 h-3 ${isVerifying ? 'animate-spin text-blue-600' : ''}`}
-                        />
-                        {isVerifying ? 'Verifying...' : 'Verify NSE/BSE'}
-                      </button>
+                      {isActive && activeSwingTier === 'NONE' ? (
+                        <span
+                          title="Fundamental Deep Audit runs only on stocks selected into Tier 1, Tier 2, or Tier 3."
+                          className="inline-flex items-center px-2 py-1 rounded border border-slate-200 bg-slate-50 text-[11px] font-medium text-slate-400 whitespace-nowrap"
+                        >
+                          Tier 1–3 Only
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => void handleVerifyBothExchanges(entry.symbol)}
+                          disabled={verifyingSymbol !== null}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 text-[11px] font-medium text-slate-700 whitespace-nowrap transition-colors"
+                        >
+                          <RefreshCw
+                            className={`w-3 h-3 ${isVerifying ? 'animate-spin text-blue-600' : ''}`}
+                          />
+                          {isVerifying ? 'Verifying...' : 'Verify NSE/BSE'}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

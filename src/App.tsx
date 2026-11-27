@@ -12,12 +12,14 @@ import {
   History,
   Home,
   Layers,
+  Lock,
   Menu,
   Minus,
   RefreshCw,
   Star,
   TrendingDown,
   TrendingUp,
+  Unlock,
   Wallet,
   X,
 } from 'lucide-react';
@@ -33,6 +35,17 @@ import { PaperTradingPanel } from './components/PaperTradingPanel';
 import { RecommendedPicksPanel } from './components/RecommendedPicksPanel';
 import { PriceAlertToastContainer } from './components/PriceAlertToastContainer';
 import { syncAndLoadPaperPortfolio } from './utils/paperTradeClient';
+import {
+  authFetch,
+  getAuthStateSnapshot,
+  hasAdminToken,
+  logoutAdmin,
+  openAuthModal,
+  refreshAuthStatus,
+  subscribeAuthState,
+  type ClientAuthState,
+} from './utils/authClient';
+import { AdminAuthModal } from './components/AdminAuthModal';
 import { evaluatePriceAlerts } from './utils/priceAlerts';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import type {
@@ -111,6 +124,7 @@ export default function App() {
   const [scannerNotice, setScannerNotice] = useState<{ tone: 'ok' | 'err'; text: string } | null>(
     null
   );
+  const [authState, setAuthState] = useState<ClientAuthState>(() => getAuthStateSnapshot());
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -175,7 +189,7 @@ export default function App() {
     const cleaned = sym.trim().toUpperCase();
     if (!cleaned) return;
     try {
-      const res = await fetch('/api/watchlist/toggle', {
+      const res = await authFetch('/api/watchlist/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symbol: cleaned }),
@@ -194,10 +208,19 @@ export default function App() {
   };
 
   useEffect(() => {
+    const unsub = subscribeAuthState(setAuthState);
+    void refreshAuthStatus();
     fetchOverview(true);
     void fetchWatchlist();
     void syncAndLoadPaperPortfolio({ live: false }).catch(() => undefined);
+    return unsub;
   }, []);
+
+  useEffect(() => {
+    if (authState.authenticated) {
+      void syncAndLoadPaperPortfolio({ live: false }).catch(() => undefined);
+    }
+  }, [authState.authenticated]);
 
   useEffect(() => {
     if (scannerReloadSeq > 0 || stockRefreshSeq > 0) {
@@ -210,7 +233,7 @@ export default function App() {
     setScannerReloading(true);
     setScannerNotice(null);
     try {
-      const res = await fetch('/api/scanner/reload-all', {
+      const res = await authFetch('/api/scanner/reload-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
@@ -274,6 +297,9 @@ export default function App() {
         if (!res.ok || cancelled) return;
         const detail = (await res.json()) as StockDetailData;
 
+        const swingTier = detail.summary?.swingTier;
+        if (!swingTier || swingTier === 'NONE' || cancelled) return;
+
         const auditTier = detail.fundamentalAuditRows?.[0]?.freshnessTier;
         const freshness = detail.summary?.fundamentalFreshness;
         const isStaleOrUnverified =
@@ -282,13 +308,13 @@ export default function App() {
           freshness === 'NOT_AVAILABLE' ||
           freshness === 'STALE';
 
-        if (!isStaleOrUnverified || cancelled) return;
+        if (!isStaleOrUnverified || cancelled || !hasAdminToken()) return;
 
         syncInFlightRef.current = true;
         lastSyncAttemptRef.current.set(sym, Date.now());
         setCacheSyncNotice(`Auto-saving ${sym} fundamentals...`);
 
-        const saveRes = await fetch('/api/fundamentals/save-to-cache', {
+        const saveRes = await authFetch('/api/fundamentals/save-to-cache', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ symbol: sym }),
@@ -1002,6 +1028,34 @@ export default function App() {
             >
               Screen Mainboard
             </button>
+
+            {authState.authenticated ? (
+              <button
+                type="button"
+                onClick={() => void logoutAdmin()}
+                title="Admin controls unlocked — click to lock session"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-md transition-colors whitespace-nowrap shrink-0"
+              >
+                <Unlock className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline">Unlocked</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={openAuthModal}
+                title={
+                  authState.needsSetup
+                    ? 'Set admin passcode to unlock write controls'
+                    : 'Unlock admin write controls'
+                }
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-md transition-colors whitespace-nowrap shrink-0"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline">
+                  {authState.needsSetup ? 'Set Passcode' : 'Unlock'}
+                </span>
+              </button>
+            )}
           </div>
         </header>
 
@@ -1192,6 +1246,7 @@ export default function App() {
         </nav>
 
         <PriceAlertToastContainer onSelectSymbol={handleSelectSymbol} />
+        <AdminAuthModal authState={authState} />
       </div>
     </div>
   );

@@ -374,6 +374,7 @@ export interface ScreenerRow {
   deliveryCategory: DeliveryCategory;
   deliveryStatus: string;
   rolling5dGt60Count: number;
+  maxConsecutiveRolling5dGt60?: number;
   dailyGt60Count: number;
   valid30dSessions: number;
   consecutiveStreak: number;
@@ -516,6 +517,12 @@ export interface OverviewData {
   sectorSentiment: SectorSentimentItem[];
   funnel: {
     universeMainboard: number;
+    funnelStep2FlowCount?: number;
+    nonAbHighRvolCount?: number;
+    funnelStep3LiquidityCount?: number;
+    funnelStep4TriggerCount?: number;
+    liquidHighRvolTotalCount?: number;
+    liquidDelivExpLowRvolCount?: number;
     deliveryAorBUnion: number;
     deliveryAAndB: number;
     deliveryAOnly: number;

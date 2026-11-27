@@ -190,7 +190,7 @@ export const SwingTierSpecPanel: React.FC<SwingTierSpecPanelProps> = ({
                 <li>20D RVOL &gt; 1.50x (Volume surge)</li>
                 <li>EOD Change % &gt; 0% (Green close)</li>
                 <li className="text-slate-500">
-                  Missing: 30D Delivery A/B or Price &gt; EMA21
+                  Missing T1/T2 gate: 30D Delivery A/B, EMA21, or DelivQty &gt;= 1.2x
                 </li>
               </ul>
             </div>
@@ -202,7 +202,7 @@ export const SwingTierSpecPanel: React.FC<SwingTierSpecPanelProps> = ({
               <strong>T2</strong> (Accumulation) filter karo → 3M Result Gate &amp; Fundamental Audit (&gt;=4/7) check karo → Stock Detail me U-Turn Zone &amp; ATR Stop dekho.
             </span>
             <span className="font-mono text-slate-500">
-              Delivery A = 5D Avg &gt;= 60% · Delivery B = Day Deliv &gt;= 60% (5+ sessions)
+              Delivery A = 5 consecutive rolling 5D Avg &gt;= 60% · Delivery B = Day Deliv &gt;= 60% (5+ sessions)
             </span>
           </div>
         </div>

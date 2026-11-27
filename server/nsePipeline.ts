@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseBhavDateToIso, parseCsvRecords, toNum } from './csvParser.ts';
+import { atomicWriteJsonSync } from './filePersistence.ts';
 import {
   classifyMarketCap,
   loadLiveFundamentalOverrides,
@@ -31,7 +32,17 @@ import {
   classifySwingTier,
   computeFunnelTierCounts,
   computeSequentialFunnelMetrics,
+  isDeliveryABCategory,
+  isDelivQtyExpanding,
+  isValidatedDeliveryAB,
+  resolveValidatedDeliveryCategory,
 } from './funnelClassifier.ts';
+import {
+  buildSeriesDeliveryTimeline,
+  computeAverageDelivery5D,
+  computeDeliveryCategoryAtSlice,
+  computeDynamicDeliveryStreak,
+} from './deliveryClassifier.ts';
 import {
   classifyFundamentalFreshness,
   DEFAULT_MAX_DATA_AGE_DAYS,
@@ -78,16 +89,6 @@ interface Thresholds {
   max_data_age_days: number;
 }
 
-interface StreakInfo {
-  consecutiveStreak: number;
-  totalQualifyingSessions: number;
-  firstStreakDate: string;
-  lastCategory: string;
-  lastStatus: string;
-  lastAvgDelivery5D: number | null;
-  lastLatestDeliveryPct: number | null;
-}
-
 class NsePipelineEngine {
   private initialized = false;
   private latestSessionDate = '';
@@ -124,8 +125,9 @@ class NsePipelineEngine {
   private overviewCache: OverviewData | null = null;
   private multiYearCsvSymbols = new Set<string>();
   private yahooEma200BySymbol = new Map<string, number>();
+  private warmupPromise: Promise<void> | null = null;
 
-  public reload(): void {
+  private resetState(): void {
     this.initialized = false;
     this.latestSessionDate = '';
     this.sessionDates = [];
@@ -140,7 +142,23 @@ class NsePipelineEngine {
     this.overviewCache = null;
     this.multiYearCsvSymbols.clear();
     this.yahooEma200BySymbol.clear();
+  }
+
+  private yieldToEventLoop(): Promise<void> {
+    return new Promise((resolve) => setImmediate(resolve));
+  }
+
+  public reload(): void {
+    this.resetState();
     this.ensureLoaded();
+  }
+
+  public async reloadAsync(): Promise<void> {
+    if (this.warmupPromise) {
+      await this.warmupPromise.catch(() => undefined);
+    }
+    this.resetState();
+    await this.ensureLoadedAsync();
   }
 
   private loadYahooEma200Cache(root: string): void {
@@ -170,11 +188,18 @@ class NsePipelineEngine {
     }
   }
 
+  public isLoaded(): boolean {
+    return this.initialized;
+  }
+
+  public getCachedSessionCount(): number {
+    return this.sessionDates.length;
+  }
+
   public ensureLoaded(): void {
     if (this.initialized) return;
     const root = process.cwd();
     this.loadThresholds(root);
-    const streakMap = this.loadStreakState(root);
     this.loadFundamentals(root);
     this.mergeFreeSourceCache(root);
     this.mergeLiveOverrides();
@@ -182,12 +207,46 @@ class NsePipelineEngine {
     this.mergeScreenerShareholding(root);
     this.loadYahooEma200Cache(root);
     this.loadXbrlFilings(root);
-    this.loadBhavcopiesAndBuildScreener(root, streakMap);
+    this.loadBhavcopiesAndBuildScreener(root);
     this.loadRawSignals(root);
     this.generateSignalsForMissingSessions();
     this.attachLatestSignalsToScreener();
     this.evaluateSignalOutcomes();
     this.initialized = true;
+  }
+
+  public async ensureLoadedAsync(): Promise<void> {
+    if (this.initialized) return;
+    if (this.warmupPromise) return this.warmupPromise;
+
+    this.warmupPromise = (async () => {
+      try {
+        const root = process.cwd();
+        this.loadThresholds(root);
+        await this.yieldToEventLoop();
+        this.loadFundamentals(root);
+        await this.yieldToEventLoop();
+        this.mergeFreeSourceCache(root);
+        this.mergeLiveOverrides();
+        this.mergeIndianFundamentalsCache();
+        this.mergeScreenerShareholding(root);
+        this.loadYahooEma200Cache(root);
+        await this.yieldToEventLoop();
+        this.loadXbrlFilings(root);
+        await this.yieldToEventLoop();
+        await this.loadBhavcopiesAndBuildScreenerAsync(root);
+        await this.yieldToEventLoop();
+        this.loadRawSignals(root);
+        await this.generateSignalsForMissingSessionsAsync();
+        this.attachLatestSignalsToScreener();
+        this.evaluateSignalOutcomes();
+        this.initialized = true;
+      } finally {
+        this.warmupPromise = null;
+      }
+    })();
+
+    return this.warmupPromise;
   }
 
   private loadThresholds(root: string): void {
@@ -206,9 +265,7 @@ class NsePipelineEngine {
     this.thresholds = { ...this.thresholds, ...newThresholds };
     const file = path.join(root, 'data', 'inputs', 'fundamental_thresholds.json');
     try {
-      const dir = path.dirname(file);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(file, JSON.stringify(this.thresholds, null, 2), 'utf-8');
+      atomicWriteJsonSync(file, this.thresholds, { pretty: true, preserveBackup: true });
     } catch (err) {
       console.error('Failed to write fundamental_thresholds.json:', err);
     }
@@ -222,27 +279,6 @@ class NsePipelineEngine {
     return this.thresholds;
   }
 
-  private loadStreakState(root: string): Map<string, StreakInfo> {
-    const map = new Map<string, StreakInfo>();
-    const file = path.join(root, 'data', 'cache', 'delivery', 'v8_delivery_scan_streak_state.csv');
-    if (!fs.existsSync(file)) return map;
-    const records = parseCsvRecords(fs.readFileSync(file, 'utf-8'));
-    for (const r of records) {
-      const sym = (r.TckrSymb || '').trim().toUpperCase();
-      if (!sym) continue;
-      map.set(sym, {
-        consecutiveStreak: toNum(r.ConsecutiveAorBScanSessions) ?? 0,
-        totalQualifyingSessions: toNum(r.TotalAorBQualifyingScanSessions) ?? 0,
-        firstStreakDate: (r.FirstDateOfCurrentStreak || '').trim(),
-        lastCategory: (r.LastDeliveryCategory || 'NONE').trim(),
-        lastStatus: (r.LastDeliveryStatus || '').trim(),
-        lastAvgDelivery5D: toNum(r.LastAvgDelivery5D),
-        lastLatestDeliveryPct: toNum(r.LastLatestDeliveryPct),
-      });
-    }
-    return map;
-  }
-
   private formatInrCompact(v: number | null): string {
     if (v === null) return 'Missing';
     const abs = Math.abs(v);
@@ -251,17 +287,20 @@ class NsePipelineEngine {
     return `₹${v.toFixed(0)}`;
   }
 
+  private finiteOrNull(val: number | null | undefined): number | null {
+    return typeof val === 'number' && Number.isFinite(val) ? val : null;
+  }
+
   private recomputeChecks(profile: FundamentalProfile): FundamentalProfile {
     const t = this.thresholds;
-    const {
-      revenueGrowthPct,
-      profitGrowthPct,
-      roePct,
-      rocePct,
-      debtToEquity,
-      interestCoverage,
-      operatingCashFlowInr,
-    } = profile;
+    const revenueGrowthPct = this.finiteOrNull(profile.revenueGrowthPct);
+    const profitGrowthPct = this.finiteOrNull(profile.profitGrowthPct);
+    const roePct = this.finiteOrNull(profile.roePct);
+    const rocePct = this.finiteOrNull(profile.rocePct);
+    const rawDe = this.finiteOrNull(profile.debtToEquity);
+    const debtToEquity = rawDe !== null && rawDe >= 0 ? rawDe : null;
+    const interestCoverage = this.finiteOrNull(profile.interestCoverage);
+    const operatingCashFlowInr = this.finiteOrNull(profile.operatingCashFlowInr);
 
     const checks: FundamentalMetricCheck[] = [
       {
@@ -309,12 +348,11 @@ class NsePipelineEngine {
       {
         key: 'debtToEquity',
         label: 'Debt / Equity',
-        value: debtToEquity !== null && debtToEquity >= 0 ? debtToEquity : null,
-        formattedValue:
-          debtToEquity !== null && debtToEquity >= 0 ? debtToEquity.toFixed(2) : 'Missing',
+        value: debtToEquity,
+        formattedValue: debtToEquity !== null ? debtToEquity.toFixed(2) : 'Missing',
         thresholdLabel: `<= ${t.max_debt_to_equity}`,
         status:
-          debtToEquity === null || debtToEquity < 0
+          debtToEquity === null
             ? 'MISSING'
             : debtToEquity <= t.max_debt_to_equity
               ? 'PASS'
@@ -356,6 +394,13 @@ class NsePipelineEngine {
 
     return {
       ...profile,
+      revenueGrowthPct,
+      profitGrowthPct,
+      roePct,
+      rocePct,
+      debtToEquity,
+      interestCoverage,
+      operatingCashFlowInr,
       checks,
       passCount,
       failCount,
@@ -545,6 +590,8 @@ class NsePipelineEngine {
       }
       const rawDeCsv = toNum(r.DebtToEquity);
       const rawIcCsv = toNum(r.InterestCoverage);
+      const rawRoceCsv = toNum(r.ROCEPercent);
+      const hasEbitCsv = toNum(r.EBITTTMINR) !== null;
       const base: FundamentalProfile = {
         ...this.emptyFundamentalProfile(sym),
         asOfDate: r.AsOfDate || '',
@@ -562,9 +609,11 @@ class NsePipelineEngine {
         revenueGrowthPct: toNum(r.RevenueGrowthPct),
         profitGrowthPct: toNum(r.ProfitGrowthPct),
         roePct: toNum(r.ROEPercent),
-        rocePct: toNum(r.ROCEPercent),
+        rocePct:
+          rawRoceCsv === 0 && !hasEbitCsv ? null : rawRoceCsv,
         debtToEquity: rawDeCsv !== null && rawDeCsv >= 0 ? rawDeCsv : null,
-        interestCoverage: rawIcCsv !== null && rawIcCsv > 0.1 ? rawIcCsv : null,
+        interestCoverage:
+          rawIcCsv !== null && (rawIcCsv < 0 || rawIcCsv > 0.1) ? rawIcCsv : null,
         operatingCashFlowInr: toNum(r.OperatingCashFlowINR),
         freeCashFlowInr: toNum(r.FreeCashFlowINR),
         earningsQualityStatus: r.EarningsQualityStatus || '',
@@ -593,13 +642,24 @@ class NsePipelineEngine {
       const sym = (r.Symbol || '').trim().toUpperCase();
       const metric = (r.Metric || '').trim();
       const val = toNum(r.Value);
+      const verificationStatus = (r.VerificationStatus || '').trim();
+      const provider = (r.Provider || '').trim();
+      const sourceUrl = (r.SourceURL || '').trim();
       if (!sym || !metric || val === null) continue;
+      // Reject corrupted unverified Moneycontrol homepage scrapes that smeared identical values across unrelated stocks
+      if (
+        verificationStatus === 'UNVERIFIED_PUBLIC_PROVIDER_PERIOD_CAPTURED' ||
+        provider === 'Moneycontrol' ||
+        sourceUrl === 'https://www.moneycontrol.com/'
+      ) {
+        continue;
+      }
 
       let prof = this.fundamentalsBySymbol.get(sym);
       if (!prof) {
         prof = this.emptyFundamentalProfile(sym);
-        prof.source = r.Provider || 'Free Source Cache';
-        prof.sourceUrl = r.SourceURL || '';
+        prof.source = provider || 'Free Source Cache';
+        prof.sourceUrl = sourceUrl;
         prof.financialPeriodEnd = r.FinancialPeriod || '';
         prof.asOfDate = (r.RetrievedAtUTC || '').slice(0, 10);
         prof.lastUpdatedUtc = r.RetrievedAtUTC || '';
@@ -620,10 +680,14 @@ class NsePipelineEngine {
       } else if (metric === 'ROCEPercent' && prof.rocePct === null) {
         prof.rocePct = val;
         changed = true;
-      } else if (metric === 'DebtToEquity' && prof.debtToEquity === null) {
+      } else if (metric === 'DebtToEquity' && prof.debtToEquity === null && val >= 0) {
         prof.debtToEquity = val;
         changed = true;
-      } else if (metric === 'InterestCoverage' && prof.interestCoverage === null) {
+      } else if (
+        metric === 'InterestCoverage' &&
+        prof.interestCoverage === null &&
+        (val < 0 || val > 0.1)
+      ) {
         prof.interestCoverage = val;
         changed = true;
       } else if (metric === 'PromoterHoldingPct' && prof.promoterHoldingPct === null) {
@@ -641,8 +705,8 @@ class NsePipelineEngine {
       }
 
       if (changed) {
-        if (prof.source && !prof.source.includes('Free Cache') && r.Provider) {
-          prof.source = `${prof.source} + ${r.Provider}`;
+        if (prof.source && !prof.source.includes('Free Cache') && provider) {
+          prof.source = `${prof.source} + ${provider}`;
         }
         this.fundamentalsBySymbol.set(sym, prof);
         touched.add(sym);
@@ -665,19 +729,18 @@ class NsePipelineEngine {
       const isTrustedIndian = Boolean(
         rec.sources?.includes('Screener.in') || rec.sources?.includes('BSE Official')
       );
+      const recDe = this.finiteOrNull(rec.debtToEquity);
       const validRecDe =
-        rec.debtToEquity !== null &&
-        rec.debtToEquity !== undefined &&
-        rec.debtToEquity >= 0 &&
-        (isTrustedIndian || rec.debtToEquity > 0.005 || existing.debtToEquity === null)
-          ? rec.debtToEquity
+        recDe !== null &&
+        recDe >= 0 &&
+        (isTrustedIndian || recDe > 0.005 || existing.debtToEquity === null)
+          ? recDe
           : existing.debtToEquity;
-      const validRecIc =
-        rec.interestCoverage !== null &&
-        rec.interestCoverage !== undefined &&
-        (rec.interestCoverage > 0.1 || existing.interestCoverage === null)
-          ? rec.interestCoverage
-          : existing.interestCoverage;
+      const recIc = this.finiteOrNull(rec.interestCoverage);
+      const recIcValid =
+        recIc !== null &&
+        (isTrustedIndian || recIc < 0 || recIc > 0.1);
+      const validRecIc = recIcValid ? recIc : existing.interestCoverage;
       const mergedSources = isTrustedIndian
         ? Array.from(
             new Set([
@@ -702,14 +765,18 @@ class NsePipelineEngine {
         fundamentalSources: mergedSources,
         lastUpdatedUtc: rec.fetchedAtUtc || rec.asOfDate || existing.lastUpdatedUtc,
         providerSector: rec.providerSector || existing.providerSector,
-        revenueGrowthPct: rec.revenueGrowthPct ?? existing.revenueGrowthPct,
-        profitGrowthPct: rec.profitGrowthPct ?? existing.profitGrowthPct,
-        roePct: rec.roePct ?? existing.roePct,
-        rocePct: rec.rocePct ?? existing.rocePct,
+        revenueGrowthPct: this.finiteOrNull(rec.revenueGrowthPct) ?? existing.revenueGrowthPct,
+        profitGrowthPct: this.finiteOrNull(rec.profitGrowthPct) ?? existing.profitGrowthPct,
+        roePct: this.finiteOrNull(rec.roePct) ?? existing.roePct,
+        rocePct: this.finiteOrNull(rec.rocePct) ?? existing.rocePct,
         debtToEquity: validRecDe !== null && validRecDe >= 0 ? validRecDe : null,
-        interestCoverage: validRecIc !== null && validRecIc > 0.1 ? validRecIc : null,
-        operatingCashFlowInr: rec.operatingCashFlowInr ?? existing.operatingCashFlowInr,
-        freeCashFlowInr: rec.freeCashFlowInr ?? existing.freeCashFlowInr,
+        interestCoverage:
+          validRecIc !== null && (isTrustedIndian || validRecIc < 0 || validRecIc > 0.1)
+            ? validRecIc
+            : null,
+        operatingCashFlowInr:
+          this.finiteOrNull(rec.operatingCashFlowInr) ?? existing.operatingCashFlowInr,
+        freeCashFlowInr: this.finiteOrNull(rec.freeCashFlowInr) ?? existing.freeCashFlowInr,
         trailingPE: rec.trailingPE ?? existing.trailingPE,
         priceToBook: rec.priceToBook ?? existing.priceToBook,
         marketCapInr: rec.marketCapInr ?? existing.marketCapInr,
@@ -744,6 +811,8 @@ class NsePipelineEngine {
           ...(rec.sources || []),
         ])
       );
+      const recDe = this.finiteOrNull(rec.debtToEquity);
+      const recIc = this.finiteOrNull(rec.interestCoverage);
       const merged: FundamentalProfile = {
         ...existing,
         asOfDate: rec.asOfDate || existing.asOfDate,
@@ -758,20 +827,16 @@ class NsePipelineEngine {
         companyName: rec.companyName || existing.companyName,
         providerSector: rec.providerSector || existing.providerSector,
         nextEarningsDate: rec.nextEarningsDate || existing.nextEarningsDate,
-        revenueGrowthPct: rec.revenueGrowthPct ?? existing.revenueGrowthPct,
-        profitGrowthPct: rec.profitGrowthPct ?? existing.profitGrowthPct,
-        roePct: rec.roePct ?? existing.roePct,
-        rocePct: rec.rocePct ?? existing.rocePct,
+        revenueGrowthPct: this.finiteOrNull(rec.revenueGrowthPct) ?? existing.revenueGrowthPct,
+        profitGrowthPct: this.finiteOrNull(rec.profitGrowthPct) ?? existing.profitGrowthPct,
+        roePct: this.finiteOrNull(rec.roePct) ?? existing.roePct,
+        rocePct: this.finiteOrNull(rec.rocePct) ?? existing.rocePct,
         debtToEquity:
-          rec.debtToEquity !== null && rec.debtToEquity >= 0
-            ? rec.debtToEquity
-            : existing.debtToEquity,
-        interestCoverage:
-          rec.interestCoverage !== null && rec.interestCoverage > 0
-            ? rec.interestCoverage
-            : existing.interestCoverage,
-        operatingCashFlowInr: rec.operatingCashFlowInr ?? existing.operatingCashFlowInr,
-        freeCashFlowInr: rec.freeCashFlowInr ?? existing.freeCashFlowInr,
+          recDe !== null && recDe >= 0 ? recDe : existing.debtToEquity,
+        interestCoverage: recIc !== null ? recIc : existing.interestCoverage,
+        operatingCashFlowInr:
+          this.finiteOrNull(rec.operatingCashFlowInr) ?? existing.operatingCashFlowInr,
+        freeCashFlowInr: this.finiteOrNull(rec.freeCashFlowInr) ?? existing.freeCashFlowInr,
         trailingPE: rec.trailingPE ?? existing.trailingPE,
         priceToBook: rec.priceToBook ?? existing.priceToBook,
         marketCapInr: rec.marketCapInr ?? existing.marketCapInr,
@@ -975,124 +1040,79 @@ class NsePipelineEngine {
   }
 
   private computeDeliveryAtSlice(
-    seriesSlice: DailyBhavRow[],
+    seriesSlice: Array<{ date: string; series?: string; delivPer: number | null }>,
     asOfDate: string,
     isIpo: boolean
   ): {
     deliveryCategory: DeliveryCategory;
     rolling5dGt60Count: number;
+    maxConsecutiveRolling5dGt60: number;
     dailyGt60Count: number;
     valid30dCount: number;
   } {
-    const asOfMs = Date.parse(`${asOfDate}T00:00:00Z`);
-    const cutoff30dMs = Number.isFinite(asOfMs) ? asOfMs - 29 * 24 * 60 * 60 * 1000 : 0;
-    const window30d = seriesSlice.filter((d) => {
-      const ms = Date.parse(`${d.date}T00:00:00Z`);
-      return ms >= cutoff30dMs && d.delivPer !== null;
-    });
-
-    let dailyGt60Count = 0;
-    let rolling5dGt60Count = 0;
-    for (let i = 0; i < window30d.length; i++) {
-      if ((window30d[i].delivPer ?? 0) >= 60.0) dailyGt60Count++;
-      if (i >= 4) {
-        const avg5 =
-          ((window30d[i - 4].delivPer ?? 0) +
-            (window30d[i - 3].delivPer ?? 0) +
-            (window30d[i - 2].delivPer ?? 0) +
-            (window30d[i - 1].delivPer ?? 0) +
-            (window30d[i].delivPer ?? 0)) /
-          5;
-        if (avg5 >= 60.0) rolling5dGt60Count++;
-      }
-    }
-
-    let deliveryCategory: DeliveryCategory = 'NONE';
-    if (window30d.length < 5) {
-      if (isIpo && window30d.length >= 2) {
-        const avgDelivShort =
-          window30d.reduce((acc, d) => acc + (d.delivPer ?? 0), 0) / window30d.length;
-        const passA = avgDelivShort >= 60.0;
-        const passB = dailyGt60Count >= Math.ceil(window30d.length * 0.6);
-        if (passA && passB) deliveryCategory = 'A_AND_B';
-        else if (passA) deliveryCategory = 'A_ONLY';
-        else if (passB) deliveryCategory = 'B_ONLY';
-      } else {
-        deliveryCategory = 'WAIT_FOR_DATA';
-      }
-    } else {
-      const passA = rolling5dGt60Count >= 5;
-      const passB = dailyGt60Count >= 5;
-      if (passA && passB) deliveryCategory = 'A_AND_B';
-      else if (passA) deliveryCategory = 'A_ONLY';
-      else if (passB) deliveryCategory = 'B_ONLY';
-    }
-
+    const res = computeDeliveryCategoryAtSlice(seriesSlice, asOfDate, isIpo);
     return {
-      deliveryCategory,
-      rolling5dGt60Count,
-      dailyGt60Count,
-      valid30dCount: window30d.length,
+      deliveryCategory: res.deliveryCategory,
+      rolling5dGt60Count: res.rolling5dGt60Count,
+      maxConsecutiveRolling5dGt60: res.maxConsecutiveRolling5dGt60,
+      dailyGt60Count: res.dailyGt60Count,
+      valid30dCount: res.valid30dCount,
     };
   }
 
-  private computeDynamicStreak(seriesHistory: DailyBhavRow[], isIpo: boolean): {
+  private computeDynamicStreak(
+    seriesHistory: Array<{ date: string; series?: string; delivPer: number | null }>,
+    isIpoOrResolver: boolean | ((asOfDate: string) => boolean),
+    asOfDate?: string
+  ): {
     consecutiveStreak: number;
     totalQualifyingSessions: number;
     firstStreakDate: string;
     deliveryStatus: string;
   } {
-    const isAB = (c: DeliveryCategory) =>
-      c === 'A_AND_B' || c === 'A_ONLY' || c === 'B_ONLY';
-
-    let totalQualifyingSessions = 0;
-    let consecutiveStreak = 0;
-    let firstStreakDate = '';
-    let streakOpen = true;
-    let latestCat: DeliveryCategory = 'NONE';
-
-    for (let i = seriesHistory.length - 1; i >= 0; i--) {
-      const slice = seriesHistory.slice(0, i + 1);
-      const res = this.computeDeliveryAtSlice(slice, seriesHistory[i].date, isIpo);
-      if (i === seriesHistory.length - 1) latestCat = res.deliveryCategory;
-      if (isAB(res.deliveryCategory)) {
-        totalQualifyingSessions++;
-        if (streakOpen) {
-          consecutiveStreak++;
-          firstStreakDate = seriesHistory[i].date;
-        }
-      } else {
-        streakOpen = false;
-      }
-    }
-
-    const deliveryStatus = isAB(latestCat)
-      ? consecutiveStreak > 1
-        ? `ACTIVE_STREAK_${consecutiveStreak}D`
-        : 'NEW_QUALIFIER'
-      : latestCat;
-
+    const streak = computeDynamicDeliveryStreak(seriesHistory, isIpoOrResolver, asOfDate);
     return {
-      consecutiveStreak,
-      totalQualifyingSessions,
-      firstStreakDate,
-      deliveryStatus,
+      consecutiveStreak: streak.consecutiveStreak,
+      totalQualifyingSessions: streak.totalQualifyingSessions,
+      firstStreakDate: streak.firstStreakDate,
+      deliveryStatus: streak.deliveryStatus,
     };
   }
 
-  private generateSignalsForMissingSessions(): void {
-    if (this.sessionDates.length === 0) return;
+  private getMissingSignalSessionDates(): string[] {
+    if (this.sessionDates.length === 0) return [];
     let maxCsvDate = '';
     for (const s of this.signals) {
       if (s.eodDate > maxCsvDate) maxCsvDate = s.eodDate;
     }
-    const missingDates = this.sessionDates.filter((d) => !maxCsvDate || d > maxCsvDate);
+    return this.sessionDates.filter((d) => !maxCsvDate || d > maxCsvDate);
+  }
+
+  private generateSignalsForMissingSessions(): void {
+    const missingDates = this.getMissingSignalSessionDates();
     if (missingDates.length === 0) return;
 
     const generated: SignalLogEntry[] = [];
-
     for (const eodDate of missingDates) {
-      // Compute market breadth & sector breadth strictly from Bhavcopy rows on eodDate
+      this.generateSignalsForEodDate(eodDate, generated);
+    }
+    this.finalizeGeneratedSignals(generated);
+  }
+
+  private async generateSignalsForMissingSessionsAsync(): Promise<void> {
+    const missingDates = this.getMissingSignalSessionDates();
+    if (missingDates.length === 0) return;
+
+    const generated: SignalLogEntry[] = [];
+    for (const eodDate of missingDates) {
+      this.generateSignalsForEodDate(eodDate, generated);
+      await this.yieldToEventLoop();
+    }
+    this.finalizeGeneratedSignals(generated);
+  }
+
+  private generateSignalsForEodDate(eodDate: string, generated: SignalLogEntry[]): void {
+    // Compute market breadth & sector breadth strictly from Bhavcopy rows on eodDate
       let marketAdv = 0;
       let marketDec = 0;
       const sectorStats = new Map<
@@ -1146,7 +1166,7 @@ class NsePipelineEngine {
 
         const scrRow = this.screenerBySymbol.get(sym);
         const isIpo = scrRow?.isIpo ?? false;
-        const seriesHistory = hist.filter((d) => d.series === latest.series);
+        const seriesHistory = buildSeriesDeliveryTimeline(hist, latest.series, this.sessionDates);
         const delivInfo = this.computeDeliveryAtSlice(seriesHistory, eodDate, isIpo);
         const isDeliveryAB =
           delivInfo.deliveryCategory === 'A_AND_B' ||
@@ -1207,7 +1227,10 @@ class NsePipelineEngine {
           latest.prevClose && latest.prevClose > 0
             ? ((latest.close - latest.prevClose) / latest.prevClose) * 100
             : null;
-        const highsWindow = hist.map((d) => d.high ?? d.close ?? 0).filter((h) => h > 0);
+        const highsWindow = hist
+          .slice(-35)
+          .map((d) => d.high ?? d.close ?? 0)
+          .filter((h) => h > 0);
         const maxHigh = highsWindow.length > 0 ? Math.max(...highsWindow) : null;
         const distFromHighPct =
           maxHigh && maxHigh > 0 ? ((latest.close - maxHigh) / maxHigh) * 100 : null;
@@ -1307,9 +1330,10 @@ class NsePipelineEngine {
           evalMaePct: null,
           skipReasons,
         });
-      }
     }
+  }
 
+  private finalizeGeneratedSignals(generated: SignalLogEntry[]): void {
     const merged = [...generated, ...this.signals].filter((s) =>
       !this.isEtfOrFundSymbol(s.symbol, this.fundamentalsBySymbol.get(s.symbol)?.companyName || '')
     );
@@ -1421,9 +1445,9 @@ class NsePipelineEngine {
     return atr;
   }
 
-  private loadBhavcopiesAndBuildScreener(root: string, streakMap: Map<string, StreakInfo>): void {
+  private getBhavcopyFiles(root: string): Array<{ dir: string; f: string; iso: string }> {
     const dir = path.join(root, 'data', 'cache', 'delivery');
-    if (!fs.existsSync(dir)) return;
+    if (!fs.existsSync(dir)) return [];
 
     const files = fs
       .readdirSync(dir)
@@ -1431,6 +1455,7 @@ class NsePipelineEngine {
       .map((f) => {
         const m = f.match(/(\d{2})(\d{2})(\d{4})/);
         return {
+          dir,
           f,
           iso: m ? `${m[3]}-${m[2]}-${m[1]}` : f,
         };
@@ -1439,80 +1464,142 @@ class NsePipelineEngine {
 
     this.sessionDates = files.map((x) => x.iso);
     this.latestSessionDate = files[files.length - 1]?.iso || '';
+    return files;
+  }
 
-    const ALLOWED_SERIES = new Set(['EQ', 'BE', 'BZ']);
+  private parseBhavcopyFileIntoHistory(
+    dir: string,
+    f: string,
+    iso: string,
+    allowedSeries: Set<string>
+  ): void {
+    const content = fs.readFileSync(path.join(dir, f), 'utf-8');
+    const lines = content.split(/\r?\n/);
+    if (lines.length < 2) return;
 
-    for (const { f, iso } of files) {
-      const content = fs.readFileSync(path.join(dir, f), 'utf-8');
-      const lines = content.split(/\r?\n/);
-      if (lines.length < 2) continue;
+    const headerCols = lines[0].split(',').map((h) => h.trim());
+    const idx = {
+      SYMBOL: headerCols.indexOf('SYMBOL'),
+      SERIES: headerCols.indexOf('SERIES'),
+      DATE1: headerCols.indexOf('DATE1'),
+      PREV_CLOSE: headerCols.indexOf('PREV_CLOSE'),
+      OPEN_PRICE: headerCols.indexOf('OPEN_PRICE'),
+      HIGH_PRICE: headerCols.indexOf('HIGH_PRICE'),
+      LOW_PRICE: headerCols.indexOf('LOW_PRICE'),
+      CLOSE_PRICE: headerCols.indexOf('CLOSE_PRICE'),
+      AVG_PRICE: headerCols.indexOf('AVG_PRICE'),
+      TTL_TRD_QNTY: headerCols.indexOf('TTL_TRD_QNTY'),
+      TURNOVER_LACS: headerCols.indexOf('TURNOVER_LACS'),
+      NO_OF_TRADES: headerCols.indexOf('NO_OF_TRADES'),
+      DELIV_QTY: headerCols.indexOf('DELIV_QTY'),
+      DELIV_PER: headerCols.indexOf('DELIV_PER'),
+    };
 
-      const headerCols = lines[0].split(',').map((h) => h.trim());
-      const idx = {
-        SYMBOL: headerCols.indexOf('SYMBOL'),
-        SERIES: headerCols.indexOf('SERIES'),
-        DATE1: headerCols.indexOf('DATE1'),
-        PREV_CLOSE: headerCols.indexOf('PREV_CLOSE'),
-        OPEN_PRICE: headerCols.indexOf('OPEN_PRICE'),
-        HIGH_PRICE: headerCols.indexOf('HIGH_PRICE'),
-        LOW_PRICE: headerCols.indexOf('LOW_PRICE'),
-        CLOSE_PRICE: headerCols.indexOf('CLOSE_PRICE'),
-        AVG_PRICE: headerCols.indexOf('AVG_PRICE'),
-        TTL_TRD_QNTY: headerCols.indexOf('TTL_TRD_QNTY'),
-        TURNOVER_LACS: headerCols.indexOf('TURNOVER_LACS'),
-        NO_OF_TRADES: headerCols.indexOf('NO_OF_TRADES'),
-        DELIV_QTY: headerCols.indexOf('DELIV_QTY'),
-        DELIV_PER: headerCols.indexOf('DELIV_PER'),
+    const seenToday = new Map<string, DailyBhavRow>();
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line || line.trim() === '') continue;
+      const cols = line.split(',');
+      const sym = (cols[idx.SYMBOL] || '').trim().toUpperCase();
+      const series = (cols[idx.SERIES] || '').trim().toUpperCase();
+      if (!sym || !allowedSeries.has(series)) continue;
+
+      const prev = seenToday.get(sym);
+      if (prev && prev.series === 'EQ') continue;
+
+      const row: DailyBhavRow = {
+        date: idx.DATE1 >= 0 && cols[idx.DATE1] ? parseBhavDateToIso(cols[idx.DATE1]) : iso,
+        symbol: sym,
+        series,
+        prevClose: toNum(cols[idx.PREV_CLOSE]),
+        open: toNum(cols[idx.OPEN_PRICE]),
+        high: toNum(cols[idx.HIGH_PRICE]),
+        low: toNum(cols[idx.LOW_PRICE]),
+        close: toNum(cols[idx.CLOSE_PRICE]),
+        avgPrice: toNum(cols[idx.AVG_PRICE]),
+        volume: toNum(cols[idx.TTL_TRD_QNTY]) ?? 0,
+        turnoverLacs: toNum(cols[idx.TURNOVER_LACS]) ?? 0,
+        trades: toNum(cols[idx.NO_OF_TRADES]) ?? 0,
+        delivQty: toNum(cols[idx.DELIV_QTY]),
+        delivPer: toNum(cols[idx.DELIV_PER]),
       };
+      seenToday.set(sym, row);
+    }
 
-      const seenToday = new Map<string, DailyBhavRow>();
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line || line.trim() === '') continue;
-        const cols = line.split(',');
-        const sym = (cols[idx.SYMBOL] || '').trim().toUpperCase();
-        const series = (cols[idx.SERIES] || '').trim().toUpperCase();
-        if (!sym || !ALLOWED_SERIES.has(series)) continue;
+    for (const [sym, row] of seenToday.entries()) {
+      const list = this.historyBySymbol.get(sym);
+      if (list) list.push(row);
+      else this.historyBySymbol.set(sym, [row]);
+    }
+  }
 
-        const prev = seenToday.get(sym);
-        if (prev && prev.series === 'EQ') continue;
+  private loadBhavcopiesAndBuildScreener(root: string): void {
+    const files = this.getBhavcopyFiles(root);
+    if (files.length === 0) return;
 
-        const row: DailyBhavRow = {
-          date: idx.DATE1 >= 0 && cols[idx.DATE1] ? parseBhavDateToIso(cols[idx.DATE1]) : iso,
-          symbol: sym,
-          series,
-          prevClose: toNum(cols[idx.PREV_CLOSE]),
-          open: toNum(cols[idx.OPEN_PRICE]),
-          high: toNum(cols[idx.HIGH_PRICE]),
-          low: toNum(cols[idx.LOW_PRICE]),
-          close: toNum(cols[idx.CLOSE_PRICE]),
-          avgPrice: toNum(cols[idx.AVG_PRICE]),
-          volume: toNum(cols[idx.TTL_TRD_QNTY]) ?? 0,
-          turnoverLacs: toNum(cols[idx.TURNOVER_LACS]) ?? 0,
-          trades: toNum(cols[idx.NO_OF_TRADES]) ?? 0,
-          delivQty: toNum(cols[idx.DELIV_QTY]),
-          delivPer: toNum(cols[idx.DELIV_PER]),
-        };
-        seenToday.set(sym, row);
+    const allowedSeries = new Set(['EQ', 'BE', 'BZ']);
+    for (const { dir, f, iso } of files) {
+      this.parseBhavcopyFileIntoHistory(dir, f, iso, allowedSeries);
+    }
+
+    const ipoCutoffDate = this.sessionDates.length > 3 ? this.sessionDates[3] : '';
+    const rows: ScreenerRow[] = [];
+
+    for (const [sym, history] of this.historyBySymbol.entries()) {
+      const row = this.buildScreenerRowForSymbol(sym, history, ipoCutoffDate);
+      if (row) {
+        rows.push(row);
+        this.screenerBySymbol.set(sym, row);
       }
+    }
 
-      for (const [sym, row] of seenToday.entries()) {
-        const list = this.historyBySymbol.get(sym);
-        if (list) list.push(row);
-        else this.historyBySymbol.set(sym, [row]);
+    rows.sort((a, b) => (b.rvol ?? -1) - (a.rvol ?? -1));
+    this.screenerRows = rows;
+  }
+
+  private async loadBhavcopiesAndBuildScreenerAsync(root: string): Promise<void> {
+    const files = this.getBhavcopyFiles(root);
+    if (files.length === 0) return;
+
+    const allowedSeries = new Set(['EQ', 'BE', 'BZ']);
+    for (let i = 0; i < files.length; i++) {
+      const { dir, f, iso } = files[i];
+      this.parseBhavcopyFileIntoHistory(dir, f, iso, allowedSeries);
+      if ((i + 1) % 8 === 0) {
+        await this.yieldToEventLoop();
       }
     }
 
     const ipoCutoffDate = this.sessionDates.length > 3 ? this.sessionDates[3] : '';
-
     const rows: ScreenerRow[] = [];
+    let processed = 0;
 
     for (const [sym, history] of this.historyBySymbol.entries()) {
+      const row = this.buildScreenerRowForSymbol(sym, history, ipoCutoffDate);
+      if (row) {
+        rows.push(row);
+        this.screenerBySymbol.set(sym, row);
+      }
+      processed++;
+      if (processed % 40 === 0) {
+        await this.yieldToEventLoop();
+      }
+    }
+
+    rows.sort((a, b) => (b.rvol ?? -1) - (a.rvol ?? -1));
+    this.screenerRows = rows;
+  }
+
+  private buildScreenerRowForSymbol(
+    sym: string,
+    history: DailyBhavRow[],
+    ipoCutoffDate: string
+  ): ScreenerRow | null {
+    {
       const latest = history[history.length - 1];
-      if (!latest || latest.date !== this.latestSessionDate || latest.close === null) continue;
+      if (!latest || latest.date !== this.latestSessionDate || latest.close === null) return null;
       const fundPreCheck = this.fundamentalsBySymbol.get(sym);
-      if (this.isEtfOrFundSymbol(sym, fundPreCheck?.companyName || '')) continue;
-      const streak = streakMap.get(sym);
+      if (this.isEtfOrFundSymbol(sym, fundPreCheck?.companyName || '')) return null;
 
       const bhavListingDate = history[0]?.date || '';
       const sessionsCount = history.length;
@@ -1564,43 +1651,38 @@ class NsePipelineEngine {
           ((knownFirstTradeAge !== null && knownFirstTradeAge <= 365) || isRecentBhavIpo)
       );
 
-      // Filter history strictly to latest's series for delivery integrity
-      const seriesHistory = history.filter((d) => d.series === latest.series);
-      const delivSlice = this.computeDeliveryAtSlice(seriesHistory, this.latestSessionDate, isIpo);
+      // Preserve chronological trading dates while enforcing latest's series integrity (non-matching series days act as null gaps rather than collapsing timeline)
+      const seriesTimeline = buildSeriesDeliveryTimeline(history, latest.series, this.sessionDates);
+      const isIpoAtDate = (dIso: string): boolean => {
+        if (sym.endsWith('-RE') || isSeasonedCompany) return false;
+        if (hasKnownFirstTrade) {
+          const ageAtDate = this.diffDaysBetween(dIso, fundPre!.firstTradeDateIso as string);
+          return ageAtDate !== null && ageAtDate >= 0 && ageAtDate <= 365;
+        }
+        return isRecentBhavIpo;
+      };
+
+      const delivSlice = this.computeDeliveryAtSlice(
+        seriesTimeline,
+        this.latestSessionDate,
+        isIpo
+      );
       const rolling5dGt60Count = delivSlice.rolling5dGt60Count;
       const dailyGt60Count = delivSlice.dailyGt60Count;
       const valid30dCount = delivSlice.valid30dCount;
-      const computedCategory = delivSlice.deliveryCategory;
+      const deliveryCategory: DeliveryCategory = delivSlice.deliveryCategory;
 
-      // Use streak file only if latestSessionDate matches streak's LastScanDate; otherwise compute dynamically across all sessions
-      const useStaticStreak = this.latestSessionDate === '2026-11-13';
-      const dynamicStreak = useStaticStreak
-        ? null
-        : this.computeDynamicStreak(seriesHistory, isIpo);
+      const dynamicStreak = this.computeDynamicStreak(
+        seriesTimeline,
+        isIpoAtDate,
+        this.latestSessionDate
+      );
 
-      const streakCat = streak?.lastCategory;
-      let deliveryCategory: DeliveryCategory = computedCategory;
-      if (
-        useStaticStreak &&
-        (streakCat === 'A_AND_B' ||
-          streakCat === 'A_ONLY' ||
-          streakCat === 'B_ONLY' ||
-          streakCat === 'NONE' ||
-          streakCat === 'WAIT_FOR_DATA')
-      ) {
-        deliveryCategory = streakCat;
-      }
-
-      const validDelivTail = seriesHistory
-        .filter((d) => d.delivPer !== null)
-        .slice(-5)
-        .map((d) => d.delivPer as number);
-      const avgDeliv5D =
-        useStaticStreak && streak?.lastAvgDelivery5D !== null && streak?.lastAvgDelivery5D !== undefined
-          ? streak.lastAvgDelivery5D
-          : validDelivTail.length === 5 || (isIpo && validDelivTail.length >= 2)
-            ? validDelivTail.reduce((acc, n) => acc + n, 0) / validDelivTail.length
-            : null;
+      const avgDeliv5D = computeAverageDelivery5D(
+        seriesTimeline,
+        isIpo,
+        this.latestSessionDate
+      );
 
       // 20-Session RVOL (requires >=21 sessions: 20 prior sessions + 1 current session)
       const priorSessions = history.slice(0, -1);
@@ -1677,7 +1759,13 @@ class NsePipelineEngine {
       const ema44Series = closes.length >= 44 ? this.computeEmaSeries(closes, 44) : [];
       const ema44 = ema44Series.length > 0 ? (ema44Series[ema44Series.length - 1] ?? null) : null;
       const aboveEma44 = ema44 !== null ? latest.close > ema44 : null;
-      const ema200 = this.yahooEma200BySymbol.get(sym) ?? null;
+      const ema200Series = closes.length >= 200 ? this.computeEmaSeries(closes, 200) : [];
+      const bhavEma200 =
+        ema200Series.length > 0 ? (ema200Series[ema200Series.length - 1] ?? null) : null;
+      const ema200 =
+        bhavEma200 !== null
+          ? Number(bhavEma200.toFixed(2))
+          : (this.yahooEma200BySymbol.get(sym) ?? null);
       const aboveEma200 = ema200 !== null ? latest.close > ema200 : null;
       const ema21Strict =
         ema21FullSeries.length > 0 ? (ema21FullSeries[ema21FullSeries.length - 1] ?? null) : null;
@@ -1721,7 +1809,10 @@ class NsePipelineEngine {
           ? ((latest.close - suggestedStopLoss) / latest.close) * 100
           : null;
 
-      const highs35 = history.map((d) => d.high ?? d.close ?? 0).filter((h) => h > 0);
+      const highs35 = history
+        .slice(-35)
+        .map((d) => d.high ?? d.close ?? 0)
+        .filter((h) => h > 0);
       const max35High = highs35.length > 0 ? Math.max(...highs35) : null;
       const distFrom35dHighPct =
         max35High && max35High > 0 ? ((latest.close - max35High) / max35High) * 100 : null;
@@ -1764,6 +1855,11 @@ class NsePipelineEngine {
         avgTurnover20DCr,
         liquidityPass,
         deliveryCategory,
+        maxConsecutiveRolling5dGt60: delivSlice.maxConsecutiveRolling5dGt60,
+        dailyGt60Count: delivSlice.dailyGt60Count,
+        valid30dCount: delivSlice.valid30dCount,
+        isIpo,
+        rolling5dGt60Count: delivSlice.rolling5dGt60Count,
         aboveEma21,
         delivQtyRatio,
         rvol,
@@ -1870,21 +1966,14 @@ class NsePipelineEngine {
         delivQtyRatio,
         delivValueCr,
         deliveryCategory,
-        deliveryStatus: useStaticStreak
-          ? streak?.lastStatus || (isDeliveryAB ? 'PASS_A_OR_B' : deliveryCategory)
-          : dynamicStreak?.deliveryStatus || deliveryCategory,
+        deliveryStatus: dynamicStreak.deliveryStatus || deliveryCategory,
         rolling5dGt60Count,
+        maxConsecutiveRolling5dGt60: delivSlice.maxConsecutiveRolling5dGt60,
         dailyGt60Count,
         valid30dSessions: valid30dCount,
-        consecutiveStreak: useStaticStreak
-          ? streak?.consecutiveStreak ?? 0
-          : dynamicStreak?.consecutiveStreak ?? 0,
-        totalQualifyingSessions: useStaticStreak
-          ? streak?.totalQualifyingSessions ?? 0
-          : dynamicStreak?.totalQualifyingSessions ?? 0,
-        firstStreakDate: useStaticStreak
-          ? streak?.firstStreakDate ?? ''
-          : dynamicStreak?.firstStreakDate ?? '',
+        consecutiveStreak: dynamicStreak.consecutiveStreak,
+        totalQualifyingSessions: dynamicStreak.totalQualifyingSessions,
+        firstStreakDate: dynamicStreak.firstStreakDate,
         rvol,
         rvolBand,
         liquidityTier,
@@ -1947,12 +2036,8 @@ class NsePipelineEngine {
         topTurnStatus: topTurnEval?.status ?? null,
       };
 
-      rows.push(row);
-      this.screenerBySymbol.set(sym, row);
+      return row;
     }
-
-    rows.sort((a, b) => (b.rvol ?? -1) - (a.rvol ?? -1));
-    this.screenerRows = rows;
   }
 
   public getXbrlBySymbolMap(): Map<string, XbrlFiling[]> {
@@ -1963,6 +2048,33 @@ class NsePipelineEngine {
   public getXbrlFilingsForSymbol(symbol: string): XbrlFiling[] {
     this.ensureLoaded();
     return this.xbrlBySymbol.get(symbol.trim().toUpperCase()) ?? [];
+  }
+
+  private isTieredSwingStock(r: ScreenerRow): boolean {
+    return (
+      r.swingTier === 'TIER_1_READY' ||
+      r.swingTier === 'TIER_2_ACCUMULATION' ||
+      r.swingTier === 'TIER_3_RVOL_WATCH'
+    );
+  }
+
+  public isSymbolEligibleForFundamentalAudit(symbol: string): boolean {
+    this.ensureLoaded();
+    const sym = symbol.trim().toUpperCase();
+    if (!sym) return false;
+    const row = this.screenerBySymbol.get(sym);
+    return Boolean(row && this.isTieredSwingStock(row));
+  }
+
+  public getEligibleAuditSymbolSet(): Set<string> {
+    this.ensureLoaded();
+    const eligible = new Set<string>();
+    for (const row of this.screenerRows) {
+      if (this.isTieredSwingStock(row)) {
+        eligible.add(row.symbol);
+      }
+    }
+    return eligible;
   }
 
   public getAuditCollectionTargets(
@@ -1977,7 +2089,8 @@ class NsePipelineEngine {
       NONE: 3,
     };
 
-    let candidates = this.screenerRows;
+    // Fundamental Deep Audit runs strictly on stocks selected into Tier 1, Tier 2, or Tier 3.
+    let candidates = this.screenerRows.filter((r) => this.isTieredSwingStock(r));
     if (scope === 'NOT_AVAILABLE') {
       candidates = candidates.filter((r) => r.fundamentalFreshness === 'NOT_AVAILABLE');
     } else if (scope === 'LIQUID') {
@@ -1988,7 +2101,7 @@ class NsePipelineEngine {
       );
     } else if (scope === 'MISSING_OR_OLD') {
       candidates = candidates.filter(
-        (r) => r.fundamentalFreshness !== 'LATEST' || r.fundamentalCoverage === 'MISSING'
+        (r) => r.fundamentalFreshness !== 'LATEST' || r.fundamentalCoverage !== 'COMPLETE'
       );
     }
 
@@ -2366,7 +2479,8 @@ class NsePipelineEngine {
     const sectorSentiment = this.computeSectorSentiment();
 
     const refDateIso = this.latestSessionDate || toIstDateIso();
-    const recentFiling90dCount = this.screenerRows.filter((r) => {
+    const tieredAuditRows = this.screenerRows.filter((r) => this.isTieredSwingStock(r));
+    const recentFiling90dCount = tieredAuditRows.filter((r) => {
       const d = this.diffDaysBetween(refDateIso, r.latestFilingDate);
       return d !== null && d <= 90;
     }).length;
@@ -2384,6 +2498,12 @@ class NsePipelineEngine {
       sectorSentiment,
       funnel: {
         universeMainboard: seqFunnel.universeMainboard,
+        funnelStep2FlowCount: seqFunnel.funnelStep2FlowCount,
+        nonAbHighRvolCount: seqFunnel.nonAbHighRvolCount,
+        funnelStep3LiquidityCount: seqFunnel.funnelStep3LiquidityCount,
+        funnelStep4TriggerCount: seqFunnel.funnelStep4TriggerCount,
+        liquidHighRvolTotalCount: seqFunnel.liquidHighRvolTotalCount,
+        liquidDelivExpLowRvolCount: seqFunnel.liquidDelivExpLowRvolCount,
         deliveryAorBUnion: seqFunnel.deliveryAorBUnion,
         deliveryAAndB: seqFunnel.deliveryAAndB,
         deliveryAOnly: seqFunnel.deliveryAOnly,
@@ -2415,30 +2535,30 @@ class NsePipelineEngine {
       },
       thresholds: this.thresholds,
       fundamentalAudit: {
-        totalStocks: this.screenerRows.length,
-        latestCount: this.screenerRows.filter((r) => r.fundamentalFreshness === 'LATEST').length,
-        old3mCount: this.screenerRows.filter((r) => r.fundamentalFreshness === 'OLD_3M').length,
-        staleCount: this.screenerRows.filter((r) => r.fundamentalFreshness === 'STALE').length,
-        notAvailableCount: this.screenerRows.filter(
+        totalStocks: tieredAuditRows.length,
+        latestCount: tieredAuditRows.filter((r) => r.fundamentalFreshness === 'LATEST').length,
+        old3mCount: tieredAuditRows.filter((r) => r.fundamentalFreshness === 'OLD_3M').length,
+        staleCount: tieredAuditRows.filter((r) => r.fundamentalFreshness === 'STALE').length,
+        notAvailableCount: tieredAuditRows.filter(
           (r) => r.fundamentalFreshness === 'NOT_AVAILABLE'
         ).length,
-        withXbrlFilingsCount: this.screenerRows.filter((r) => r.xbrlFilingCount > 0).length,
+        withXbrlFilingsCount: tieredAuditRows.filter((r) => r.xbrlFilingCount > 0).length,
         recentFiling90dCount,
         sourcesBreakdown: {
-          nseXbrl: this.screenerRows.filter((r) =>
+          nseXbrl: tieredAuditRows.filter((r) =>
             r.fundamentalSources.some((s) => s.includes('NSE'))
           ).length,
-          yahooNs: this.screenerRows.filter(
+          yahooNs: tieredAuditRows.filter(
             (r) =>
               r.fundamentalSources.includes('Screener.in') ||
               r.fundamentalSources.includes('YFinance (.NS)')
           ).length,
-          bseBo: this.screenerRows.filter(
+          bseBo: tieredAuditRows.filter(
             (r) =>
               r.fundamentalSources.includes('BSE Official') ||
               r.fundamentalSources.includes('BSE (.BO)')
           ).length,
-          csvBaseline: this.screenerRows.filter((r) =>
+          csvBaseline: tieredAuditRows.filter((r) =>
             r.fundamentalSources.includes('CSV Baseline')
           ).length,
         },
@@ -2523,18 +2643,34 @@ class NsePipelineEngine {
 
     const delivery = (params.delivery || 'ALL').toUpperCase();
     if (delivery === 'UNION') {
+      list = list.filter((r) => isValidatedDeliveryAB(r));
+    } else if (delivery === 'UNION_OR_RVOL') {
       list = list.filter(
-        (r) =>
-          r.deliveryCategory === 'A_AND_B' ||
-          r.deliveryCategory === 'A_ONLY' ||
-          r.deliveryCategory === 'B_ONLY'
+        (r) => isValidatedDeliveryAB(r) || r.rvolBand === 'HIGH'
+      );
+    } else if (delivery === 'NON_AB_HIGH_RVOL') {
+      list = list.filter(
+        (r) => !isValidatedDeliveryAB(r) && r.rvolBand === 'HIGH'
       );
     } else if (delivery !== 'ALL') {
-      list = list.filter((r) => r.deliveryCategory === delivery);
+      list = list.filter((r) => resolveValidatedDeliveryCategory(r) === delivery);
     }
 
     const rvol = (params.rvol || 'ALL').toUpperCase();
-    if (rvol !== 'ALL') {
+    if (rvol === 'HIGH_OR_DELIV_EXP') {
+      list = list.filter(
+        (r) =>
+          r.rvolBand === 'HIGH' ||
+          (isValidatedDeliveryAB(r) && isDelivQtyExpanding(r))
+      );
+    } else if (rvol === 'LOW_DELIV_EXP') {
+      list = list.filter(
+        (r) =>
+          r.rvolBand !== 'HIGH' &&
+          isValidatedDeliveryAB(r) &&
+          isDelivQtyExpanding(r)
+      );
+    } else if (rvol !== 'ALL') {
       list = list.filter((r) => r.rvolBand === rvol);
     }
 
@@ -2843,7 +2979,8 @@ class NsePipelineEngine {
     const refDateIso = this.getAuditRefDateIso();
     const usePeriodBasis = (params.basis || '').toUpperCase() === 'PERIOD';
 
-    const allEntries = this.screenerRows.map((r) => this.buildAuditEntryForRow(r, refDateIso));
+    const tieredRows = this.screenerRows.filter((r) => this.isTieredSwingStock(r));
+    const allEntries = tieredRows.map((r) => this.buildAuditEntryForRow(r, refDateIso));
 
     const effectiveTier = (entry: FundamentalAuditEntry): AuditFreshnessTier =>
       usePeriodBasis ? this.classifyAgeTier(entry.periodAgeDays) : entry.freshnessTier;
@@ -2970,8 +3107,9 @@ class NsePipelineEngine {
     const activeAudit = this.buildAuditEntryForRow(summary, refDateIso);
     const activeSector = summary.providerSector.trim().toUpperCase();
 
+    const tieredPeerPool = this.screenerRows.filter((r) => this.isTieredSwingStock(r));
     const sameSectorPeers = activeSector
-      ? this.screenerRows.filter(
+      ? tieredPeerPool.filter(
           (r) => r.symbol !== sym && r.providerSector.trim().toUpperCase() === activeSector
         )
       : [];
@@ -2983,7 +3121,7 @@ class NsePipelineEngine {
     const chosenSet = new Set<string>([sym, ...selectedPeers.map((r) => r.symbol)]);
 
     if (selectedPeers.length < 14) {
-      const liquidFallback = [...this.screenerRows]
+      const liquidFallback = [...tieredPeerPool]
         .filter((r) => !chosenSet.has(r.symbol))
         .sort((a, b) => (b.avgTurnover20DCr ?? 0) - (a.avgTurnover20DCr ?? 0));
       for (const candidate of liquidFallback) {
@@ -3697,41 +3835,9 @@ class NsePipelineEngine {
             ((knownFirstTradeAge !== null && knownFirstTradeAge <= 365) || isRecentBhavIpo)
         );
 
-      const seriesHistory = history.filter((d) => d.series === latest.series);
-      const window30d = seriesHistory.filter((d) => {
-        const ms = Date.parse(`${d.date}T00:00:00Z`);
-        return ms >= cutoff30dMs && d.delivPer !== null;
-      });
-
-      let dailyGt60Count = 0;
-      let rolling5dGt60Count = 0;
-      for (let i = 0; i < window30d.length; i++) {
-        if ((window30d[i].delivPer ?? 0) >= 60.0) dailyGt60Count++;
-        if (i >= 4) {
-          const avg5 =
-            ((window30d[i - 4].delivPer ?? 0) +
-              (window30d[i - 3].delivPer ?? 0) +
-              (window30d[i - 2].delivPer ?? 0) +
-              (window30d[i - 1].delivPer ?? 0) +
-              (window30d[i].delivPer ?? 0)) /
-            5;
-          if (avg5 >= 60.0) rolling5dGt60Count++;
-        }
-      }
-
-      let isDeliveryAB = false;
-      if (window30d.length < 5) {
-        if (isIpo && window30d.length >= 2) {
-          const avgDelivShort =
-            window30d.reduce((acc, d) => acc + (d.delivPer ?? 0), 0) / window30d.length;
-          const passA = avgDelivShort >= 60.0;
-          const passB = dailyGt60Count >= Math.ceil(window30d.length * 0.6);
-          isDeliveryAB = passA || passB;
-        }
-      } else {
-        isDeliveryAB = rolling5dGt60Count >= 5 || dailyGt60Count >= 5;
-      }
-      if (!isDeliveryAB) continue;
+      const seriesTimeline = buildSeriesDeliveryTimeline(history, latest.series, this.sessionDates);
+      const delivSlice = this.computeDeliveryAtSlice(seriesTimeline, targetDate, isIpo);
+      if (!isDeliveryABCategory(delivSlice.deliveryCategory)) continue;
 
       const minLiqLookback = isIpo ? 2 : 20;
       if (history.length < minLiqLookback) continue;
@@ -3783,7 +3889,12 @@ class NsePipelineEngine {
       const classified = classifySwingTier({
         avgTurnover20DCr,
         liquidityPass: true,
-        deliveryCategory: 'A_AND_B',
+        deliveryCategory: delivSlice.deliveryCategory,
+        maxConsecutiveRolling5dGt60: delivSlice.maxConsecutiveRolling5dGt60,
+        dailyGt60Count: delivSlice.dailyGt60Count,
+        valid30dCount: delivSlice.valid30dCount,
+        isIpo,
+        rolling5dGt60Count: delivSlice.rolling5dGt60Count,
         aboveEma21,
         delivQtyRatio,
         rvol,

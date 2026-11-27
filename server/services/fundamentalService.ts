@@ -3,9 +3,11 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { LRUCache } from 'lru-cache';
 import {
+  evictIndianFundamentalsCacheStore,
   fetchTrustedIndianFundamentals,
   getScreenerRateLimitState,
   loadIndianFundamentalsCache,
+  periodHeaderToIso,
   saveIndianFundamentalsEntry,
   type AnnualStatementYear,
   type IndianFundamentalsPayload,
@@ -120,30 +122,8 @@ function toIstDateIso(d: Date = new Date()): string {
   return new Date(d.getTime() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
-const MONTH_INDEX: Record<string, string> = {
-  jan: '01',
-  feb: '02',
-  mar: '03',
-  apr: '04',
-  may: '05',
-  jun: '06',
-  jul: '07',
-  aug: '08',
-  sep: '09',
-  oct: '10',
-  nov: '11',
-  dec: '12',
-};
-
-function periodLabelToEndDate(periodLabel: string): string {
-  const match = periodLabel.trim().match(/^([A-Za-z]{3})\s+(\d{4})$/);
-  if (!match) return '';
-  const mm = MONTH_INDEX[match[1].toLowerCase()];
-  if (!mm) return '';
-  const year = Number(match[2]);
-  const monthNum = Number(mm);
-  const lastDay = new Date(Date.UTC(year, monthNum, 0)).getUTCDate();
-  return `${year}-${mm}-${String(lastDay).padStart(2, '0')}`;
+export function periodLabelToEndDate(periodLabel: string): string {
+  return periodHeaderToIso(periodLabel);
 }
 
 function findRowNumber(
@@ -170,6 +150,25 @@ function computeYoYPct(curr: number | null, prev: number | null): number | null 
   return Number((((curr - prev) / Math.abs(prev)) * 100).toFixed(2));
 }
 
+function findYoYPrevQuarter<T extends { period: string }>(records: T[]): T | null {
+  if (records.length < 2) return null;
+  const latest = records[records.length - 1];
+  const latestIso = periodLabelToEndDate(latest.period);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(latestIso)) return null;
+  const latestMs = Date.parse(`${latestIso}T00:00:00Z`);
+  if (!Number.isFinite(latestMs)) return null;
+
+  for (let i = records.length - 2; i >= 0; i--) {
+    const candidateIso = periodLabelToEndDate(records[i].period);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(candidateIso)) continue;
+    const diffDays = (latestMs - Date.parse(`${candidateIso}T00:00:00Z`)) / 86400000;
+    if (diffDays >= 340 && diffDays <= 390) {
+      return records[i];
+    }
+  }
+  return null;
+}
+
 export function mapScreenerToIndianPayload(
   screener: ScreenerFundamentals,
   liveQuote: LiveQuote | null = null
@@ -177,8 +176,8 @@ export function mapScreenerToIndianPayload(
   const qRecords = screener.quarterlyResults.records;
   const qCount = qRecords.length;
   const latestQ = qCount >= 1 ? qRecords[qCount - 1] : null;
-  const yoyPrevQ =
-    qCount >= 5 ? qRecords[qCount - 5] : qCount >= 2 ? qRecords[qCount - 2] : null;
+  const prevConsecutiveQ = qCount >= 2 ? qRecords[qCount - 2] : null;
+  const yoyPrevQ = findYoYPrevQuarter(qRecords);
 
   // Compute TTM EPS (sum of last 4 quarters) & prior TTM EPS where available
   const epsVals = qRecords.map((r) => r.eps);
@@ -198,6 +197,12 @@ export function mapScreenerToIndianPayload(
     }
   }
 
+  const isFinFormat =
+    screener.profitLossRows.some((r) => r.label.toLowerCase().includes('financing profit')) ||
+    screener.quarterlyResults.rawRows.some((r) =>
+      r.label.toLowerCase().includes('financing profit')
+    );
+
   // Annual Profit & Loss + Cash Flow + Balance Sheet mapping
   const plPeriods = extractPeriodsFromRows(screener.profitLossRows).filter(
     (p) => p.toUpperCase() !== 'TTM'
@@ -206,12 +211,16 @@ export function mapScreenerToIndianPayload(
 
   const annualYears: AnnualStatementYear[] = plPeriods.slice(-5).map((period) => {
     const salesCr = findRowNumber(screener.profitLossRows, period, ['sales', 'revenue']);
-    const opProfitCr = findRowNumber(screener.profitLossRows, period, ['operating profit']);
+    const opProfitCr = findRowNumber(screener.profitLossRows, period, [
+      'operating profit',
+      'financing profit',
+    ]);
     const interestCr = findRowNumber(screener.profitLossRows, period, ['interest']);
     const depCr = findRowNumber(screener.profitLossRows, period, ['depreciation']);
+    const pbtCr = findRowNumber(screener.profitLossRows, period, ['profit before tax']);
     const netProfitCr = findRowNumber(screener.profitLossRows, period, ['net profit']);
     const eps = findRowNumber(screener.profitLossRows, period, ['eps']);
-    const ocfCr = findRowNumber(screener.cashFlowRows, period, ['cash from operating activity']);
+    const ocfCr = findRowNumber(screener.cashFlowRows, period, ['cash from operating activit']);
     const fixedAssetsPurchasedCr = findRowNumber(screener.cashFlowRows, period, [
       'fixed assets purchased',
     ]);
@@ -221,19 +230,29 @@ export function mapScreenerToIndianPayload(
         ? bs.equityCapitalCr + bs.reservesCr
         : null;
     const ebitCr =
-      opProfitCr !== null && depCr !== null ? opProfitCr - depCr : opProfitCr;
+      isFinFormat && pbtCr !== null && interestCr !== null
+        ? pbtCr + interestCr
+        : opProfitCr !== null && depCr !== null
+          ? opProfitCr - depCr
+          : pbtCr !== null && interestCr !== null
+            ? pbtCr + interestCr
+            : opProfitCr;
+    const ebitdaCr =
+      isFinFormat && pbtCr !== null && interestCr !== null
+        ? pbtCr + interestCr + (depCr ?? 0)
+        : opProfitCr;
     const fcfCr =
       ocfCr !== null && fixedAssetsPurchasedCr !== null
-        ? ocfCr + fixedAssetsPurchasedCr
+        ? ocfCr - Math.abs(fixedAssetsPurchasedCr)
         : null;
 
     return {
-      asOfDate: periodLabelToEndDate(period) || period,
+      asOfDate: periodLabelToEndDate(period),
       revenue: salesCr !== null ? Math.round(salesCr * CRORE_IN_INR) : null,
       grossProfit: null,
       netIncome: netProfitCr !== null ? Math.round(netProfitCr * CRORE_IN_INR) : null,
       ebit: ebitCr !== null ? Math.round(ebitCr * CRORE_IN_INR) : null,
-      ebitda: opProfitCr !== null ? Math.round(opProfitCr * CRORE_IN_INR) : null,
+      ebitda: ebitdaCr !== null ? Math.round(ebitdaCr * CRORE_IN_INR) : null,
       interestExpense: interestCr !== null ? Math.round(interestCr * CRORE_IN_INR) : null,
       totalAssets:
         bs?.totalAssetsCr !== null && bs?.totalAssetsCr !== undefined
@@ -254,24 +273,63 @@ export function mapScreenerToIndianPayload(
   });
 
   const latestAnnual = annualYears[annualYears.length - 1];
-  const latestQuarterlyRevGrowth =
-    latestQ && yoyPrevQ ? computeYoYPct(latestQ.salesCr, yoyPrevQ.salesCr) : null;
-  const latestQuarterlyProfitGrowth =
-    latestQ && yoyPrevQ ? computeYoYPct(latestQ.netProfitCr, yoyPrevQ.netProfitCr) : null;
+  const prevAnnual = annualYears.length >= 2 ? annualYears[annualYears.length - 2] : undefined;
 
-  const interestCoverage =
-    latestQ &&
-    latestQ.operatingProfitCr !== null &&
-    latestQ.interestCr !== null &&
-    latestQ.interestCr > 0
-      ? Number((latestQ.operatingProfitCr / latestQ.interestCr).toFixed(2))
-      : latestAnnual?.ebit !== null &&
-          latestAnnual?.interestExpense !== null &&
-          latestAnnual?.interestExpense !== undefined &&
-          latestAnnual.interestExpense > 0 &&
-          latestAnnual.ebit !== undefined
-        ? Number((latestAnnual.ebit / latestAnnual.interestExpense).toFixed(2))
+  const latestQuarterlyRevGrowth =
+    latestQ && yoyPrevQ
+      ? computeYoYPct(latestQ.salesCr, yoyPrevQ.salesCr)
+      : latestAnnual && prevAnnual
+        ? computeYoYPct(latestAnnual.revenue, prevAnnual.revenue)
         : null;
+  const latestQuarterlyProfitGrowth =
+    latestQ && yoyPrevQ
+      ? computeYoYPct(latestQ.netProfitCr, yoyPrevQ.netProfitCr)
+      : latestAnnual && prevAnnual
+        ? computeYoYPct(latestAnnual.netIncome, prevAnnual.netIncome)
+        : null;
+
+  const latestQEbitCr = latestQ
+    ? isFinFormat && latestQ.pbtCr !== null && latestQ.interestCr !== null
+      ? latestQ.pbtCr + latestQ.interestCr
+      : latestQ.operatingProfitCr !== null
+        ? latestQ.operatingProfitCr - (latestQ.depreciationCr ?? 0)
+        : latestQ.pbtCr !== null && latestQ.interestCr !== null
+          ? latestQ.pbtCr + latestQ.interestCr
+          : null
+    : null;
+
+  let interestCoverage: number | null = null;
+  if (latestQEbitCr !== null && latestQ?.interestCr !== null && latestQ?.interestCr !== undefined) {
+    if (Math.abs(latestQ.interestCr) > 0.05) {
+      interestCoverage = Number((latestQEbitCr / Math.abs(latestQ.interestCr)).toFixed(2));
+    } else if (
+      screener.debtToEquity !== null &&
+      screener.debtToEquity <= 0.02 &&
+      latestQEbitCr > 0
+    ) {
+      interestCoverage = 999;
+    }
+  }
+  if (
+    interestCoverage === null &&
+    latestAnnual?.ebit !== null &&
+    latestAnnual?.ebit !== undefined &&
+    latestAnnual?.interestExpense !== null &&
+    latestAnnual?.interestExpense !== undefined
+  ) {
+    const absIntCr = Math.abs(latestAnnual.interestExpense) / CRORE_IN_INR;
+    if (absIntCr > 0.05) {
+      interestCoverage = Number(
+        (latestAnnual.ebit / Math.abs(latestAnnual.interestExpense)).toFixed(2)
+      );
+    } else if (
+      screener.debtToEquity !== null &&
+      screener.debtToEquity <= 0.02 &&
+      latestAnnual.ebit > 0
+    ) {
+      interestCoverage = 999;
+    }
+  }
 
   const currentPrice = liveQuote?.lastPrice ?? screener.topRatios.currentPrice;
   const marketCapInr =
@@ -297,9 +355,9 @@ export function mapScreenerToIndianPayload(
     sourceUrl: screener.sourceUrl,
     sources,
     financialPeriodEnd:
-      (latestQ ? periodLabelToEndDate(latestQ.period) : '') ||
-      latestAnnual?.asOfDate ||
-      '',
+      [latestQ ? periodLabelToEndDate(latestQ.period) : '', latestAnnual?.asOfDate || '']
+        .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+        .sort((a, b) => b.localeCompare(a))[0] || '',
     companyName: liveQuote?.companyName || screener.companyName,
     providerSector: '',
     bseScripCode: liveQuote?.bseScripCode,
@@ -328,9 +386,9 @@ export function mapScreenerToIndianPayload(
         : null,
     evToEbitda: null,
     epsCurr: latestQ?.eps ?? null,
-    epsPrev: yoyPrevQ?.eps ?? null,
+    epsPrev: prevConsecutiveQ?.eps ?? null,
     epsCurrPeriod: latestQ?.period ?? '',
-    epsPrevPeriod: yoyPrevQ?.period ?? '',
+    epsPrevPeriod: prevConsecutiveQ?.period ?? '',
     epsTtmCurr,
     epsTtmPrev,
     promoterHoldingPct: latestSh?.promoterPct ?? null,
@@ -760,33 +818,22 @@ export async function getHistoricalPrices(
   return defaultIndianStockDataService.getHistoricalPrices(symbol, options);
 }
 
-export function evictFundamentalCache(symbol?: string): { clearedCount: number } {
+export async function evictFundamentalCache(symbol?: string): Promise<{ clearedCount: number }> {
   defaultIndianStockDataService.evictSymbol(symbol);
-  const cache = loadIndianFundamentalsCache();
   if (symbol) {
     const sym = normalizeSymbol(symbol);
-    const existed = (sym in cache) || payloadLruCache.has(sym);
+    const hadLru = payloadLruCache.has(sym);
     payloadLruCache.delete(sym);
-    delete cache[sym];
     failureCooldownMap.delete(sym);
-    const file = path.join(process.cwd(), 'data', 'research', 'indian_fundamentals_cache.json');
-    if (existed && fs.existsSync(file)) {
-      fs.writeFileSync(file, JSON.stringify(cache), 'utf-8');
-    }
-    return { clearedCount: existed ? 1 : 0 };
+    const storeCleared = await evictIndianFundamentalsCacheStore(sym);
+    return { clearedCount: Math.max(storeCleared, hadLru ? 1 : 0) };
   }
 
-  const count = Math.max(Object.keys(cache).length, payloadLruCache.size);
+  const hadLruCount = payloadLruCache.size;
   payloadLruCache.clear();
-  for (const key of Object.keys(cache)) {
-    delete cache[key];
-  }
   failureCooldownMap.clear();
-  const file = path.join(process.cwd(), 'data', 'research', 'indian_fundamentals_cache.json');
-  if (fs.existsSync(file)) {
-    fs.writeFileSync(file, JSON.stringify({}), 'utf-8');
-  }
-  return { clearedCount: count };
+  const storeCleared = await evictIndianFundamentalsCacheStore();
+  return { clearedCount: Math.max(storeCleared, hadLruCount) };
 }
 
 export function getFundamentalServiceHealth(): FundamentalServiceHealth {

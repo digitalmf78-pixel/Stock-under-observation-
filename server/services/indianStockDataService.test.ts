@@ -402,3 +402,82 @@ test('marks live quote as stale when API lastUpdated belongs to previous session
   assert.equal(fallback.cacheMeta.staleFallback, true);
   assert.equal(fallback.data?.isStale, true);
 });
+
+test('computes YoY growth strictly across 340-390d quarters (never QoQ) and uses EBIT & bank Financing Profit for Interest Coverage', () => {
+  // 1. Consecutive quarters only (Dec 2024 & Mar 2025 -> no YoY quarter match), must fall back to Annual YoY, never QoQ!
+  const qoqOnlyScreener: ApiResponse<CompanyData> = {
+    data: {
+      name: 'Sample Manufacturing Ltd',
+      symbol: 'SAMPLEMFG',
+      mode: 'consolidated',
+      topRatios: [
+        { name: 'Market Cap', value: '5,000 Cr.' },
+        { name: 'Current Price', value: '500' },
+        { name: 'Stock P/E', value: '20' },
+        { name: 'ROCE', value: '22 %' },
+        { name: 'ROE', value: '18 %' },
+      ],
+      quarters: {
+        headers: ['', 'Dec 2024', 'Mar 2025'],
+        rows: [
+          { '': 'Sales +', 'Dec 2024': '500', 'Mar 2025': '1000' },
+          { '': 'Operating Profit', 'Dec 2024': '100', 'Mar 2025': '250' },
+          { '': 'Depreciation', 'Dec 2024': '20', 'Mar 2025': '50' },
+          { '': 'Interest', 'Dec 2024': '10', 'Mar 2025': '20' },
+          { '': 'Net Profit +', 'Dec 2024': '50', 'Mar 2025': '130' },
+          { '': 'EPS in Rs', 'Dec 2024': '5', 'Mar 2025': '13' },
+        ],
+      },
+      balanceSheet: {
+        headers: ['', 'Mar 2024', 'Mar 2025'],
+        rows: [
+          { '': 'Equity Capital', 'Mar 2024': '100', 'Mar 2025': '100' },
+          { '': 'Reserves', 'Mar 2024': '900', 'Mar 2025': '1000' },
+          { '': 'Borrowings +', 'Mar 2024': '200', 'Mar 2025': '220' },
+          { '': 'Total Assets', 'Mar 2024': '1500', 'Mar 2025': '1700' },
+        ],
+      },
+      profitLoss: {
+        headers: ['', 'Mar 2024', 'Mar 2025'],
+        rows: [
+          { '': 'Sales +', 'Mar 2024': '2000', 'Mar 2025': '2200' }, // +10% YoY (not +100% QoQ!)
+          { '': 'Operating Profit', 'Mar 2024': '400', 'Mar 2025': '460' },
+          { '': 'Depreciation', 'Mar 2024': '80', 'Mar 2025': '100' },
+          { '': 'Interest', 'Mar 2024': '40', 'Mar 2025': '50' },
+          { '': 'Net Profit +', 'Mar 2024': '200', 'Mar 2025': '230' }, // +15% YoY (not +160% QoQ!)
+          { '': 'EPS in Rs', 'Mar 2024': '20', 'Mar 2025': '23' },
+        ],
+      },
+      cashFlow: {
+        headers: ['', 'Mar 2024', 'Mar 2025'],
+        rows: [
+          { '': 'Cash from Operating Activity +', 'Mar 2024': '300', 'Mar 2025': '350' },
+          // Positive CapEx magnitude convention check
+          { '': 'Fixed Assets Purchased', 'Mar 2024': '50', 'Mar 2025': '75' },
+        ],
+      },
+      shareholding: { headers: [], rows: [] },
+      analysis: { pros: [], cons: [], description: '' },
+    },
+    meta: { sourceUrl: 'https://www.screener.in/company/SAMPLEMFG/', fetchedAt: '2026-04-01T00:00:00Z', parserVersion: '1.0.1' },
+    warnings: [],
+  };
+
+  // Use raw mapped screener structure via IndianStockDataService so parseScreener logic is exercised
+  const svc = new IndianStockDataService({
+    screenerClient: { async getCompany() { return qoqOnlyScreener; } },
+    nseClient: { async quote() { return {}; }, async equityQuote() { return {}; }, async fetch_equity_historical_data() { return []; } },
+    bseClient: { async getScripCode() { return ''; }, async quote() { return {}; } },
+  });
+  return svc.getFundamentals('SAMPLEMFG').then((res) => {
+    assert.ok(res.data);
+    const mapped = mapScreenerToIndianPayload(res.data, null);
+    assert.equal(mapped.revenueGrowthPct, 10); // Annual YoY, NOT 100% QoQ
+    assert.equal(mapped.profitGrowthPct, 15); // Annual YoY, NOT 160% QoQ
+    // Quarterly EBIT = Operating Profit (250) - Depreciation (50) = 200; Interest = 20 -> 10.0x (NOT 250/20 = 12.5x EBITDA)
+    assert.equal(mapped.interestCoverage, 10);
+    // FCF = OCF (350) - |CapEx| (75) = 275 Cr
+    assert.equal(mapped.annualYears[1].fcf, 275 * 1e7);
+  });
+});
+

@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import type {
   LiveStockQuote,
@@ -6,6 +5,7 @@ import type {
   T1T2DailyReportItem,
   T1T2DailyReportResponse,
 } from '../src/types/trading.ts';
+import { atomicWriteJsonSync, readJsonSafe } from './filePersistence.ts';
 import { toIstDateIso } from './liveFetcher.ts';
 import { nsePipeline } from './nsePipeline.ts';
 import { fetchLiveYahooQuote } from './paperTradeStore.ts';
@@ -38,38 +38,70 @@ function snapshotsFilePath(): string {
   return path.join(process.cwd(), 'data', 'research', 't1_t2_daily_snapshots.json');
 }
 
-function atomicWriteJson(filePath: string, data: T1T2SnapshotsFile): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+function isT1T2SnapshotsFile(val: unknown): val is Partial<T1T2SnapshotsFile> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
 }
 
-function loadSnapshotsFile(): T1T2SnapshotsFile {
+function isValidStoredSnapshotEntry(val: unknown): val is StoredSnapshotEntry {
+  if (!val || typeof val !== 'object' || Array.isArray(val)) return false;
+  const e = val as Record<string, unknown>;
+  const validTier = e.swingTier === 'TIER_1_READY' || e.swingTier === 'TIER_2_ACCUMULATION';
+  return (
+    typeof e.symbol === 'string' &&
+    e.symbol.trim().length > 0 &&
+    validTier &&
+    typeof e.closePrice === 'number' &&
+    Number.isFinite(e.closePrice) &&
+    e.closePrice > 0
+  );
+}
+
+function sanitizeSnapshotsByDate(
+  raw: Record<string, unknown>
+): Record<string, StoredSnapshotEntry[]> {
+  const out: Record<string, StoredSnapshotEntry[]> = {};
+  for (const [dt, entries] of Object.entries(raw)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dt) || !Array.isArray(entries)) continue;
+    const bySym = new Map<string, StoredSnapshotEntry>();
+    for (const item of entries) {
+      if (!isValidStoredSnapshotEntry(item)) continue;
+      const sym = item.symbol.trim().toUpperCase();
+      bySym.set(sym, { ...item, symbol: sym });
+    }
+    out[dt] = Array.from(bySym.values());
+  }
+  return out;
+}
+
+function loadSnapshotsFile(throwOnCorruptWithoutBackup = false): T1T2SnapshotsFile {
   const file = snapshotsFilePath();
-  if (!fs.existsSync(file)) {
-    return { updatedAtUtc: '', snapshotsByDate: {} };
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as T1T2SnapshotsFile;
-    return {
-      updatedAtUtc: parsed?.updatedAtUtc || '',
-      snapshotsByDate:
-        parsed?.snapshotsByDate && typeof parsed.snapshotsByDate === 'object'
-          ? parsed.snapshotsByDate
-          : {},
-    };
-  } catch {
-    return { updatedAtUtc: '', snapshotsByDate: {} };
-  }
+  const parsed = readJsonSafe<Partial<T1T2SnapshotsFile>>(
+    file,
+    { updatedAtUtc: '', snapshotsByDate: {} },
+    {
+      validate: isT1T2SnapshotsFile,
+      throwOnCorruptWithoutBackup,
+    }
+  );
+  const rawByDate =
+    parsed.snapshotsByDate &&
+    typeof parsed.snapshotsByDate === 'object' &&
+    !Array.isArray(parsed.snapshotsByDate)
+      ? (parsed.snapshotsByDate as Record<string, unknown>)
+      : {};
+  return {
+    updatedAtUtc: typeof parsed.updatedAtUtc === 'string' ? parsed.updatedAtUtc : '',
+    snapshotsByDate: sanitizeSnapshotsByDate(rawByDate),
+  };
 }
 
 export function syncT1T2DailySnapshots(): T1T2SnapshotsFile {
   const { latestDate, sessionDates } = nsePipeline.getScreenerSessionMeta();
-  const store = loadSnapshotsFile();
+  const store = loadSnapshotsFile(true);
   let dirty = false;
 
-  // Backfill up to the latest 10 Bhavcopy sessions if not yet memorized, and always refresh latestDate
+  // Backfill recent Bhavcopy sessions if not yet memorized, and always refresh latestDate.
+  // Historical snapshot dates already persisted are strictly preserved (never deleted).
   const recentDates = sessionDates.slice(-10);
   for (const dt of recentDates) {
     if (!store.snapshotsByDate[dt] || dt === latestDate) {
@@ -84,19 +116,9 @@ export function syncT1T2DailySnapshots(): T1T2SnapshotsFile {
     }
   }
 
-  // Retain up to 90 trading dates in persistent memory
-  const allDates = Object.keys(store.snapshotsByDate).sort();
-  if (allDates.length > 90) {
-    const toDrop = allDates.slice(0, allDates.length - 90);
-    for (const d of toDrop) {
-      delete store.snapshotsByDate[d];
-      dirty = true;
-    }
-  }
-
   if (dirty) {
     store.updatedAtUtc = new Date().toISOString();
-    atomicWriteJson(snapshotsFilePath(), store);
+    atomicWriteJsonSync(snapshotsFilePath(), store, { pretty: true, preserveBackup: true });
   }
 
   return store;

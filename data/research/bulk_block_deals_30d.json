@@ -1,6 +1,2126 @@
 {
-  "lastSyncedUtc": "2026-11-25T17:56:32.318Z",
+  "lastSyncedUtc": "2026-11-27T08:23:31.339Z",
   "deals": [
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SCHAEFFLER SCHWEINFURT BETEILIGUNGS GMBH",
+      "buySell": "SELL",
+      "quantity": 10159738,
+      "tradePrice": 3493,
+      "valueCr": 3548.7965
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "LGEINDIA",
+      "clientName": "LG ELECTRONICS INC",
+      "buySell": "SELL",
+      "quantity": 13575447,
+      "tradePrice": 1765.28,
+      "valueCr": 2396.4465
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "IIFL",
+      "clientName": "SMALLCAP WORLD FUND INC",
+      "buySell": "SELL",
+      "quantity": 5615936,
+      "tradePrice": 600.16,
+      "valueCr": 337.046
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "CARBORUNIV",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 3344472,
+      "tradePrice": 975,
+      "valueCr": 326.086
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "NATIONAL PENSION SYSTEM (NPS) TRUST",
+      "buySell": "BUY",
+      "quantity": 847000,
+      "tradePrice": 3493,
+      "valueCr": 295.8571
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "CARBORUNIV",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "SELL",
+      "quantity": 2793669,
+      "tradePrice": 975,
+      "valueCr": 272.3827
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 758660,
+      "tradePrice": 3493,
+      "valueCr": 264.9999
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "AMAGI",
+      "clientName": "NORWEST VENTURE PARTNERS X MAURITIUS",
+      "buySell": "SELL",
+      "quantity": 4737204,
+      "tradePrice": 554,
+      "valueCr": 262.4411
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "IIFL",
+      "clientName": "UBS AG",
+      "buySell": "BUY",
+      "quantity": 4320402,
+      "tradePrice": 600,
+      "valueCr": 259.2241
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 644046,
+      "tradePrice": 3493,
+      "valueCr": 224.9653
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "AMAGI",
+      "clientName": "ADITYA BIRLA SUN LIFE MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 3327204,
+      "tradePrice": 554,
+      "valueCr": 184.3271
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "ALKEM",
+      "clientName": "SEEMA SINGH",
+      "buySell": "SELL",
+      "quantity": 358695,
+      "tradePrice": 5075,
+      "valueCr": 182.0377
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "MIRAE ASSET MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 491804,
+      "tradePrice": 3493,
+      "valueCr": 171.7871
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 452311,
+      "tradePrice": 3493,
+      "valueCr": 157.9922
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "NIPPON INDIA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 347000,
+      "tradePrice": 3493,
+      "valueCr": 121.2071
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 1258122,
+      "tradePrice": 848.14,
+      "valueCr": 106.7064
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 4478721,
+      "tradePrice": 234.56,
+      "valueCr": 105.0529
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "EDELWEISS MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 300000,
+      "tradePrice": 3493,
+      "valueCr": 104.79
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 4464252,
+      "tradePrice": 234.53,
+      "valueCr": 104.7001
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 1230983,
+      "tradePrice": 850.3,
+      "valueCr": 104.6705
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "WHITEOAK CAPITAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 288974,
+      "tradePrice": 3493,
+      "valueCr": 100.9386
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ADITYA BIRLA SUN LIFE MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 275677,
+      "tradePrice": 3493,
+      "valueCr": 96.294
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1079507,
+      "tradePrice": 852.06,
+      "valueCr": 91.9805
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "MIRAE ASSET MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 262295,
+      "tradePrice": 3493,
+      "valueCr": 91.6196
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SOCIETE GENERALE",
+      "buySell": "BUY",
+      "quantity": 260738,
+      "tradePrice": 3493,
+      "valueCr": 91.0758
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "HDFC STANDARD LIFE INSURANCE CO LTD",
+      "buySell": "BUY",
+      "quantity": 260000,
+      "tradePrice": 3493,
+      "valueCr": 90.818
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1052704,
+      "tradePrice": 851.96,
+      "valueCr": 89.6862
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 3520852,
+      "tradePrice": 235.37,
+      "valueCr": 82.8703
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 3519382,
+      "tradePrice": 235.44,
+      "valueCr": 82.8603
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DSP MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 210547,
+      "tradePrice": 3493,
+      "valueCr": 73.5441
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DSP MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 207319,
+      "tradePrice": 3493,
+      "valueCr": 72.4165
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "GREAVESCOT",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 2252274,
+      "tradePrice": 320.91,
+      "valueCr": 72.2777
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "GREAVESCOT",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 2228252,
+      "tradePrice": 321.16,
+      "valueCr": 71.5625
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 3020209,
+      "tradePrice": 234.39,
+      "valueCr": 70.7907
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "BAJAJ ALLIANZ LIFE INSURANCE COMPANY LIMITED",
+      "buySell": "BUY",
+      "quantity": 200000,
+      "tradePrice": 3493,
+      "valueCr": 69.86
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 2938691,
+      "tradePrice": 234.17,
+      "valueCr": 68.8153
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "MIRAE ASSET MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 196721,
+      "tradePrice": 3493,
+      "valueCr": 68.7146
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
+      "buySell": "SELL",
+      "quantity": 2825694,
+      "tradePrice": 235.68,
+      "valueCr": 66.596
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
+      "buySell": "BUY",
+      "quantity": 2825694,
+      "tradePrice": 235.55,
+      "valueCr": 66.5592
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 2805939,
+      "tradePrice": 235.5,
+      "valueCr": 66.0799
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 2807378,
+      "tradePrice": 235.36,
+      "valueCr": 66.0744
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 716927,
+      "tradePrice": 863.31,
+      "valueCr": 61.893
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DSP MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 174557,
+      "tradePrice": 3493,
+      "valueCr": 60.9728
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGMART",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 706519,
+      "tradePrice": 862.83,
+      "valueCr": 60.9606
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 171772,
+      "tradePrice": 3493,
+      "valueCr": 60
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "BUY",
+      "quantity": 2744324,
+      "tradePrice": 201.87,
+      "valueCr": 55.3997
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "SELL",
+      "quantity": 2744324,
+      "tradePrice": 201.23,
+      "valueCr": 55.224
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 2256433,
+      "tradePrice": 235.11,
+      "valueCr": 53.051
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JWL",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 2198863,
+      "tradePrice": 235.09,
+      "valueCr": 51.6931
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 145712,
+      "tradePrice": 3493,
+      "valueCr": 50.8972
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "ALKEM",
+      "clientName": "HDFC MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 95000,
+      "tradePrice": 5075,
+      "valueCr": 48.2125
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "ALKEM",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 95000,
+      "tradePrice": 5075,
+      "valueCr": 48.2125
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "ALKEM",
+      "clientName": "NIPPON INDIA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 95000,
+      "tradePrice": 5075,
+      "valueCr": 48.2125
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "GREAVESCOT",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1502711,
+      "tradePrice": 320.83,
+      "valueCr": 48.2115
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "GREAVESCOT",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1497474,
+      "tradePrice": 321.79,
+      "valueCr": 48.1872
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "BNP PARIBAS ARBITRAGE",
+      "buySell": "BUY",
+      "quantity": 132000,
+      "tradePrice": 3493,
+      "valueCr": 46.1076
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "AMAGI",
+      "clientName": "OLD BRIDGE CAPITAL MANAGEMENT PVT LTD ALL CAP STRATEGY",
+      "buySell": "BUY",
+      "quantity": 765000,
+      "tradePrice": 554,
+      "valueCr": 42.381
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 114260,
+      "tradePrice": 3493,
+      "valueCr": 39.911
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 109945,
+      "tradePrice": 3493,
+      "valueCr": 38.4038
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "ALKEM",
+      "clientName": "BAJAJ LIFE INSURANCE LIMITED",
+      "buySell": "BUY",
+      "quantity": 73695,
+      "tradePrice": 5075,
+      "valueCr": 37.4002
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "AMAGI",
+      "clientName": "LONG TERM EQUITY FUND",
+      "buySell": "BUY",
+      "quantity": 645000,
+      "tradePrice": 554,
+      "valueCr": 35.733
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 101207,
+      "tradePrice": 3493,
+      "valueCr": 35.3516
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ABU DHABI INVESTMENT AUTHORITY",
+      "buySell": "BUY",
+      "quantity": 97162,
+      "tradePrice": 3493,
+      "valueCr": 33.9387
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 94780,
+      "tradePrice": 3493,
+      "valueCr": 33.1067
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "RATNAVEER",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "SELL",
+      "quantity": 810867,
+      "tradePrice": 405.01,
+      "valueCr": 32.8409
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "RATNAVEER",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "BUY",
+      "quantity": 810330,
+      "tradePrice": 404.08,
+      "valueCr": 32.7438
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 92006,
+      "tradePrice": 3493,
+      "valueCr": 32.1377
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AGIIL",
+      "clientName": "ARTHKUMBH VENTURES LLP",
+      "buySell": "BUY",
+      "quantity": 1000000,
+      "tradePrice": 306,
+      "valueCr": 30.6
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "V2RETAIL",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 2021365,
+      "tradePrice": 150.42,
+      "valueCr": 30.4054
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "INDIA ACORN ICAV",
+      "buySell": "BUY",
+      "quantity": 86900,
+      "tradePrice": 3493,
+      "valueCr": 30.3542
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "RATNAVEER",
+      "clientName": "NOMURA SINGAPORE LIMITED",
+      "buySell": "BUY",
+      "quantity": 750000,
+      "tradePrice": 404,
+      "valueCr": 30.3
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "INDIA ACORN ICAV - ASHOKA WHITEOAK EMERGING MARKETS EQUITY FUND",
+      "buySell": "BUY",
+      "quantity": 86216,
+      "tradePrice": 3493,
+      "valueCr": 30.1152
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "BARODA BNP PARIBAS MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 85000,
+      "tradePrice": 3493,
+      "valueCr": 29.6905
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL LIFE INSURANCE COMPANY LIMITED",
+      "buySell": "BUY",
+      "quantity": 85000,
+      "tradePrice": 3493,
+      "valueCr": 29.6905
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 1454300,
+      "tradePrice": 204.02,
+      "valueCr": 29.6706
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "V2RETAIL",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1976883,
+      "tradePrice": 149.8,
+      "valueCr": 29.6137
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "V2RETAIL",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 1945706,
+      "tradePrice": 151.24,
+      "valueCr": 29.4269
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "V2RETAIL",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1947244,
+      "tradePrice": 150.53,
+      "valueCr": 29.3119
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "RBA FINANCE AND INVESTMENT COMPANY",
+      "buySell": "BUY",
+      "quantity": 1500000,
+      "tradePrice": 195,
+      "valueCr": 29.25
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 1422199,
+      "tradePrice": 205.19,
+      "valueCr": 29.1821
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGFIN",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 478388,
+      "tradePrice": 606.35,
+      "valueCr": 29.0071
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "WHITEOAK CAPITAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 81615,
+      "tradePrice": 3493,
+      "valueCr": 28.5081
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "TCI",
+      "clientName": "NIRMAL BANG (HUF)",
+      "buySell": "SELL",
+      "quantity": 380000,
+      "tradePrice": 747.69,
+      "valueCr": 28.4122
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "MORGAN STANLEY ASIA SINGAPORE PTE",
+      "buySell": "BUY",
+      "quantity": 80000,
+      "tradePrice": 3493,
+      "valueCr": 27.944
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1527955,
+      "tradePrice": 180.22,
+      "valueCr": 27.5368
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1527955,
+      "tradePrice": 179.96,
+      "valueCr": 27.4971
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGFIN",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 445836,
+      "tradePrice": 605.66,
+      "valueCr": 27.0025
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 73605,
+      "tradePrice": 3493,
+      "valueCr": 25.7102
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGFIN",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 420271,
+      "tradePrice": 606.07,
+      "valueCr": 25.4714
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SGFIN",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 415686,
+      "tradePrice": 609.49,
+      "valueCr": 25.3356
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AGIIL",
+      "clientName": "CRAFT EMERGING MARKET FUND PCC-CITADEL CAPITAL FUND",
+      "buySell": "SELL",
+      "quantity": 830188,
+      "tradePrice": 305,
+      "valueCr": 25.3207
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "GHISALLO MASTER FUND LP",
+      "buySell": "BUY",
+      "quantity": 72000,
+      "tradePrice": 3493,
+      "valueCr": 25.1496
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "GOLDMAN SACHS BANK EUROPE SE",
+      "buySell": "BUY",
+      "quantity": 72000,
+      "tradePrice": 3493,
+      "valueCr": 25.1496
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "NORGES BANK ON ACCOUNT OF THE GOVERNMENT PENSION FUND GLOBAL",
+      "buySell": "BUY",
+      "quantity": 72000,
+      "tradePrice": 3493,
+      "valueCr": 25.1496
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VIRIDIAN ASIA OPPORTUNITIES MASTER FUND",
+      "buySell": "BUY",
+      "quantity": 72000,
+      "tradePrice": 3493,
+      "valueCr": 25.1496
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1378286,
+      "tradePrice": 179.86,
+      "valueCr": 24.7899
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1377675,
+      "tradePrice": 179.76,
+      "valueCr": 24.7651
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 1368823,
+      "tradePrice": 179.67,
+      "valueCr": 24.5936
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1368823,
+      "tradePrice": 179.58,
+      "valueCr": 24.5813
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 1337344,
+      "tradePrice": 179.98,
+      "valueCr": 24.0695
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 1334717,
+      "tradePrice": 179.15,
+      "valueCr": 23.9115
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 66245,
+      "tradePrice": 3493,
+      "valueCr": 23.1394
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AGIIL",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "SELL",
+      "quantity": 727898,
+      "tradePrice": 306.56,
+      "valueCr": 22.3144
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "CLT RESEARCH TECH PRIVATE LTD",
+      "buySell": "SELL",
+      "quantity": 1196083,
+      "tradePrice": 179.96,
+      "valueCr": 21.5247
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "CLT RESEARCH TECH PRIVATE LTD",
+      "buySell": "BUY",
+      "quantity": 1196083,
+      "tradePrice": 179.87,
+      "valueCr": 21.5139
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI LIFE INSURANCE COMPANY LIMITED",
+      "buySell": "BUY",
+      "quantity": 61550,
+      "tradePrice": 3493,
+      "valueCr": 21.4994
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 61103,
+      "tradePrice": 3493,
+      "valueCr": 21.3433
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 60246,
+      "tradePrice": 3493,
+      "valueCr": 21.0439
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AGIIL",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "BUY",
+      "quantity": 682794,
+      "tradePrice": 305.42,
+      "valueCr": 20.8539
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AGIIL",
+      "clientName": "CRAFT EMERGING MARKET FUND PCC-ARBITRAGE STRATEGY FUND",
+      "buySell": "SELL",
+      "quantity": 681132,
+      "tradePrice": 306.01,
+      "valueCr": 20.8433
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1013506,
+      "tradePrice": 202.78,
+      "valueCr": 20.5519
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 58168,
+      "tradePrice": 3493,
+      "valueCr": 20.3181
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 57257,
+      "tradePrice": 3493,
+      "valueCr": 19.9999
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "GOLDEN GOENKA MANAGEMENT CONSULTANCY SERVICES LLP",
+      "buySell": "SELL",
+      "quantity": 1000000,
+      "tradePrice": 196.02,
+      "valueCr": 19.602
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DSP MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 55454,
+      "tradePrice": 3493,
+      "valueCr": 19.3701
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "WHITEOAK CAPITAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 54411,
+      "tradePrice": 3493,
+      "valueCr": 19.0058
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 924930,
+      "tradePrice": 204,
+      "valueCr": 18.8686
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "NIPPON INDIA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 53000,
+      "tradePrice": 3493,
+      "valueCr": 18.5129
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DSP MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 52123,
+      "tradePrice": 3493,
+      "valueCr": 18.2066
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 855449,
+      "tradePrice": 206.26,
+      "valueCr": 17.6445
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 851080,
+      "tradePrice": 206.03,
+      "valueCr": 17.5348
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 49683,
+      "tradePrice": 3493,
+      "valueCr": 17.3543
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 49358,
+      "tradePrice": 3493,
+      "valueCr": 17.2407
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "MIRAE ASSET MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 49180,
+      "tradePrice": 3493,
+      "valueCr": 17.1786
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SUNSHINE",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "BUY",
+      "quantity": 324006,
+      "tradePrice": 520.98,
+      "valueCr": 16.8801
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "TATA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 45500,
+      "tradePrice": 3493,
+      "valueCr": 15.8932
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 877935,
+      "tradePrice": 180.36,
+      "valueCr": 15.8344
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "NK SECURITIES RESEARCH PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 877935,
+      "tradePrice": 180.28,
+      "valueCr": 15.8274
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "SUNSHINE",
+      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
+      "buySell": "SELL",
+      "quantity": 295236,
+      "tradePrice": 531.08,
+      "valueCr": 15.6794
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "PCA INDIA INFRASTRUCTURE EQUITYOPEN LIMITED",
+      "buySell": "BUY",
+      "quantity": 42505,
+      "tradePrice": 3493,
+      "valueCr": 14.847
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "EASTSPRING INVESTMENTS INDIA EQUITY FUND",
+      "buySell": "BUY",
+      "quantity": 42495,
+      "tradePrice": 3493,
+      "valueCr": 14.8435
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 4993699,
+      "tradePrice": 27.97,
+      "valueCr": 13.9674
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 4993699,
+      "tradePrice": 27.97,
+      "valueCr": 13.9674
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HMAAGRO",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 2993810,
+      "tradePrice": 45.39,
+      "valueCr": 13.5889
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ADITYA BIRLA SUN LIFE MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 36756,
+      "tradePrice": 3493,
+      "valueCr": 12.8389
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "TATA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 36300,
+      "tradePrice": 3493,
+      "valueCr": 12.6796
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HMAAGRO",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 2760204,
+      "tradePrice": 45.45,
+      "valueCr": 12.5451
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ASHOKA INDIA EQUITY INVESTMENT TRUST PLC",
+      "buySell": "BUY",
+      "quantity": 34908,
+      "tradePrice": 3493,
+      "valueCr": 12.1934
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 4227296,
+      "tradePrice": 27.97,
+      "valueCr": 11.8237
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 4227296,
+      "tradePrice": 27.96,
+      "valueCr": 11.8195
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "PASHUPATI",
+      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
+      "buySell": "BUY",
+      "quantity": 3738494,
+      "tradePrice": 31.23,
+      "valueCr": 11.6753
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 4078044,
+      "tradePrice": 27.87,
+      "valueCr": 11.3655
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "JISLJALEQS",
+      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 4067741,
+      "tradePrice": 27.85,
+      "valueCr": 11.3287
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 581797,
+      "tradePrice": 180.09,
+      "valueCr": 10.4776
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "ELIXIR WEALTH MANAGEMENT PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 581797,
+      "tradePrice": 179.64,
+      "valueCr": 10.4514
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "PASHUPATI",
+      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
+      "buySell": "SELL",
+      "quantity": 3238494,
+      "tradePrice": 31.3,
+      "valueCr": 10.1365
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 28861,
+      "tradePrice": 3493,
+      "valueCr": 10.0811
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HUBTOWN",
+      "clientName": "GOLDEN GOENKA MANAGEMENT CONSULTANCY SERVICES LLP",
+      "buySell": "BUY",
+      "quantity": 500000,
+      "tradePrice": 200.23,
+      "valueCr": 10.0115
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ADITYA BIRLA SUN LIFE MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 27567,
+      "tradePrice": 3493,
+      "valueCr": 9.6292
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "BLSPOLY",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 364587,
+      "tradePrice": 263.81,
+      "valueCr": 9.6182
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "BLSPOLY",
+      "clientName": "QE SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 346022,
+      "tradePrice": 263.67,
+      "valueCr": 9.1236
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD TOTAL INTERNATIONAL STOCK INDEX FUND",
+      "buySell": "BUY",
+      "quantity": 25064,
+      "tradePrice": 3493,
+      "valueCr": 8.7549
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "MARWADI SHARES AND FINANCE LTD.",
+      "buySell": "SELL",
+      "quantity": 485957,
+      "tradePrice": 180.02,
+      "valueCr": 8.7482
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "MARWADI SHARES AND FINANCE LTD.",
+      "buySell": "BUY",
+      "quantity": 485957,
+      "tradePrice": 179.91,
+      "valueCr": 8.7429
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 24851,
+      "tradePrice": 3493,
+      "valueCr": 8.6805
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "J4S FINANCIAL SOLUTIONS LLP",
+      "buySell": "SELL",
+      "quantity": 470655,
+      "tradePrice": 179.72,
+      "valueCr": 8.4586
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "J4S FINANCIAL SOLUTIONS LLP",
+      "buySell": "BUY",
+      "quantity": 470655,
+      "tradePrice": 179.57,
+      "valueCr": 8.4516
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD EMERGING MARKETS STOCK INDEX FUND A SERIES OF VIEIF",
+      "buySell": "BUY",
+      "quantity": 23954,
+      "tradePrice": 3493,
+      "valueCr": 8.3671
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "IMC INDIA SECURITIES PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 457846,
+      "tradePrice": 179.65,
+      "valueCr": 8.2252
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "RITCO",
+      "clientName": "SETU SECURITIES PVT LTD",
+      "buySell": "SELL",
+      "quantity": 300000,
+      "tradePrice": 261.77,
+      "valueCr": 7.8531
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "J4S FINANCIAL SOLUTIONS LLP",
+      "buySell": "SELL",
+      "quantity": 424959,
+      "tradePrice": 179.63,
+      "valueCr": 7.6335
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "J4S FINANCIAL SOLUTIONS LLP",
+      "buySell": "BUY",
+      "quantity": 424959,
+      "tradePrice": 179.43,
+      "valueCr": 7.625
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "GRT STRATEGIC VENTURES LLP",
+      "buySell": "SELL",
+      "quantity": 414006,
+      "tradePrice": 180.05,
+      "valueCr": 7.4542
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "GRT STRATEGIC VENTURES LLP",
+      "buySell": "BUY",
+      "quantity": 414006,
+      "tradePrice": 179.99,
+      "valueCr": 7.4517
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "IMC INDIA SECURITIES PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 411552,
+      "tradePrice": 180.82,
+      "valueCr": 7.4417
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 20241,
+      "tradePrice": 3493,
+      "valueCr": 7.0702
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 19240,
+      "tradePrice": 3493,
+      "valueCr": 6.7205
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 364133,
+      "tradePrice": 179.38,
+      "valueCr": 6.5318
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 18401,
+      "tradePrice": 3493,
+      "valueCr": 6.4275
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "VINSUL MAKARDI LTD",
+      "buySell": "SELL",
+      "quantity": 357317,
+      "tradePrice": 179.82,
+      "valueCr": 6.4253
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "VINSUL MAKARDI LTD",
+      "buySell": "BUY",
+      "quantity": 357317,
+      "tradePrice": 179.62,
+      "valueCr": 6.4181
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "CHETANA BUGALIYA",
+      "buySell": "SELL",
+      "quantity": 351000,
+      "tradePrice": 181.89,
+      "valueCr": 6.3843
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "TATA MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 18200,
+      "tradePrice": 3493,
+      "valueCr": 6.3573
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "HRTI PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 351379,
+      "tradePrice": 179.81,
+      "valueCr": 6.3181
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "DHAMPURSUG",
+      "clientName": "CHETANA BUGALIYA",
+      "buySell": "BUY",
+      "quantity": 351000,
+      "tradePrice": 179.63,
+      "valueCr": 6.305
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "INDIA ACORN FUND LTD",
+      "buySell": "BUY",
+      "quantity": 16020,
+      "tradePrice": 3493,
+      "valueCr": 5.5958
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 15581,
+      "tradePrice": 3493,
+      "valueCr": 5.4424
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "UTI MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 15061,
+      "tradePrice": 3493,
+      "valueCr": 5.2608
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VFTC - INSTITUTIONAL TOTAL INTERNATIONAL STOCK MARKET INDEX TRUST II",
+      "buySell": "BUY",
+      "quantity": 12776,
+      "tradePrice": 3493,
+      "valueCr": 4.4627
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI LIFE INSURANCE COMPANY LIMITED",
+      "buySell": "BUY",
+      "quantity": 12000,
+      "tradePrice": 3493,
+      "valueCr": 4.1916
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "HTEL",
+      "clientName": "ASHIKA GLOBAL FINANCE PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 566088,
+      "tradePrice": 67.43,
+      "valueCr": 3.8171
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ASHOKA WHITEOAK EMERGING MARKETS EQUITY EX CHINA FUND",
+      "buySell": "BUY",
+      "quantity": 10110,
+      "tradePrice": 3493,
+      "valueCr": 3.5314
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "NECCLTD",
+      "clientName": "SRNDM TRADE VALUE PRIVATE LIMITED",
+      "buySell": "BUY",
+      "quantity": 1000000,
+      "tradePrice": 26.06,
+      "valueCr": 2.606
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SUNDARAM MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 7253,
+      "tradePrice": 3493,
+      "valueCr": 2.5335
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "RFBL",
+      "clientName": "L7 HITECH PRIVATE LIMITED",
+      "buySell": "SELL",
+      "quantity": 180000,
+      "tradePrice": 125,
+      "valueCr": 2.25
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "SBI LIFE INSURANCE COMPANY LIMITED",
+      "buySell": "BUY",
+      "quantity": 5725,
+      "tradePrice": 3493,
+      "valueCr": 1.9997
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "ICICI PRUDENTIAL MUTUAL FUND",
+      "buySell": "BUY",
+      "quantity": 5520,
+      "tradePrice": 3493,
+      "valueCr": 1.9281
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "NECCLTD",
+      "clientName": "RATHOD MANOJ CHHAGANLAL HUF",
+      "buySell": "SELL",
+      "quantity": 615798,
+      "tradePrice": 26.07,
+      "valueCr": 1.6054
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "FACTORY MUTUAL INSURANCE COMPANY",
+      "buySell": "BUY",
+      "quantity": 4105,
+      "tradePrice": 3493,
+      "valueCr": 1.4339
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD FTSE ALL WORLD",
+      "buySell": "BUY",
+      "quantity": 4069,
+      "tradePrice": 3493,
+      "valueCr": 1.4213
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "NECCLTD",
+      "clientName": "RATHOD MANOJ CHHAGANLAL HUF",
+      "buySell": "BUY",
+      "quantity": 386501,
+      "tradePrice": 26.07,
+      "valueCr": 1.0076
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VFTC - INSTITUTIONAL TOTAL INTERNATIONAL STOCK MARKET INDEX TRUST",
+      "buySell": "BUY",
+      "quantity": 2090,
+      "tradePrice": 3493,
+      "valueCr": 0.73
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AKG",
+      "clientName": "KALAPI VINIT NAGADA",
+      "buySell": "SELL",
+      "quantity": 753011,
+      "tradePrice": 8.58,
+      "valueCr": 0.6461
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "BRACEPORT",
+      "clientName": "GNANYAGNA SECURITIES LLP",
+      "buySell": "BUY",
+      "quantity": 57600,
+      "tradePrice": 109.39,
+      "valueCr": 0.6301
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "INDIA ACORN ICAV ASHOKA INDIA ESG FUND",
+      "buySell": "BUY",
+      "quantity": 1786,
+      "tradePrice": 3493,
+      "valueCr": 0.6238
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "TCW WHITE OAK EMERGING MARKETS EQUITY FUND",
+      "buySell": "BUY",
+      "quantity": 1520,
+      "tradePrice": 3493,
+      "valueCr": 0.5309
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD TOTAL WORLD STOCK INDEX FUND",
+      "buySell": "BUY",
+      "quantity": 1439,
+      "tradePrice": 3493,
+      "valueCr": 0.5026
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "DENDANA INVESTMENTS MAURITIUS LIMITED",
+      "buySell": "BUY",
+      "quantity": 1273,
+      "tradePrice": 3493,
+      "valueCr": 0.4447
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "INTEGRITY",
+      "clientName": "EMRALD COMMERCIAL LIMITED",
+      "buySell": "BUY",
+      "quantity": 24000,
+      "tradePrice": 183.78,
+      "valueCr": 0.4411
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "NGIL",
+      "clientName": "KARAN SURESH MAJITHIA",
+      "buySell": "BUY",
+      "quantity": 100000,
+      "tradePrice": 41.82,
+      "valueCr": 0.4182
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD FUNDS PUBLIC LTD COMP VANGUARD FTSE EMERGING MKTS ETF",
+      "buySell": "BUY",
+      "quantity": 986,
+      "tradePrice": 3493,
+      "valueCr": 0.3444
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AKG",
+      "clientName": "SHRI MUKTA SHARES",
+      "buySell": "SELL",
+      "quantity": 250784,
+      "tradePrice": 8.99,
+      "valueCr": 0.2255
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "AKG",
+      "clientName": "SHRI MUKTA SHARES",
+      "buySell": "BUY",
+      "quantity": 250784,
+      "tradePrice": 8.76,
+      "valueCr": 0.2197
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD FUNDS PUBLIC LIMITED COMP VANGUARD FTSE ALL WRLD ETF",
+      "buySell": "BUY",
+      "quantity": 568,
+      "tradePrice": 3493,
+      "valueCr": 0.1984
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "ITALIANE",
+      "clientName": "HARSHA RAJESH JHAVERI",
+      "buySell": "SELL",
+      "quantity": 74000,
+      "tradePrice": 22.1,
+      "valueCr": 0.1635
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD ESG INTERNATIONAL STOCK ETF",
+      "buySell": "BUY",
+      "quantity": 363,
+      "tradePrice": 3493,
+      "valueCr": 0.1268
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD INVESTMENTS FUNDS ICVC VANGUARD FTSE GLOBAL ALL CAP INDEX FUND",
+      "buySell": "BUY",
+      "quantity": 291,
+      "tradePrice": 3493,
+      "valueCr": 0.1016
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VIS PLC VANGUARD ESG EMERGING MARKETS ALL CAP EQUITY INDEX FUND",
+      "buySell": "BUY",
+      "quantity": 210,
+      "tradePrice": 3493,
+      "valueCr": 0.0734
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD ASIA EX JAPAN SHARES INDEX FUND",
+      "buySell": "BUY",
+      "quantity": 90,
+      "tradePrice": 3493,
+      "valueCr": 0.0314
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD EMERGING MARKETS EX-CHINA ETF",
+      "buySell": "BUY",
+      "quantity": 73,
+      "tradePrice": 3493,
+      "valueCr": 0.0255
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BULK",
+      "symbol": "BRACEPORT",
+      "clientName": "GNANYAGNA SECURITIES LLP",
+      "buySell": "SELL",
+      "quantity": 1600,
+      "tradePrice": 106.2,
+      "valueCr": 0.017
+    },
+    {
+      "date": "2026-11-26",
+      "dealType": "BLOCK",
+      "symbol": "SCHAEFFLER",
+      "clientName": "VANGUARD FUNDS PLC VANGUARD ESG EMERGING MARKETS ALL CAP UCITS ETF",
+      "buySell": "BUY",
+      "quantity": 27,
+      "tradePrice": 3493,
+      "valueCr": 0.0094
+    },
     {
       "date": "2026-11-25",
       "dealType": "BLOCK",
@@ -21190,1596 +23310,6 @@
       "quantity": 458760,
       "tradePrice": 6.85,
       "valueCr": 0.3143
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 88453380,
-      "tradePrice": 16.69,
-      "valueCr": 147.6287
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 88213716,
-      "tradePrice": 16.67,
-      "valueCr": 147.0523
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 2084836,
-      "tradePrice": 436.38,
-      "valueCr": 90.9781
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 2065992,
-      "tradePrice": 435.26,
-      "valueCr": 89.9244
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "OLAELEC",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 23557236,
-      "tradePrice": 33.16,
-      "valueCr": 78.1158
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "OLAELEC",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 23305798,
-      "tradePrice": 33.06,
-      "valueCr": 77.049
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SESHAPAPER",
-      "clientName": "ATYANT CAPITAL INDIA FUND I",
-      "buySell": "SELL",
-      "quantity": 1723521,
-      "tradePrice": 206.24,
-      "valueCr": 35.5459
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AGIIL",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "SELL",
-      "quantity": 1081374,
-      "tradePrice": 231.77,
-      "valueCr": 25.063
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "MSTCLTD",
-      "clientName": "WISDOMTREE EMERGING MARKETS HIGH DIVIDEND FUND",
-      "buySell": "SELL",
-      "quantity": 413676,
-      "tradePrice": 561.32,
-      "valueCr": 23.2205
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AGIIL",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "BUY",
-      "quantity": 1025197,
-      "tradePrice": 221.09,
-      "valueCr": 22.6661
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RATNAVEER",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "BUY",
-      "quantity": 621943,
-      "tradePrice": 346.34,
-      "valueCr": 21.5404
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AGIIL",
-      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 837618,
-      "tradePrice": 227.48,
-      "valueCr": 19.0541
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AGIIL",
-      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 837618,
-      "tradePrice": 227.2,
-      "valueCr": 19.0307
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RATNAVEER",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "SELL",
-      "quantity": 518381,
-      "tradePrice": 346.13,
-      "valueCr": 17.9427
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "TECHNOCRAF",
-      "clientName": "ACME CAPITAL MARKET LIMITED",
-      "buySell": "SELL",
-      "quantity": 337023,
-      "tradePrice": 482.68,
-      "valueCr": 16.2674
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "TECHNOCRAF",
-      "clientName": "ACME CAPITAL MARKET LIMITED",
-      "buySell": "BUY",
-      "quantity": 337023,
-      "tradePrice": 481.34,
-      "valueCr": 16.2223
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "INDIAGLYCO",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 390788,
-      "tradePrice": 321.16,
-      "valueCr": 12.5505
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "INDIAGLYCO",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 390584,
-      "tradePrice": 321.06,
-      "valueCr": 12.5401
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PASHUPATI",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 1078581,
-      "tradePrice": 113.64,
-      "valueCr": 12.257
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SESHAPAPER",
-      "clientName": "TIME SQUARE INVESTMENTS PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 570000,
-      "tradePrice": 214.99,
-      "valueCr": 12.2544
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PASHUPATI",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 1069926,
-      "tradePrice": 114.3,
-      "valueCr": 12.2293
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PARACABLES",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 1787033,
-      "tradePrice": 66.39,
-      "valueCr": 11.8641
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PARACABLES",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 1769639,
-      "tradePrice": 66.31,
-      "valueCr": 11.7345
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PASHUPATI",
-      "clientName": "RATHOD MANOJ CHHAGANLAL HUF",
-      "buySell": "SELL",
-      "quantity": 954844,
-      "tradePrice": 115.17,
-      "valueCr": 10.9969
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "PASHUPATI",
-      "clientName": "RATHOD MANOJ CHHAGANLAL HUF",
-      "buySell": "BUY",
-      "quantity": 954844,
-      "tradePrice": 114.56,
-      "valueCr": 10.9387
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "JISLJALEQS",
-      "clientName": "NITN KAPOOR AND HUF",
-      "buySell": "BUY",
-      "quantity": 4271556,
-      "tradePrice": 25.34,
-      "valueCr": 10.8241
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RAMBHAJO",
-      "clientName": "RAMESH SAWALRAM SARAOGI",
-      "buySell": "BUY",
-      "quantity": 325000,
-      "tradePrice": 332.72,
-      "valueCr": 10.8134
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "JISLJALEQS",
-      "clientName": "NITN KAPOOR AND HUF",
-      "buySell": "SELL",
-      "quantity": 4271556,
-      "tradePrice": 25.28,
-      "valueCr": 10.7985
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SUNSHINE",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "SELL",
-      "quantity": 247431,
-      "tradePrice": 404.52,
-      "valueCr": 10.0091
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "TECHNOCRAF",
-      "clientName": "GOVIND JI GUPTA",
-      "buySell": "SELL",
-      "quantity": 200000,
-      "tradePrice": 481.5,
-      "valueCr": 9.63
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RHETAN",
-      "clientName": "JAGID VANITABEN RAJENDRAPRASAD",
-      "buySell": "SELL",
-      "quantity": 6481504,
-      "tradePrice": 14.82,
-      "valueCr": 9.6056
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RHETAN",
-      "clientName": "JAGID VANITABEN RAJENDRAPRASAD",
-      "buySell": "BUY",
-      "quantity": 6275517,
-      "tradePrice": 14.8,
-      "valueCr": 9.2878
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RHETAN",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 4282609,
-      "tradePrice": 14.78,
-      "valueCr": 6.3297
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RHETAN",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 4262279,
-      "tradePrice": 14.84,
-      "valueCr": 6.3252
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "BUY",
-      "quantity": 102951,
-      "tradePrice": 540.04,
-      "valueCr": 5.5598
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "ARIHANTCAP",
-      "clientName": "DEALMONEY COMMODITIES PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 603995,
-      "tradePrice": 91.64,
-      "valueCr": 5.535
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "ARIHANTCAP",
-      "clientName": "DEALMONEY COMMODITIES PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 603995,
-      "tradePrice": 90.94,
-      "valueCr": 5.4927
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SUNSHINE",
-      "clientName": "ARIHANT CAPITAL MARKETS LIMITED",
-      "buySell": "BUY",
-      "quantity": 123681,
-      "tradePrice": 403.9,
-      "valueCr": 4.9955
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "DEALMONEY COMMODITIES PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 92150,
-      "tradePrice": 541.63,
-      "valueCr": 4.9911
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "DEALMONEY COMMODITIES PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 82600,
-      "tradePrice": 541.27,
-      "valueCr": 4.4709
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "CRABEL VINTRADE PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 80000,
-      "tradePrice": 541.5,
-      "valueCr": 4.332
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "PARMANAND KEJRIWAL & SONS PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 80000,
-      "tradePrice": 541.25,
-      "valueCr": 4.33
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHIVAUM",
-      "clientName": "VENKATESHWARA INDUSTRIAL PROMOTION CO LIMITED",
-      "buySell": "SELL",
-      "quantity": 75000,
-      "tradePrice": 540.03,
-      "valueCr": 4.0502
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VOLERCAR",
-      "clientName": "KAMAL KUMAR DUGAR HUF",
-      "buySell": "SELL",
-      "quantity": 104800,
-      "tradePrice": 282.8,
-      "valueCr": 2.9637
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 311595,
-      "tradePrice": 93.95,
-      "valueCr": 2.9274
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 311595,
-      "tradePrice": 93.9,
-      "valueCr": 2.9259
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "BUY",
-      "quantity": 200020,
-      "tradePrice": 93.88,
-      "valueCr": 1.8778
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "KALPALABDHI SECURITIES PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 200000,
-      "tradePrice": 93.88,
-      "valueCr": 1.8776
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "SUNCITY SHARE BROKER PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 195000,
-      "tradePrice": 94.01,
-      "valueCr": 1.8332
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VOLERCAR",
-      "clientName": "PROGNOSIS SECURITIES PVT. LTD",
-      "buySell": "BUY",
-      "quantity": 57600,
-      "tradePrice": 279.72,
-      "valueCr": 1.6112
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "SAHASTRAA ADVISORS PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 146201,
-      "tradePrice": 93.99,
-      "valueCr": 1.3741
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AARTECH",
-      "clientName": "KAILASH KABRA",
-      "buySell": "BUY",
-      "quantity": 267874,
-      "tradePrice": 48.7,
-      "valueCr": 1.3045
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "SAHASTRAA ADVISORS PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 136204,
-      "tradePrice": 94.3,
-      "valueCr": 1.2844
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "AARTECH",
-      "clientName": "KAILASH KABRA",
-      "buySell": "SELL",
-      "quantity": 257874,
-      "tradePrice": 45.77,
-      "valueCr": 1.1803
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "BMLL",
-      "clientName": "JAYANT BABULAL BOKADIA",
-      "buySell": "SELL",
-      "quantity": 80000,
-      "tradePrice": 146,
-      "valueCr": 1.168
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "BMLL",
-      "clientName": "OSWAL ENERGIES LIMITED",
-      "buySell": "BUY",
-      "quantity": 80000,
-      "tradePrice": 146,
-      "valueCr": 1.168
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RICHA",
-      "clientName": "SALONI JAIN",
-      "buySell": "BUY",
-      "quantity": 99000,
-      "tradePrice": 86.85,
-      "valueCr": 0.8598
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RICHA",
-      "clientName": "UNICORN FUND",
-      "buySell": "SELL",
-      "quantity": 99000,
-      "tradePrice": 86.85,
-      "valueCr": 0.8598
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VNL",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "SELL",
-      "quantity": 82482,
-      "tradePrice": 93.88,
-      "valueCr": 0.7743
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SUPREMEENG",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 1390533,
-      "tradePrice": 4.91,
-      "valueCr": 0.6828
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "RCDL",
-      "clientName": "FIVEX CAPITAL VCC - FIVEX EMERGING STAR FUND",
-      "buySell": "SELL",
-      "quantity": 405000,
-      "tradePrice": 16.75,
-      "valueCr": 0.6784
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "DBSTOCKBRO",
-      "clientName": "ELLIS NIKETAN PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 210500,
-      "tradePrice": 29.98,
-      "valueCr": 0.6311
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VINOD",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 264000,
-      "tradePrice": 20.39,
-      "valueCr": 0.5383
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VINOD",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 231600,
-      "tradePrice": 20.88,
-      "valueCr": 0.4836
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VINOD",
-      "clientName": "GIRIRAJ STOCK BROKING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 139200,
-      "tradePrice": 20.4,
-      "valueCr": 0.284
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "VINOD",
-      "clientName": "SVS SECURITIES PVT. LTD.",
-      "buySell": "SELL",
-      "quantity": 102000,
-      "tradePrice": 20.35,
-      "valueCr": 0.2076
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHANTI",
-      "clientName": "AUM SECURITIES PVT. LTD.",
-      "buySell": "BUY",
-      "quantity": 71479,
-      "tradePrice": 6.09,
-      "valueCr": 0.0435
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHANTI",
-      "clientName": "JUHI BAJAJ",
-      "buySell": "BUY",
-      "quantity": 71537,
-      "tradePrice": 5.43,
-      "valueCr": 0.0388
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHANTI",
-      "clientName": "PRASANNA PHANI SANKAR POGARU",
-      "buySell": "SELL",
-      "quantity": 60000,
-      "tradePrice": 6.12,
-      "valueCr": 0.0367
-    },
-    {
-      "date": "2026-10-27",
-      "dealType": "BULK",
-      "symbol": "SHANTI",
-      "clientName": "MSB E TRADE SECURITIES LIMITED",
-      "buySell": "BUY",
-      "quantity": 59833,
-      "tradePrice": 5.59,
-      "valueCr": 0.0334
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 96313342,
-      "tradePrice": 17.58,
-      "valueCr": 169.3189
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 96313342,
-      "tradePrice": 17.49,
-      "valueCr": 168.452
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 2641960,
-      "tradePrice": 411.55,
-      "valueCr": 108.7299
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "JUMP TRADING FINANCIAL INDIA PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 2641960,
-      "tradePrice": 411.53,
-      "valueCr": 108.7246
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 2516393,
-      "tradePrice": 410.63,
-      "valueCr": 103.3306
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "APOLLO",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 2465951,
-      "tradePrice": 410.93,
-      "valueCr": 101.3333
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 55604717,
-      "tradePrice": 17.5,
-      "valueCr": 97.3083
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 1657804,
-      "tradePrice": 503.14,
-      "valueCr": 83.4108
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "ALPHAGREP SECURITIES PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 1657804,
-      "tradePrice": 501.63,
-      "valueCr": 83.1604
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 1611228,
-      "tradePrice": 509.6,
-      "valueCr": 82.1082
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 1611228,
-      "tradePrice": 509.26,
-      "valueCr": 82.0534
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "PCJEWELLER",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 46746933,
-      "tradePrice": 17.19,
-      "valueCr": 80.358
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 1483512,
-      "tradePrice": 500.36,
-      "valueCr": 74.229
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 1421767,
-      "tradePrice": 501.72,
-      "valueCr": 71.3329
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SGMART",
-      "clientName": "RIAMBEL CAPITAL PCC - RCC1",
-      "buySell": "BUY",
-      "quantity": 789702,
-      "tradePrice": 799.46,
-      "valueCr": 63.1335
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
-      "buySell": "SELL",
-      "quantity": 1127919,
-      "tradePrice": 507.24,
-      "valueCr": 57.2126
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
-      "buySell": "BUY",
-      "quantity": 1127919,
-      "tradePrice": 506.86,
-      "valueCr": 57.1697
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 989001,
-      "tradePrice": 503.43,
-      "valueCr": 49.7893
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 988200,
-      "tradePrice": 503.01,
-      "valueCr": 49.7074
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 871622,
-      "tradePrice": 510.44,
-      "valueCr": 44.4911
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TONBO",
-      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 338265,
-      "tradePrice": 1255.54,
-      "valueCr": 42.4705
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TONBO",
-      "clientName": "MICROCURVES TRADING PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 338265,
-      "tradePrice": 1254.96,
-      "valueCr": 42.4509
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TFCILTD",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 2800000,
-      "tradePrice": 147.94,
-      "valueCr": 41.4232
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TONBO",
-      "clientName": "MATHISYS QUANTCAP LLP",
-      "buySell": "BUY",
-      "quantity": 300089,
-      "tradePrice": 1249.7,
-      "valueCr": 37.5021
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TONBO",
-      "clientName": "MATHISYS QUANTCAP LLP",
-      "buySell": "SELL",
-      "quantity": 300089,
-      "tradePrice": 1248.86,
-      "valueCr": 37.4769
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "IRAGE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 139790,
-      "tradePrice": 2599.16,
-      "valueCr": 36.3337
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 3286747,
-      "tradePrice": 105.52,
-      "valueCr": 34.6818
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "BUY",
-      "quantity": 3275821,
-      "tradePrice": 105.58,
-      "valueCr": 34.5861
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TFCILTD",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 2310000,
-      "tradePrice": 147.03,
-      "valueCr": 33.9639
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BELDING",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "BUY",
-      "quantity": 385019,
-      "tradePrice": 872.1,
-      "valueCr": 33.5775
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 3156777,
-      "tradePrice": 105.64,
-      "valueCr": 33.3482
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SSWL",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 612864,
-      "tradePrice": 503.28,
-      "valueCr": 30.8442
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BELDING",
-      "clientName": "IRAGE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 346167,
-      "tradePrice": 872.06,
-      "valueCr": 30.1878
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "SELL",
-      "quantity": 2711957,
-      "tradePrice": 105.9,
-      "valueCr": 28.7196
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "D3 STOCK VISION LLP",
-      "buySell": "BUY",
-      "quantity": 2709795,
-      "tradePrice": 105.42,
-      "valueCr": 28.5667
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "SWASTIK TRADING AND INVESTMENTS",
-      "buySell": "BUY",
-      "quantity": 2688598,
-      "tradePrice": 105.32,
-      "valueCr": 28.3163
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "SWASTIK TRADING AND INVESTMENTS",
-      "buySell": "SELL",
-      "quantity": 2538598,
-      "tradePrice": 106.31,
-      "valueCr": 26.9878
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "D3 STOCK VISION LLP",
-      "buySell": "SELL",
-      "quantity": 2526294,
-      "tradePrice": 105.68,
-      "valueCr": 26.6979
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 2500003,
-      "tradePrice": 105.33,
-      "valueCr": 26.3325
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HEROMOTORS",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 2500003,
-      "tradePrice": 105.29,
-      "valueCr": 26.3225
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "F3 ADVISORS PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 69300,
-      "tradePrice": 2598.43,
-      "valueCr": 18.0071
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TECHNOCRAF",
-      "clientName": "ACME CAPITAL MARKET LIMITED",
-      "buySell": "BUY",
-      "quantity": 352805,
-      "tradePrice": 488.19,
-      "valueCr": 17.2236
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "TECHNOCRAF",
-      "clientName": "ACME CAPITAL MARKET LIMITED",
-      "buySell": "SELL",
-      "quantity": 352805,
-      "tradePrice": 487.67,
-      "valueCr": 17.2052
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "BUY",
-      "quantity": 61817,
-      "tradePrice": 2582.8,
-      "valueCr": 15.9661
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SHANTIGOLD",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 424893,
-      "tradePrice": 344.96,
-      "valueCr": 14.6571
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SHANTIGOLD",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 377379,
-      "tradePrice": 341.62,
-      "valueCr": 12.892
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "STLNETWORK",
-      "clientName": "UNO METALS LTD",
-      "buySell": "SELL",
-      "quantity": 2600000,
-      "tradePrice": 34.46,
-      "valueCr": 8.9596
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "XTRANET",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 325000,
-      "tradePrice": 250.3,
-      "valueCr": 8.1348
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "GKSL",
-      "clientName": "NEXUS GLOBAL OPPORTUNITIES FUND",
-      "buySell": "SELL",
-      "quantity": 438656,
-      "tradePrice": 178,
-      "valueCr": 7.8081
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SHANKESH",
-      "clientName": "TIGER STRATEGIES FUND -I",
-      "buySell": "SELL",
-      "quantity": 821420,
-      "tradePrice": 91.76,
-      "valueCr": 7.5373
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HIMATSEIDE",
-      "clientName": "SHALU AGGARWAL",
-      "buySell": "BUY",
-      "quantity": 660000,
-      "tradePrice": 53.93,
-      "valueCr": 3.5594
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "HIMATSEIDE",
-      "clientName": "AJAY KUMAR AGGARWAL",
-      "buySell": "SELL",
-      "quantity": 660000,
-      "tradePrice": 53.76,
-      "valueCr": 3.5482
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "MACOBSTECH",
-      "clientName": "GOLDENDUNES BUILDHOME PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 182400,
-      "tradePrice": 193.83,
-      "valueCr": 3.5355
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "MACOBSTECH",
-      "clientName": "GOLDENDUNES LAND DEVELOPERS PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 182400,
-      "tradePrice": 193.83,
-      "valueCr": 3.5355
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 608831,
-      "tradePrice": 52.47,
-      "valueCr": 3.1945
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "HRTI PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 602438,
-      "tradePrice": 52.54,
-      "valueCr": 3.1652
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 597349,
-      "tradePrice": 52.86,
-      "valueCr": 3.1576
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "OLAELEC-RE",
-      "clientName": "SVF II OSTRICH (DE) LLC",
-      "buySell": "SELL",
-      "quantity": 23714631,
-      "tradePrice": 1.32,
-      "valueCr": 3.1303
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "JUNOMONETA FINSOL PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 592945,
-      "tradePrice": 52.73,
-      "valueCr": 3.1266
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "SELL",
-      "quantity": 582116,
-      "tradePrice": 52.56,
-      "valueCr": 3.0596
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "QE SECURITIES LLP",
-      "buySell": "BUY",
-      "quantity": 584476,
-      "tradePrice": 52.18,
-      "valueCr": 3.0498
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
-      "buySell": "SELL",
-      "quantity": 560303,
-      "tradePrice": 52.91,
-      "valueCr": 2.9646
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "PLUTUS WEALTH MANAGEMENT LLP",
-      "buySell": "BUY",
-      "quantity": 560303,
-      "tradePrice": 52.87,
-      "valueCr": 2.9623
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "OLAELEC-RE",
-      "clientName": "PARAM CAPITAL",
-      "buySell": "BUY",
-      "quantity": 21750000,
-      "tradePrice": 1.31,
-      "valueCr": 2.8493
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "NK SECURITIES RESEARCH PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 521102,
-      "tradePrice": 52.37,
-      "valueCr": 2.729
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "NK SECURITIES RESEARCH PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 521102,
-      "tradePrice": 52.34,
-      "valueCr": 2.7274
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "MUGI CONSTRUCTIONS PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 500000,
-      "tradePrice": 52.38,
-      "valueCr": 2.619
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "XTRANET",
-      "clientName": "NEO APEX SHARE BROKING SERVICES LLP",
-      "buySell": "SELL",
-      "quantity": 93000,
-      "tradePrice": 251.73,
-      "valueCr": 2.3411
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "VIVEK DROLIA",
-      "buySell": "BUY",
-      "quantity": 435569,
-      "tradePrice": 53.17,
-      "valueCr": 2.3159
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BMLL",
-      "clientName": "OSWAL ENERGIES LIMITED",
-      "buySell": "BUY",
-      "quantity": 144000,
-      "tradePrice": 146,
-      "valueCr": 2.1024
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "VIVEK DROLIA",
-      "buySell": "SELL",
-      "quantity": 355569,
-      "tradePrice": 52.73,
-      "valueCr": 1.8749
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BMISL",
-      "clientName": "ANIRUDH MOHTA",
-      "buySell": "BUY",
-      "quantity": 73200,
-      "tradePrice": 188.4,
-      "valueCr": 1.3791
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "DCMSRIND",
-      "clientName": "MUGI CONSTRUCTIONS PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 267144,
-      "tradePrice": 51.44,
-      "valueCr": 1.3742
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BMLL",
-      "clientName": "DIXIT JITENDRA BOKADIA",
-      "buySell": "SELL",
-      "quantity": 75000,
-      "tradePrice": 146,
-      "valueCr": 1.095
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BMLL",
-      "clientName": "RATAN BABULAL BOKADIA",
-      "buySell": "SELL",
-      "quantity": 69000,
-      "tradePrice": 146,
-      "valueCr": 1.0074
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SHAHALLOYS",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 150000,
-      "tradePrice": 65.74,
-      "valueCr": 0.9861
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "OLAELEC-RE",
-      "clientName": "OEM EMPLOYEES WELFARE TRUST",
-      "buySell": "SELL",
-      "quantity": 7525682,
-      "tradePrice": 1.31,
-      "valueCr": 0.9859
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "OLAELEC-RE",
-      "clientName": "VANGUARD ESG INTERNATIONAL STOCK ETF",
-      "buySell": "SELL",
-      "quantity": 5705325,
-      "tradePrice": 1.31,
-      "valueCr": 0.7474
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "SELL",
-      "quantity": 2817,
-      "tradePrice": 2589.48,
-      "valueCr": 0.7295
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "F3 ADVISORS PRIVATE LIMITED",
-      "buySell": "SELL",
-      "quantity": 2348,
-      "tradePrice": 2555.07,
-      "valueCr": 0.5999
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "EVENTIONS",
-      "clientName": "L7 HITECH PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 93600,
-      "tradePrice": 54,
-      "valueCr": 0.5054
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "EVENTIONS",
-      "clientName": "MACH CONFERENCES AND EVENTS LIMITED",
-      "buySell": "BUY",
-      "quantity": 64800,
-      "tradePrice": 54.01,
-      "valueCr": 0.35
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "OLAELEC-RE",
-      "clientName": "KRONE FINSTOCK PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 2000000,
-      "tradePrice": 1.31,
-      "valueCr": 0.262
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "INDOTECH",
-      "clientName": "IRAGE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 888,
-      "tradePrice": 2572.02,
-      "valueCr": 0.2284
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "RAJTV",
-      "clientName": "MOOLCHAND KIRAN KUMAR JAIN",
-      "buySell": "SELL",
-      "quantity": 268849,
-      "tradePrice": 7.57,
-      "valueCr": 0.2035
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BELDING",
-      "clientName": "SETU SECURITIES PVT LTD",
-      "buySell": "SELL",
-      "quantity": 2019,
-      "tradePrice": 863.4,
-      "valueCr": 0.1743
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "RITEZONE",
-      "clientName": "SHAKTI PRATAP SINGH",
-      "buySell": "BUY",
-      "quantity": 22400,
-      "tradePrice": 19.07,
-      "valueCr": 0.0427
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "SHAHALLOYS",
-      "clientName": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
-      "buySell": "BUY",
-      "quantity": 5000,
-      "tradePrice": 69.48,
-      "valueCr": 0.0347
-    },
-    {
-      "date": "2026-10-26",
-      "dealType": "BULK",
-      "symbol": "BELDING",
-      "clientName": "IRAGE BROKING SERVICES LLP",
-      "buySell": "BUY",
-      "quantity": 401,
-      "tradePrice": 861.6,
-      "valueCr": 0.0346
     }
   ]
 }

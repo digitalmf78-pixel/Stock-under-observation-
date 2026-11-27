@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-import fs from 'node:fs';
 import path from 'node:path';
 import type {
   LiveStockQuote,
@@ -8,6 +7,11 @@ import type {
   PaperTrade,
   PaperTradeMarked,
 } from '../src/types/trading.ts';
+import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 import { toIstDateIso } from './liveFetcher.ts';
 import { nsePipeline } from './nsePipeline.ts';
 import { evaluateQuoteFreshness } from '../src/utils/quoteFreshness.ts';
@@ -24,16 +28,8 @@ interface PaperTradesFile {
 const LIVE_QUOTE_TTL_MS = 60 * 1000;
 const liveQuoteCache = new Map<string, { fetchedAt: number; quote: LiveStockQuote }>();
 
-let writeSeq = 0;
-let writeQueue: Promise<unknown> = Promise.resolve();
-
 function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
-  const next = writeQueue.then(fn, fn);
-  writeQueue = next.then(
-    () => undefined,
-    () => undefined
-  );
-  return next;
+  return withFileLock(paperTradesPath(), fn);
 }
 
 function paperTradesPath(): string {
@@ -41,28 +37,27 @@ function paperTradesPath(): string {
 }
 
 function atomicWriteJson(filePath: string, data: PaperTradesFile): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  writeSeq += 1;
-  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}.${writeSeq}`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+  atomicWriteJsonSync(filePath, data, { pretty: true, preserveBackup: true });
 }
 
-function loadPaperTradesFile(): PaperTradesFile {
-  const file = paperTradesPath();
-  if (!fs.existsSync(file)) {
-    return { updatedAtUtc: '', trades: [], deletedIds: [] };
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as PaperTradesFile;
-    return {
-      updatedAtUtc: parsed?.updatedAtUtc || '',
-      trades: Array.isArray(parsed?.trades) ? parsed.trades : [],
-      deletedIds: Array.isArray(parsed?.deletedIds) ? parsed.deletedIds : [],
-    };
-  } catch {
-    return { updatedAtUtc: '', trades: [], deletedIds: [] };
-  }
+function isPaperTradesShape(val: unknown): val is Partial<PaperTradesFile> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
+function loadPaperTradesFile(throwOnCorruptWithoutBackup = false): PaperTradesFile {
+  const parsed = readJsonSafe<Partial<PaperTradesFile>>(
+    paperTradesPath(),
+    { updatedAtUtc: '', trades: [], deletedIds: [] },
+    {
+      validate: isPaperTradesShape,
+      throwOnCorruptWithoutBackup,
+    }
+  );
+  return {
+    updatedAtUtc: typeof parsed.updatedAtUtc === 'string' ? parsed.updatedAtUtc : '',
+    trades: Array.isArray(parsed.trades) ? parsed.trades : [],
+    deletedIds: Array.isArray(parsed.deletedIds) ? parsed.deletedIds : [],
+  };
 }
 
 function formatIstTimestamp(unixSec: number | undefined): string {
@@ -603,7 +598,7 @@ export async function createPaperBuyTrade(input: {
   };
 
   await withWriteLock(async () => {
-    const file = loadPaperTradesFile();
+    const file = loadPaperTradesFile(true);
     const nextTrades = [trade, ...file.trades];
     atomicWriteJson(paperTradesPath(), {
       updatedAtUtc: nowUtc,
@@ -620,7 +615,7 @@ export async function closePaperSellTrade(
   id: string,
   input?: { exitPrice?: unknown; notes?: unknown }
 ): Promise<{ trade: PaperTrade; portfolio: PaperPortfolioSummary }> {
-  const fileSnapshot = loadPaperTradesFile();
+  const fileSnapshot = loadPaperTradesFile(false);
   const cur = fileSnapshot.trades.find((t) => t.id === id);
   if (!cur) throw new Error(`Paper trade ${id} not found.`);
   if (cur.status === 'CLOSED') {
@@ -651,7 +646,7 @@ export async function closePaperSellTrade(
   }
 
   const updated = await withWriteLock(async () => {
-    const file = loadPaperTradesFile();
+    const file = loadPaperTradesFile(true);
     const idx = file.trades.findIndex((t) => t.id === id);
     if (idx < 0) throw new Error(`Paper trade ${id} not found.`);
     const latest = file.trades[idx];
@@ -708,7 +703,7 @@ export async function closePaperSellTrade(
 
 export async function deletePaperTrade(id: string): Promise<PaperPortfolioSummary> {
   await withWriteLock(async () => {
-    const file = loadPaperTradesFile();
+    const file = loadPaperTradesFile(true);
     const next = file.trades.filter((t) => t.id !== id);
     if (next.length === file.trades.length) {
       throw new Error(`Paper trade ${id} not found.`);
@@ -790,7 +785,7 @@ export async function syncPaperTrades(options: {
   fetchLive?: boolean;
 }): Promise<{ restoredCount: number; portfolio: PaperPortfolioSummary }> {
   const restoredCount = await withWriteLock(async () => {
-    const file = loadPaperTradesFile();
+    const file = loadPaperTradesFile(true);
     const serverDeleted = new Set(file.deletedIds || []);
     const clientDeleted = new Set(
       Array.isArray(options.deletedIds)

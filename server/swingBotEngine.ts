@@ -1,5 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 import type {
   BotBacktestPhaseMetrics,
   BotBacktestReport,
@@ -57,41 +62,36 @@ interface YahooOhlcvCacheEntry {
 
 const BOT_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 let memoryBotCache: Record<string, YahooOhlcvCacheEntry> | null = null;
-let cacheWriteQueue: Promise<void> = Promise.resolve();
 
 function botCachePath(): string {
   return path.join(process.cwd(), 'data', 'research', 'bot_yahoo_cache.json');
 }
 
-function loadBotCache(): Record<string, YahooOhlcvCacheEntry> {
-  if (memoryBotCache) return memoryBotCache;
-  const file = botCachePath();
-  if (!fs.existsSync(file)) {
-    memoryBotCache = {};
-    return memoryBotCache;
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    memoryBotCache =
-      parsed && typeof parsed === 'object' ? (parsed as Record<string, YahooOhlcvCacheEntry>) : {};
-  } catch {
-    memoryBotCache = {};
-  }
+function isBotCacheShape(val: unknown): val is Record<string, YahooOhlcvCacheEntry> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
+function loadBotCache(throwOnCorruptWithoutBackup = false): Record<string, YahooOhlcvCacheEntry> {
+  if (memoryBotCache && !throwOnCorruptWithoutBackup) return memoryBotCache;
+  memoryBotCache = readJsonSafe<Record<string, YahooOhlcvCacheEntry>>(
+    botCachePath(),
+    {},
+    {
+      validate: isBotCacheShape,
+      throwOnCorruptWithoutBackup,
+    }
+  );
   return memoryBotCache;
 }
 
 async function saveBotCacheEntry(entry: YahooOhlcvCacheEntry): Promise<void> {
-  const cache = loadBotCache();
-  cache[entry.symbol] = entry;
-  const op = cacheWriteQueue.then(() => {
-    const file = botCachePath();
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(cache), 'utf-8');
-    fs.renameSync(tmp, file);
+  const file = botCachePath();
+  await withFileLock(file, () => {
+    const cache = loadBotCache(true);
+    cache[entry.symbol] = entry;
+    memoryBotCache = cache;
+    atomicWriteJsonSync(file, cache, { preserveBackup: true });
   });
-  cacheWriteQueue = op.catch(() => {});
-  await op;
 }
 
 function toIstIso(unixSec: number): string {
@@ -2245,16 +2245,23 @@ export async function analyzeStockWithV3Bot(
   const sector1mMap = options?.sector1mMap ?? nsePipeline.getSector1mReturnMap();
   const bulkDeals = options?.bulkDeals ?? loadBulkDeals30D();
 
+  const isTieredSwingStock =
+    detail.summary.swingTier === 'TIER_1_READY' ||
+    detail.summary.swingTier === 'TIER_2_ACCUMULATION' ||
+    detail.summary.swingTier === 'TIER_3_RVOL_WATCH';
+
   const [yf, indianFund] = await Promise.all([
     fetchAndCacheYahooForSymbol(sym, Boolean(options?.forceRefresh)),
-    getVerifiedFundamentals(sym, {
-      xbrlFilings: nsePipeline.getXbrlFilingsForSymbol(sym),
-      forceRefresh: Boolean(options?.forceRefresh),
-      forceBseProbe: true,
-      allowYahooSupplement: true,
-    })
-      .then((res) => res.payload)
-      .catch(() => null),
+    isTieredSwingStock
+      ? getVerifiedFundamentals(sym, {
+          xbrlFilings: nsePipeline.getXbrlFilingsForSymbol(sym),
+          forceRefresh: Boolean(options?.forceRefresh),
+          forceBseProbe: true,
+          allowYahooSupplement: true,
+        })
+          .then((res) => res.payload)
+          .catch(() => null)
+      : Promise.resolve(null),
   ]);
   const closePrice = detail.summary.closePrice;
   const bhavHistory = detail.history;

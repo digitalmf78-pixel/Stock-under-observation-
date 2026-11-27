@@ -1,7 +1,11 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import Parser from 'rss-parser';
 import { fetchBseCorporateAnnouncements } from './catalystFetcher.ts';
+import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 import { toIstDateIso } from './liveFetcher.ts';
 import type {
   CorporateAnnouncementItem,
@@ -90,40 +94,39 @@ interface DailyNewsCacheFile {
 }
 
 let memoryDailyCache: DailyNewsCacheFile | null = null;
-let cacheWriteQueue: Promise<void> = Promise.resolve();
 
-function loadDailyNewsCache(): DailyNewsCacheFile {
-  if (memoryDailyCache) return memoryDailyCache;
-  const file = newsCachePath();
-  if (!fs.existsSync(file)) {
-    memoryDailyCache = { entries: {} };
-    return memoryDailyCache;
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8')) as DailyNewsCacheFile;
-    if (parsed && typeof parsed === 'object' && parsed.entries) {
-      memoryDailyCache = parsed;
-      return memoryDailyCache;
+function isNewsCacheShape(val: unknown): val is Partial<DailyNewsCacheFile> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
+function loadDailyNewsCache(throwOnCorruptWithoutBackup = false): DailyNewsCacheFile {
+  if (memoryDailyCache && !throwOnCorruptWithoutBackup) return memoryDailyCache;
+  const parsed = readJsonSafe<Partial<DailyNewsCacheFile>>(
+    newsCachePath(),
+    { entries: {} },
+    {
+      validate: isNewsCacheShape,
+      throwOnCorruptWithoutBackup,
     }
-  } catch {
-    // ignore corrupt cache
-  }
-  memoryDailyCache = { entries: {} };
-  return memoryDailyCache;
+  );
+  const normalized: DailyNewsCacheFile = {
+    entries:
+      parsed.entries && typeof parsed.entries === 'object' && !Array.isArray(parsed.entries)
+        ? parsed.entries
+        : {},
+  };
+  memoryDailyCache = normalized;
+  return normalized;
 }
 
 async function saveDailyNewsEntry(entry: StockLiveNewsResponse): Promise<void> {
-  const cache = loadDailyNewsCache();
-  cache.entries[entry.symbol] = entry;
-  const op = cacheWriteQueue.then(() => {
-    const file = newsCachePath();
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(cache), 'utf-8');
-    fs.renameSync(tmp, file);
+  const file = newsCachePath();
+  await withFileLock(file, () => {
+    const cache = loadDailyNewsCache(true);
+    cache.entries[entry.symbol] = entry;
+    memoryDailyCache = cache;
+    atomicWriteJsonSync(file, cache, { preserveBackup: true });
   });
-  cacheWriteQueue = op.catch(() => {});
-  await op;
 }
 
 interface SharedRssEntry {

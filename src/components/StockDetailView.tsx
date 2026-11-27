@@ -30,6 +30,7 @@ import type {
 import { classifyBurstPowerProfile } from '../utils/burstPowerProfile';
 import { formatMarketCapCr, getCapBadgeClass, getCapLabel } from '../utils/marketCap';
 import { evaluateQuoteFreshness } from '../utils/quoteFreshness';
+import { authFetch } from '../utils/authClient';
 import { StockBacktestCard } from './StockBacktestCard';
 import { InstitutionalFlowChart } from './InstitutionalFlowChart';
 import { UTurnStrategyMonitor } from './UTurnStrategyMonitor';
@@ -314,10 +315,16 @@ export const StockDetailView: React.FC<StockDetailViewProps> = ({
 
   const handleFetchLiveFundamentals = async () => {
     if (!data) return;
+    if (data.summary.swingTier === 'NONE') {
+      setFundNotice(
+        `Fundamental Deep Audit runs only on stocks selected into Tier 1, Tier 2, or Tier 3 (${data.summary.symbol} is currently NONE).`
+      );
+      return;
+    }
     setFundFetching(true);
     setFundNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/save-to-cache', {
+      const res = await authFetch('/api/fundamentals/save-to-cache', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symbol: data.summary.symbol, force: true }),
@@ -2465,14 +2472,23 @@ export const StockDetailView: React.FC<StockDetailViewProps> = ({
                       {data.fundamentals.coverage} ({data.fundamentals.passCount}/7 Pass)
                     </span>
                   )}
-                  <button
-                    onClick={handleFetchLiveFundamentals}
-                    disabled={fundFetching}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap shrink-0"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${fundFetching ? 'animate-spin' : ''}`} />
-                    {fundFetching ? 'Collecting...' : 'Collect Live (NSE+BSE+YF)'}
-                  </button>
+                  {data.summary.swingTier === 'NONE' ? (
+                    <span
+                      title="Fundamental Deep Audit runs strictly on stocks selected into Tier 1, Tier 2, or Tier 3."
+                      className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200 rounded-md whitespace-nowrap shrink-0"
+                    >
+                      Deep Audit: Tier 1–3 Only
+                    </span>
+                  ) : (
+                    <button
+                      onClick={handleFetchLiveFundamentals}
+                      disabled={fundFetching}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap shrink-0"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${fundFetching ? 'animate-spin' : ''}`} />
+                      {fundFetching ? 'Collecting...' : 'Collect Live (NSE+BSE+YF)'}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -2631,6 +2647,7 @@ export const StockDetailView: React.FC<StockDetailViewProps> = ({
           {/* Fundamental Audit Table (Symbol -> NSE/BSE Exchange Mapping, Timestamp, Freshness) */}
           <FundamentalAuditTable
             activeSymbol={data.summary.symbol}
+            activeSwingTier={data.summary.swingTier}
             initialRows={data.fundamentalAuditRows || []}
             onSelectSymbol={onSelectSymbol}
             onStockRefreshed={async () => {

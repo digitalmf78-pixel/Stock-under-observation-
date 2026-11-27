@@ -15,6 +15,7 @@ import type {
   ScreenerRow,
 } from '../types/trading';
 import { formatMarketCapCr, getCapBadgeClass, getCapShortLabel } from '../utils/marketCap';
+import { authFetch } from '../utils/authClient';
 import { SwingTierSpecPanel } from './SwingTierSpecPanel';
 
 interface IpoSentimentViewProps {
@@ -92,7 +93,7 @@ export const IpoSentimentView: React.FC<IpoSentimentViewProps> = ({
     setSyncingIpos(true);
     setNotice(null);
     try {
-      const res = await fetch('/api/catalysts/sync', {
+      const res = await authFetch('/api/catalysts/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ background: false }),
@@ -115,7 +116,7 @@ export const IpoSentimentView: React.FC<IpoSentimentViewProps> = ({
     setSavingMissing(true);
     setNotice(null);
     try {
-      const res = await fetch('/api/fundamentals/save-to-cache', {
+      const res = await authFetch('/api/fundamentals/save-to-cache', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveAll: true, scope: 'MISSING_OR_OLD' }),
@@ -124,8 +125,8 @@ export const IpoSentimentView: React.FC<IpoSentimentViewProps> = ({
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
       setNotice(
         json.started
-          ? `Started background save-to-cache across ${json.total} missing/old NSE symbols (including IPOs).`
-          : json.message || 'All fundamentals are already cached.'
+          ? `Started background save-to-cache across ${json.total} missing/old Tier 1–3 selected symbols.`
+          : json.message || 'All Tier 1–3 fundamentals are already cached.'
       );
     } catch (err) {
       setNotice(`Save failed: ${(err as Error).message}`);
@@ -310,7 +311,7 @@ export const IpoSentimentView: React.FC<IpoSentimentViewProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 rounded-md transition-colors whitespace-nowrap"
           >
             <Database className="w-3.5 h-3.5" />
-            {savingMissing ? 'Starting Cache Save...' : 'Save Missing IPO Fundamentals'}
+            {savingMissing ? 'Starting Cache Save...' : 'Save Tier 1–3 Fundamentals'}
           </button>
           <button
             type="button"

@@ -1,5 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  atomicWriteJsonSync,
+  readJsonSafe,
+  withFileLock,
+} from './filePersistence.ts';
 import type { XbrlFiling } from '../src/types/trading.ts';
 
 const UA =
@@ -94,8 +99,6 @@ export interface ParsedXbrlMetrics {
 
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 let memoryFundCache: Record<string, IndianFundamentalsPayload> | null = null;
-let fundWriteQueue: Promise<void> = Promise.resolve();
-let scripMapWriteQueue: Promise<void> = Promise.resolve();
 
 // Screener.in rate limiter & HTTP 429 circuit breaker
 const SCREENER_MIN_GAP_MS = 350;
@@ -200,89 +203,100 @@ function screenerCachePath(): string {
   return path.join(process.cwd(), 'data', 'research', 'bot_screener_cache.json');
 }
 
+function isPlainObjectRecord<T>(val: unknown): val is Record<string, T> {
+  return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
+}
+
 export function loadIndianFundamentalsCache(): Record<string, IndianFundamentalsPayload> {
   if (memoryFundCache) return memoryFundCache;
   const file = indianCachePath();
-  if (!fs.existsSync(file)) {
-    memoryFundCache = {};
-    return memoryFundCache;
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    memoryFundCache =
-      parsed && typeof parsed === 'object'
-        ? (parsed as Record<string, IndianFundamentalsPayload>)
-        : {};
-  } catch {
-    memoryFundCache = {};
-  }
+  memoryFundCache = readJsonSafe<Record<string, IndianFundamentalsPayload>>(file, {}, {
+    validate: isPlainObjectRecord<IndianFundamentalsPayload>,
+  });
   return memoryFundCache;
 }
 
 export async function saveIndianFundamentalsEntry(entry: IndianFundamentalsPayload): Promise<void> {
-  const cache = loadIndianFundamentalsCache();
-  cache[entry.symbol] = entry;
-  const op = fundWriteQueue.then(() => {
-    const file = indianCachePath();
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(cache), 'utf-8');
-    fs.renameSync(tmp, file);
+  const file = indianCachePath();
+  await withFileLock(file, () => {
+    const cache = readJsonSafe<Record<string, IndianFundamentalsPayload>>(file, {}, {
+      validate: isPlainObjectRecord<IndianFundamentalsPayload>,
+      throwOnCorruptWithoutBackup: true,
+    });
+    cache[entry.symbol] = entry;
+    memoryFundCache = cache;
+    atomicWriteJsonSync(file, cache, { preserveBackup: true });
   });
-  fundWriteQueue = op.catch(() => {});
-  await op;
 }
 
-function syncScreenerShareholdingCache(entry: IndianFundamentalsPayload): void {
+export async function evictIndianFundamentalsCacheStore(symbol?: string): Promise<number> {
+  const file = indianCachePath();
+  return withFileLock(file, () => {
+    const cache = readJsonSafe<Record<string, IndianFundamentalsPayload>>(file, {}, {
+      validate: isPlainObjectRecord<IndianFundamentalsPayload>,
+      throwOnCorruptWithoutBackup: true,
+    });
+    if (symbol) {
+      const sym = symbol.trim().toUpperCase();
+      const existed = sym in cache;
+      delete cache[sym];
+      if (memoryFundCache) delete memoryFundCache[sym];
+      if (existed) {
+        atomicWriteJsonSync(file, cache, { preserveBackup: true });
+      }
+      return existed ? 1 : 0;
+    }
+    const count = Object.keys(cache).length;
+    memoryFundCache = {};
+    if (count > 0) {
+      atomicWriteJsonSync(file, {}, { preserveBackup: true });
+    }
+    return count;
+  });
+}
+
+async function syncScreenerShareholdingCache(entry: IndianFundamentalsPayload): Promise<void> {
   if (entry.shareholdingQuarters.length === 0) return;
   try {
     const file = screenerCachePath();
-    let existing: Record<string, unknown> = {};
-    if (fs.existsSync(file)) {
-      existing = JSON.parse(fs.readFileSync(file, 'utf-8')) as Record<string, unknown>;
-    }
-    existing[entry.symbol] = {
-      symbol: entry.symbol,
-      fetchedAtUtc: entry.fetchedAtUtc,
-      quarters: entry.shareholdingQuarters,
-      latestPromoterPct: entry.promoterHoldingPct,
-      latestFiiPct: entry.fiiHoldingPct,
-      latestDiiPct: entry.diiHoldingPct,
-    };
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(existing), 'utf-8');
-    fs.renameSync(tmp, file);
+    await withFileLock(file, () => {
+      const existing = readJsonSafe<Record<string, unknown>>(file, {}, {
+        validate: isPlainObjectRecord<unknown>,
+        throwOnCorruptWithoutBackup: true,
+      });
+      existing[entry.symbol] = {
+        symbol: entry.symbol,
+        fetchedAtUtc: entry.fetchedAtUtc,
+        quarters: entry.shareholdingQuarters,
+        latestPromoterPct: entry.promoterHoldingPct,
+        latestFiiPct: entry.fiiHoldingPct,
+        latestDiiPct: entry.diiHoldingPct,
+      };
+      atomicWriteJsonSync(file, existing, { preserveBackup: true });
+    });
   } catch {
     // non-fatal
   }
 }
 
 function loadBseScripMap(): Record<string, string> {
-  const file = bseScripMapPath();
-  if (!fs.existsSync(file)) return {};
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
-    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {};
-  } catch {
-    return {};
-  }
+  return readJsonSafe<Record<string, string>>(bseScripMapPath(), {}, {
+    validate: isPlainObjectRecord<string>,
+  });
 }
 
 async function saveBseScripCode(sym: string, code: string): Promise<void> {
   if (!sym || !code) return;
-  const op = scripMapWriteQueue.then(() => {
-    const map = loadBseScripMap();
+  const file = bseScripMapPath();
+  await withFileLock(file, () => {
+    const map = readJsonSafe<Record<string, string>>(file, {}, {
+      validate: isPlainObjectRecord<string>,
+      throwOnCorruptWithoutBackup: true,
+    });
     if (map[sym] === code) return;
     map[sym] = code;
-    const file = bseScripMapPath();
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.tmp.${process.pid}.${Date.now()}`;
-    fs.writeFileSync(tmp, JSON.stringify(map, null, 2) + '\n', 'utf-8');
-    fs.renameSync(tmp, file);
+    atomicWriteJsonSync(file, map, { pretty: true, preserveBackup: true });
   });
-  scripMapWriteQueue = op.catch(() => {});
-  await op;
 }
 
 function toIstDateIso(d: Date = new Date()): string {
@@ -307,27 +321,34 @@ function parseIndianNum(raw: string | undefined | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function periodHeaderToIso(label: string): string {
-  const m = label.trim().match(/^([A-Za-z]{3})[\s-]+(\d{2,4})$/);
+export function periodHeaderToIso(label: string): string {
+  const cleaned = String(label || '').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) return cleaned;
+  // Supports annotated headers from Screener such as "Mar 2026 (S)" or "Mar 2009 18m"
+  const m = cleaned.match(/^([A-Za-z]{3})[\s-]+(\d{2,4})(?:\s*\([^)]*\)|\s+\d+m|\s+TTM)?$/i)
+    ?? cleaned.match(/^([A-Za-z]{3})[\s-]+(\d{2,4})\b/);
   if (!m) return '';
-  const monMap: Record<string, string> = {
-    JAN: '01-31',
-    FEB: '02-28',
-    MAR: '03-31',
-    APR: '04-30',
-    MAY: '05-31',
-    JUN: '06-30',
-    JUL: '07-31',
-    AUG: '08-31',
-    SEP: '09-30',
-    OCT: '10-31',
-    NOV: '11-30',
-    DEC: '12-31',
+  const monthIdx: Record<string, number> = {
+    JAN: 1,
+    FEB: 2,
+    MAR: 3,
+    APR: 4,
+    MAY: 5,
+    JUN: 6,
+    JUL: 7,
+    AUG: 8,
+    SEP: 9,
+    OCT: 10,
+    NOV: 11,
+    DEC: 12,
   };
-  const mmdd = monMap[m[1].toUpperCase()];
-  if (!mmdd) return '';
-  const yyyy = m[2].length === 2 ? `20${m[2]}` : m[2];
-  return `${yyyy}-${mmdd}`;
+  const monthNum = monthIdx[m[1].toUpperCase()];
+  if (!monthNum) return '';
+  const year = m[2].length === 2 ? Number(`20${m[2]}`) : Number(m[2]);
+  if (!Number.isFinite(year) || year < 1990 || year > 2100) return '';
+  const lastDay = new Date(Date.UTC(year, monthNum, 0)).getUTCDate();
+  return `${year}-${String(monthNum).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 }
 
 interface ParsedScreenerTable {
@@ -543,6 +564,7 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
   const dividendYieldPct = topRatios.get('dividend yield') ?? null;
   const rocePct = topRatios.get('roce') ?? null;
   const roePct = topRatios.get('roe') ?? null;
+  const topDebtToEquity = topRatios.get('debt to equity') ?? null;
   const faceValue = topRatios.get('face value') ?? null;
 
   const marketCapInr = mcapCr !== null && mcapCr > 0 ? Math.round(mcapCr * 1e7) : null;
@@ -617,19 +639,30 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
         epsTtmPrev = Number(prev4.reduce((a, b) => a + b, 0).toFixed(2));
       }
     }
-    // YoY Revenue & Net Profit Growth from latest quarter vs 4 quarters prior
-    if (validQCols.length >= 5) {
-      const cIdx = validQCols[validQCols.length - 1].col;
-      const yIdx = validQCols[validQCols.length - 5].col;
-      const sCurr = qSales ? parseIndianNum(qSales[cIdx]) : null;
-      const sPrev = qSales ? parseIndianNum(qSales[yIdx]) : null;
-      if (sCurr !== null && sPrev !== null && Math.abs(sPrev) > 0) {
-        revenueGrowthPct = Number((((sCurr - sPrev) / Math.abs(sPrev)) * 100).toFixed(2));
-      }
-      const pCurr = qProfit ? parseIndianNum(qProfit[cIdx]) : null;
-      const pPrev = qProfit ? parseIndianNum(qProfit[yIdx]) : null;
-      if (pCurr !== null && pPrev !== null && Math.abs(pPrev) > 0) {
-        profitGrowthPct = Number((((pCurr - pPrev) / Math.abs(pPrev)) * 100).toFixed(2));
+    // YoY Revenue & Net Profit Growth: match prior-year quarter 340..390 days earlier by ISO period date
+    if (validQCols.length >= 2) {
+      const latestQCol = validQCols[validQCols.length - 1];
+      const latestQMs = Date.parse(`${latestQCol.iso}T00:00:00Z`);
+      const yoyQCol = Number.isFinite(latestQMs)
+        ? validQCols.find((q) => {
+            if (q.col === latestQCol.col) return false;
+            const diffDays = (latestQMs - Date.parse(`${q.iso}T00:00:00Z`)) / 86400000;
+            return diffDays >= 340 && diffDays <= 390;
+          })
+        : undefined;
+      if (yoyQCol) {
+        const cIdx = latestQCol.col;
+        const yIdx = yoyQCol.col;
+        const sCurr = qSales ? parseIndianNum(qSales[cIdx]) : null;
+        const sPrev = qSales ? parseIndianNum(qSales[yIdx]) : null;
+        if (sCurr !== null && sPrev !== null && Math.abs(sPrev) > 0) {
+          revenueGrowthPct = Number((((sCurr - sPrev) / Math.abs(sPrev)) * 100).toFixed(2));
+        }
+        const pCurr = qProfit ? parseIndianNum(qProfit[cIdx]) : null;
+        const pPrev = qProfit ? parseIndianNum(qProfit[yIdx]) : null;
+        if (pCurr !== null && pPrev !== null && Math.abs(pPrev) > 0) {
+          profitGrowthPct = Number((((pCurr - pPrev) / Math.abs(pPrev)) * 100).toFixed(2));
+        }
       }
     }
   }
@@ -700,7 +733,9 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
     const patCr = pCol !== undefined && plPatRow ? parseIndianNum(plPatRow[pCol]) : null;
     const epsFy = pCol !== undefined && plEpsRow ? parseIndianNum(plEpsRow[pCol]) : null;
 
-    const isFinFormat = Boolean(plTable?.rows.has('financing profit'));
+    const isFinFormat = Array.from(plTable?.rows.keys() ?? []).some((k) =>
+      k.includes('financing profit')
+    );
     const ebitdaCr = isFinFormat && pbtCr !== null && intCr !== null ? pbtCr + intCr + (depCr ?? 0) : opProfCr;
     const ebitCr =
       isFinFormat && pbtCr !== null && intCr !== null
@@ -819,15 +854,15 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
     epsTtmPrev = annualYears[1].dilutedEps ?? null;
   }
 
-  // Latest Balance Sheet D/E (prefer Sep/latest BS column if newer than Mar)
+  // Latest Balance Sheet D/E (prefer Sep/latest BS column if newer than Mar; treat all-blank cells as null)
   const latestBsCol = bsTable && bsTable.headers.length > 1 ? bsTable.headers.length - 1 : -1;
-  let latestEquityCr =
-    latestBsCol > 0 && bsEqCapRow && bsResRow
-      ? (parseIndianNum(bsEqCapRow[latestBsCol]) ?? 0) + (parseIndianNum(bsResRow[latestBsCol]) ?? 0)
-      : null;
+  const bsEqVal = latestBsCol > 0 && bsEqCapRow ? parseIndianNum(bsEqCapRow[latestBsCol]) : null;
+  const bsResVal = latestBsCol > 0 && bsResRow ? parseIndianNum(bsResRow[latestBsCol]) : null;
+  let latestEquityCr: number | null =
+    bsEqVal !== null || bsResVal !== null ? (bsEqVal ?? 0) + (bsResVal ?? 0) : null;
   let latestDebtCr =
     latestBsCol > 0 && bsBorrowRow ? parseIndianNum(bsBorrowRow[latestBsCol]) : null;
-  if (latestEquityCr === null && annualYears[0]?.equity) {
+  if (latestEquityCr === null && annualYears[0]?.equity !== null && annualYears[0]?.equity !== undefined) {
     latestEquityCr = annualYears[0].equity / 1e7;
   }
   if (latestDebtCr === null && annualYears[0]?.totalDebt !== null && annualYears[0]?.totalDebt !== undefined) {
@@ -836,7 +871,9 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
   const debtToEquity =
     latestDebtCr !== null && latestEquityCr !== null && latestEquityCr > 0
       ? Number((latestDebtCr / latestEquityCr).toFixed(2))
-      : null;
+      : topDebtToEquity !== null && topDebtToEquity >= 0
+        ? topDebtToEquity
+        : null;
 
   // Interest coverage from TTM or latest FY
   let interestCoverage: number | null = null;
@@ -845,7 +882,9 @@ async function fetchScreenerFullData(symbol: string): Promise<Partial<IndianFund
   const ttmDep = ttmCol !== undefined && plDepRow ? parseIndianNum(plDepRow[ttmCol]) : null;
   const ttmInt = ttmCol !== undefined && plInterestRow ? parseIndianNum(plInterestRow[ttmCol]) : null;
   const ttmPbt = ttmCol !== undefined && plPbtRow ? parseIndianNum(plPbtRow[ttmCol]) : null;
-  const isFinFormatGlobal = Boolean(plTable?.rows.has('financing profit'));
+  const isFinFormatGlobal = Array.from(plTable?.rows.keys() ?? []).some((k) =>
+    k.includes('financing profit')
+  );
   const ttmEbit =
     isFinFormatGlobal && ttmPbt !== null && ttmInt !== null
       ? ttmPbt + ttmInt
@@ -1279,27 +1318,37 @@ export async function fetchAndParseNseXbrl(filing: XbrlFiling): Promise<ParsedXb
     return null;
   };
 
-  const rawDe = currQtr && deMap.has(currQtr.id) ? deMap.get(currQtr.id)! : firstVal(deMap);
+  const instantForEnd = (m: Map<string, number>): number | null => {
+    if (periodEnd) {
+      for (const [ctxId, v] of m.entries()) {
+        const ctx = contexts.get(ctxId);
+        if (ctx?.instant === periodEnd || ctx?.end === periodEnd) return v;
+      }
+    }
+    return firstVal(m);
+  };
+
+  const rawDe = currQtr && deMap.has(currQtr.id) ? deMap.get(currQtr.id)! : instantForEnd(deMap);
   const debtToEquity = rawDe !== null && rawDe >= 0 ? rawDe : null;
 
   let interestCoverage =
-    currQtr && icMap.has(currQtr.id) ? icMap.get(currQtr.id)! : firstVal(icMap);
+    currQtr && icMap.has(currQtr.id) ? icMap.get(currQtr.id)! : instantForEnd(icMap);
   if (interestCoverage === null || interestCoverage <= 0.1) {
     let computedIc: number | null = null;
     if (currQtr) {
       const pbt = pbtMap.get(currQtr.id);
       const fc = finCostMap.get(currQtr.id);
       if (pbt !== undefined && fc !== undefined && fc > 0) {
-        computedIc = (pbt + fc) / fc;
+        computedIc = Number(((pbt + fc) / fc).toFixed(2));
       }
     }
-    interestCoverage = computedIc !== null && computedIc > 0.1 ? computedIc : null;
+    interestCoverage = computedIc !== null && Number.isFinite(computedIc) ? computedIc : null;
   }
 
   let roePct: number | null = null;
   const patCurr = currQtr ? patMap.get(currQtr.id) : undefined;
-  const eqCap = firstVal(equityCapMap);
-  const othEq = firstVal(otherEqMap);
+  const eqCap = instantForEnd(equityCapMap);
+  const othEq = instantForEnd(otherEqMap);
   if (patCurr !== undefined && eqCap !== null && othEq !== null && eqCap + othEq > 0) {
     roePct = Number((((patCurr * 4) / (eqCap + othEq)) * 100).toFixed(2));
   }
@@ -1493,6 +1542,6 @@ export async function fetchTrustedIndianFundamentals(
   };
 
   await saveIndianFundamentalsEntry(payload);
-  syncScreenerShareholdingCache(payload);
+  await syncScreenerShareholdingCache(payload);
   return payload;
 }

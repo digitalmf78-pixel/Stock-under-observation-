@@ -1,4 +1,5 @@
 import type { PaperPortfolioSummary, PaperTrade, PaperTradeMarked } from '../types/trading';
+import { authFetch, hasAdminToken } from './authClient';
 
 const VAULT_STORAGE_KEY = 'nse_scanner_paper_vault_v1';
 
@@ -180,15 +181,32 @@ export function buildFallbackPortfolioFromVault(): PaperPortfolioSummary {
 
 export async function syncAndLoadPaperPortfolio(options?: {
   live?: boolean;
+  forceSync?: boolean;
 }): Promise<{ portfolio: PaperPortfolioSummary; restoredCount: number }> {
   const vault = readPaperVault();
-  const res = await fetch('/api/paper-trades/sync', {
+  const liveFlag = options?.live !== false;
+
+  if (!hasAdminToken() && !options?.forceSync) {
+    const res = await fetch(`/api/paper-trades?live=${liveFlag ? '1' : '0'}`);
+    const portfolio = (await res.json()) as PaperPortfolioSummary & { error?: string };
+    if (!res.ok) throw new Error(portfolio.error || `HTTP ${res.status}`);
+    if (Array.isArray(portfolio.trades)) {
+      mergePortfolioIntoVault(portfolio.trades);
+    }
+    notifyPortfolioUpdated();
+    return {
+      portfolio,
+      restoredCount: 0,
+    };
+  }
+
+  const res = await authFetch('/api/paper-trades/sync', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       trades: vault.trades,
       deletedIds: vault.deletedIds,
-      fetchLive: options?.live !== false,
+      fetchLive: liveFlag,
     }),
   });
   const json = await res.json();
@@ -219,7 +237,7 @@ export async function executePaperBuy(payload: {
   notes?: string;
   preferLive?: boolean;
 }): Promise<{ trade: PaperTrade; portfolio: PaperPortfolioSummary }> {
-  const res = await fetch('/api/paper-trades/buy', {
+  const res = await authFetch('/api/paper-trades/buy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -235,7 +253,7 @@ export async function executePaperSell(
   id: string,
   payload?: { exitPrice?: number; notes?: string }
 ): Promise<{ trade: PaperTrade; portfolio: PaperPortfolioSummary }> {
-  const res = await fetch(`/api/paper-trades/${encodeURIComponent(id)}/sell`, {
+  const res = await authFetch(`/api/paper-trades/${encodeURIComponent(id)}/sell`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload || {}),
@@ -248,7 +266,7 @@ export async function executePaperSell(
 }
 
 export async function executePaperDelete(id: string): Promise<PaperPortfolioSummary> {
-  const res = await fetch(`/api/paper-trades/${encodeURIComponent(id)}`, {
+  const res = await authFetch(`/api/paper-trades/${encodeURIComponent(id)}`, {
     method: 'DELETE',
   });
   const json = await res.json();

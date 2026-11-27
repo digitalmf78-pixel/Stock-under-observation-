@@ -211,23 +211,32 @@ export const QuarterlyEpsValuationPanel: React.FC<QuarterlyEpsValuationPanelProp
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onVerifyFundamentals}
-          disabled={verifying}
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
-            allVerified
-              ? 'bg-slate-100 text-slate-800 hover:bg-slate-200'
-              : 'bg-blue-700 text-white hover:bg-blue-800'
-          } disabled:opacity-50`}
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${verifying ? 'animate-spin' : ''}`} />
-          {verifying
-            ? 'Verifying Screener+BSE+NSE...'
-            : allVerified
-              ? 'Re-Verify Fundamentals'
-              : 'Verify & Save Fundamentals (MUST)'}
-        </button>
+        {summary.swingTier === 'NONE' ? (
+          <span
+            title="Fundamental Deep Audit runs strictly on stocks selected into Tier 1, Tier 2, or Tier 3."
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-slate-200 bg-slate-50 text-slate-500 whitespace-nowrap shrink-0"
+          >
+            Deep Audit: Tier 1–3 Only
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={onVerifyFundamentals}
+            disabled={verifying}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+              allVerified
+                ? 'bg-slate-100 text-slate-800 hover:bg-slate-200'
+                : 'bg-blue-700 text-white hover:bg-blue-800'
+            } disabled:opacity-50`}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${verifying ? 'animate-spin' : ''}`} />
+            {verifying
+              ? 'Verifying Screener+BSE+NSE...'
+              : allVerified
+                ? 'Re-Verify Fundamentals'
+                : 'Verify & Save Fundamentals (MUST)'}
+          </button>
+        )}
       </div>
 
       <div className="p-5 space-y-5 text-xs">
